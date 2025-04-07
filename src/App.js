@@ -14,7 +14,7 @@ class App extends Component {
   }
   render() {
     return (
-      <BrowserRouter>
+      <BrowserRouter basename='/web'>
       <div className='App'>
         <Nav></Nav>
         <Routes>
