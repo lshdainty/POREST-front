@@ -1,25 +1,31 @@
 import React, { Component } from 'react';
-import Nav from './components/Nav'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Home from './view/home/Home'
+import Work from './view/work/Work'
+import Culture from './view/culture/Culture'
+import Rule from './view/rule/Rule'
+import Login from './view/login/Login'
+import Nav from './components/nav/Nav'
 import './App.css';
 
-class Subject extends Component {
-  render() {
-    return (
-      <header>
-        <h1>{this.props.title}</h1>
-        {this.props.sub}
-      </header>
-    );
-  }
-}
-
 class App extends Component {
+  constructor(props) {  // 생성자 초기화
+    super(props)
+  }
   render() {
     return (
-      <div className="App">
-        <Subject title="WEB" sub="world wide web!"></Subject>
+      <BrowserRouter>
+      <div className='App'>
         <Nav></Nav>
+        <Routes>
+          <Route path='/' exact={true} element={<Home/>} />
+          <Route path='/work' element={<Work/>} />
+          <Route path='/culture' element={<Culture/>} />
+          <Route path='/rule' element={<Rule/>} />
+          <Route path='/login' element={<Login/>} />
+        </Routes>
       </div>
+      </BrowserRouter>
     );
   }
 }
