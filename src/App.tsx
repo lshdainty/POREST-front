@@ -9,16 +9,13 @@ import Nav from './components/nav/Nav'
 import './App.css';
 
 class App extends Component {
-  constructor(props) {  // 생성자 초기화
-    super(props)
-  }
   render() {
     return (
       <BrowserRouter basename='/web'>
       <div className='App'>
         <Nav></Nav>
         <Routes>
-          <Route path='/' exact={true} element={<Home/>} />
+          <Route path='/' element={<Home/>} />
           <Route path='/work' element={<Work/>} />
           <Route path='/culture' element={<Culture/>} />
           <Route path='/rule' element={<Rule/>} />
