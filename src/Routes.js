@@ -9,7 +9,7 @@ import Login from './view/login/Login'
 class Routes {
   return () {
     <Routes>
-      <Route path='/' exact={true} element={<Home/>} />
+      <Route path='/' element={<Home/>} />
       <Route path='/work' element={<Work/>} />
       <Route path='/culture' element={<Culture/>} />
       <Route path='/rule' element={<Rule/>} />

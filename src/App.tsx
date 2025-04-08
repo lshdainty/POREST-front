@@ -1,4 +1,3 @@
-import React, { Component } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './view/home/Home'
 import Work from './view/work/Work'
@@ -8,23 +7,21 @@ import Login from './view/login/Login'
 import Nav from './components/nav/Nav'
 import './App.css';
 
-class App extends Component {
-  render() {
-    return (
-      <BrowserRouter basename='/web'>
-      <div className='App'>
-        <Nav></Nav>
-        <Routes>
-          <Route path='/' element={<Home/>} />
-          <Route path='/work' element={<Work/>} />
-          <Route path='/culture' element={<Culture/>} />
-          <Route path='/rule' element={<Rule/>} />
-          <Route path='/login' element={<Login/>} />
-        </Routes>
-      </div>
-      </BrowserRouter>
-    );
-  }
+const App = () => {
+  return (
+    <BrowserRouter basename='/web'>
+    <div className='App'>
+      <Nav></Nav>
+      <Routes>
+        <Route path='/' element={<Home/>} />
+        <Route path='/work' element={<Work/>} />
+        <Route path='/culture' element={<Culture/>} />
+        <Route path='/rule' element={<Rule/>} />
+        <Route path='/login' element={<Login/>} />
+      </Routes>
+    </div>
+    </BrowserRouter>
+  );
 }
 
 export default App;
