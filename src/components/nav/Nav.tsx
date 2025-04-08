@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import './nav.scss';
 
-class Nav extends Component {
-  render() {
-    return (
+const Nav = () => {
+  return (
+    <div className='nav'>
       <nav className='nav-bar'>
         <div className='nav-bar-logo'>
           <div></div>
@@ -22,8 +22,8 @@ class Nav extends Component {
           </div>
         </div>
       </nav>
-    );
-  }
+    </div>
+  );
 }
 
 export default Nav;

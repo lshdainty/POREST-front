@@ -5,6 +5,7 @@ import Culture from './view/culture/Culture'
 import Rule from './view/rule/Rule'
 import Login from './view/login/Login'
 import Nav from './components/nav/Nav'
+import Coin from './view/example/Coin'
 import './App.css';
 
 const App = () => {
@@ -12,6 +13,7 @@ const App = () => {
     <BrowserRouter basename='/web'>
     <div className='App'>
       <Nav></Nav>
+      <Coin></Coin>
       <Routes>
         <Route path='/' element={<Home/>} />
         <Route path='/work' element={<Work/>} />
