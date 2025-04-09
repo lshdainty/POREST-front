@@ -8,6 +8,7 @@ export const useToken = (callback: (val: boolean) => void) => {
   const checkExpire = () => {
     // server check
     return true;
+    // return false;
   }
 
   useEffect(() => {

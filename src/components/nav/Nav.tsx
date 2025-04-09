@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Sidebar, Menu, MenuItem, SubMenu, menuClasses, MenuItemStyles } from 'react-pro-sidebar';
-import { Calendar } from '@/components/test/icons/Calendar';
-import '@/components/nav/nav.scss';
+import { Sidebar, Menu, MenuItem, menuClasses, MenuItemStyles } from 'react-pro-sidebar';
+import { Home, EditNote, Celebration, Rule, Height } from '@mui/icons-material';
 
 type Theme = 'light' | 'dark';
 
@@ -14,7 +13,7 @@ const themes = {
     },
     menu: {
       menuContent: '#fbfcfd',
-      icon: '#0098e5',
+      icon: '#515ce6',
       hover: {
         backgroundColor: '#c5e4ff',
         color: '#44596e',
@@ -53,8 +52,7 @@ const hexToRgba = (hex: string, alpha: number) => {
 }
 
 const Nav = () => {
-  const [collapsed, setCollapsed] = useState(false);
-  const [hasImage, setHasImage] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const [theme, setTheme] = useState<Theme>('light');
 
   const menuItemStyles: MenuItemStyles = {
@@ -67,24 +65,18 @@ const Nav = () => {
       [`&.${menuClasses.disabled}`]: {
         color: themes[theme].menu.disabled.color,
       },
+      
     },
-    SubMenuExpandIcon: {
-      color: '#b6b7b9',
-    },
-    subMenuContent: ({ level }) => ({
-      backgroundColor:
-        level === 0
-          ? hexToRgba(themes[theme].menu.menuContent, hasImage && !collapsed ? 0.4 : 1)
-          : 'transparent',
-    }),
     button: {
       [`&.${menuClasses.disabled}`]: {
         color: themes[theme].menu.disabled.color,
       },
       '&:hover': {
-        backgroundColor: hexToRgba(themes[theme].menu.hover.backgroundColor, hasImage ? 0.8 : 1),
+        backgroundColor: hexToRgba(themes[theme].menu.hover.backgroundColor, 1),
         color: themes[theme].menu.hover.color,
       },
+      paddingLeft: '14px',
+      paddingRight: '14px',
     },
     label: ({ open }) => ({
       fontWeight: open ? 600 : undefined,
@@ -92,12 +84,28 @@ const Nav = () => {
   }
 
   return (
-    <Sidebar collapsed={true}>
-      <Menu menuItemStyles={menuItemStyles} closeOnClick={true}>
-        <MenuItem icon={<Calendar />}>Home</MenuItem>
-        <MenuItem icon={<Calendar />}>Work</MenuItem>
-        <MenuItem icon={<Calendar />}>Culture</MenuItem>
-        <MenuItem icon={<Calendar />}>Rule</MenuItem>
+    <Sidebar
+      collapsed={collapsed}
+      backgroundColor={hexToRgba(themes[theme].sidebar.backgroundColor, 1)}
+      width={'200px'}
+      collapsedWidth={'60px'}
+      rootStyles={{
+        color: themes[theme].sidebar.color,
+        height: '100vh',
+      }}
+    >
+      <Menu
+        rootStyles={{
+          marginTop: '50px',
+        }}
+        menuItemStyles={menuItemStyles}
+        onMouseOver={()=>{setCollapsed(false)}}
+        onMouseOut={()=>{setCollapsed(true)}}
+      >
+        <MenuItem icon={<Home />} component={<Link to={"/"} />}>Home</MenuItem>
+        <MenuItem icon={<EditNote />} component={<Link to={"/work"} />}>Work</MenuItem>
+        <MenuItem icon={<Celebration />} component={<Link to={"/culture"} />}>Culture</MenuItem>
+        <MenuItem icon={<Rule />} component={<Link to={"/rule"} />}>Rule</MenuItem>
       </Menu>
     </Sidebar>
   );

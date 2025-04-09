@@ -1,0 +1,6 @@
+@use "@/assets/scss/variables" as var;
+
+.test {
+    height: var.$header-height;
+    width: var.$header-width;
+}
