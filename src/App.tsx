@@ -1,27 +1,15 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Home from './view/home/Home'
-import Work from './view/work/Work'
-import Culture from './view/culture/Culture'
-import Rule from './view/rule/Rule'
-import Login from './view/login/Login'
-import Nav from './components/nav/Nav'
-import Coin from './view/example/Coin'
-import './App.css';
+import { BrowserRouter } from 'react-router-dom'
+import Router from '@/Router'
+import Nav from '@/components/nav/Nav'
+import Coin from '@/view/example/Coin'
+import '@/App.scss';
 
 const App = () => {
   return (
-    <BrowserRouter basename='/web'>
-    <div className='App'>
+    <BrowserRouter basename='/web' future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Nav></Nav>
-      <Coin></Coin>
-      <Routes>
-        <Route path='/' element={<Home/>} />
-        <Route path='/work' element={<Work/>} />
-        <Route path='/culture' element={<Culture/>} />
-        <Route path='/rule' element={<Rule/>} />
-        <Route path='/login' element={<Login/>} />
-      </Routes>
-    </div>
+      {/* <Coin></Coin> */}
+      <Router />
     </BrowserRouter>
   );
 }
