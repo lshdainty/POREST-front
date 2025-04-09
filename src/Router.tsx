@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
+import { useToken } from '@/hooks/useToken'
 import Login from '@/view/login/Login'
 import Home from '@/view/home/Home'
 import Work from '@/view/work/Work'
@@ -10,14 +11,19 @@ const Router = () => {
   const [home, setHome] = useState<boolean | undefined>(undefined);
   const navigate = useNavigate();
 
-  console.log(home);
+  console.log("router  ", home);
+
+  useToken(setHome);
 
   useEffect(() => {
+    console.log("router useEffect!!!!")
+    console.log("useEffect home : ", home);
+
     if (home !== undefined && !home) {
       console.log("this?");
       navigate('/login');
     }
-  }, []);
+  }, [home]);
 
   return (
     <Routes>
