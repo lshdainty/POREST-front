@@ -1,6 +1,5 @@
 import { BrowserRouter } from 'react-router-dom'
 import Router from '@/Router'
-import Nav from '@/components/nav/Nav'
 import '@/App.scss';
 
 const App = () => {

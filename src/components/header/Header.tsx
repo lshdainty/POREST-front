@@ -2,7 +2,7 @@ import '@/components/header/header.scss'
 
 const Header = () => {
   return (
-    <div className='test'>
+    <div className='header'>
       header
     </div>
   )

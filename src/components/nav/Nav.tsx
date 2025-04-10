@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Sidebar, Menu, MenuItem, menuClasses, MenuItemStyles } from 'react-pro-sidebar';
-import { Home, EditNote, Celebration, Rule, Height } from '@mui/icons-material';
+import { Home, EditNote, Celebration, Rule } from '@mui/icons-material';
 
 type Theme = 'light' | 'dark';
 
@@ -96,7 +96,7 @@ const Nav = () => {
     >
       <Menu
         rootStyles={{
-          marginTop: '50px',
+          marginTop: '70px',
         }}
         menuItemStyles={menuItemStyles}
         onMouseOver={()=>{setCollapsed(false)}}

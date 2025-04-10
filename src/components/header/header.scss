@@ -1,6 +1,10 @@
 @use "@/assets/scss/variables" as var;
 
-.test {
+.header {
+    position: absolute;
+    top: 0;
+    z-index: 4;
     height: var.$header-height;
     width: var.$header-width;
+    background-color: rgb(199, 194, 194);
 }

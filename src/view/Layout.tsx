@@ -2,9 +2,11 @@ import Nav from '@/components/nav/Nav';
 import Header from '@/components/header/Header';
 import { Outlet } from 'react-router-dom';
 
+import '@/view/Layout.scss'
+
 const Layout = () => {
   return (
-    <div style={{ display: 'flex', height: '100%'}}>
+    <div className='layout'>
       <Header />
       <Nav />
       <Outlet />
