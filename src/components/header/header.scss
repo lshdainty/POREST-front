@@ -1,10 +1,29 @@
 @use "@/assets/scss/variables" as var;
 
 .header {
-    position: absolute;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 4;
     height: var.$header-height;
     width: var.$header-width;
-    background-color: rgb(199, 194, 194);
+
+    .inner {
+        position: relative;
+        width: 100vw;
+
+        .logo {
+            position: absolute;
+            height: 100%;
+            left: 60px;
+            top: 3px;
+
+            img {
+                display: flex;
+                align-items: center;
+                width: 90px;
+            }
+        }
+    }
 }

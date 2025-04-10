@@ -1,9 +1,14 @@
 import '@/components/header/header.scss'
+import Logo from '@/assets/img/logo.png'
 
 const Header = () => {
   return (
     <div className='header'>
-      header
+      <div className='inner'>
+        <div className='logo'>
+          <img src={Logo}></img>
+        </div>
+      </div>
     </div>
   )
 }
