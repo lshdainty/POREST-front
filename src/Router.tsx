@@ -13,16 +13,10 @@ const Router = () => {
   const [home, setHome] = useState<boolean | undefined>(undefined);
   const navigate = useNavigate();
 
-  console.log("router  ", home);
-
   useToken(setHome);
 
   useEffect(() => {
-    console.log("router useEffect!!!!")
-    console.log("useEffect home : ", home);
-
     if (home !== undefined && !home) {
-      console.log("this?");
       navigate('/login');
     }
   }, [home]);
