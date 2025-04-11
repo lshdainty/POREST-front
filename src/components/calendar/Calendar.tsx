@@ -15,7 +15,7 @@ const CalendarInfo = () => {
         localizer={localizer}
         resizable
         selectable
-        style={{ height: 900 }}
+        style={{ height: '100%', width: '100%' }}
       />
 
   );
