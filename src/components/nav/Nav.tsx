@@ -27,9 +27,9 @@ const menuItemStyles: MenuItemStyles = {
   },
   icon: {
     color: '#495771',
-    marginRight: '25px',
+    marginRight: '20px',
     [`&.${menuClasses.active}`]: {
-      color: '#7f56d9'
+      color: '#0080fc'
     },
   },
   button: {
@@ -40,8 +40,8 @@ const menuItemStyles: MenuItemStyles = {
     [`&.${menuClasses.active}`]: {
       borderBottomStyle: 'solid',
       borderBottomWidth: '2px',
-      borderBottomColor: '#7f56d9',
-      color: '#7f56d9'
+      borderBottomColor: '#0080fc',
+      color: '#0080fc'
     },
     paddingLeft: '14px',
     paddingRight: '14px',
