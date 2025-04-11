@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import {getUsers} from '@/api/user'
 
-import '@/view/home/home.scss'
+import '@/view/dashboard/dashboard.scss'
 
 interface User {
   user_no: Int16Array,
@@ -11,7 +11,7 @@ interface User {
   user_work_time: string,
 }
 
-const Home = () => {
+const Dashboard = () => {
   const [users, setUsers] = useState<User[]>([]);
 
   const init = async () => {
@@ -46,4 +46,4 @@ const Home = () => {
   );
 }
 
-export default Home;
+export default Dashboard;

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Sidebar, Menu, MenuItem, menuClasses, MenuItemStyles } from 'react-pro-sidebar'
-import { Home, CalendarMonth, EditNote, Celebration, Rule, Settings, AccountCircleRounded } from '@mui/icons-material'
+import { DashboardRounded, CalendarMonthRounded, BorderColorRounded, Diversity3Rounded, Rule, SettingsRounded, PersonRounded } from '@mui/icons-material'
 
 import '@/components/nav/Nav.scss'
 
@@ -15,7 +15,7 @@ const hexToRgba = (hex: string, alpha: number) => {
 }
 
 const sidebarStyles = {
-  color: '#607489',
+  color: '#495771',
   height: '100vh',
   borderRightWidth: '0'
 }
@@ -26,20 +26,22 @@ const menuItemStyles: MenuItemStyles = {
     fontWeight: 400,
   },
   icon: {
-    color: '#00a9ff',
-    marginRight: '15px'
+    color: '#495771',
+    marginRight: '25px',
+    [`&.${menuClasses.active}`]: {
+      color: '#7f56d9'
+    },
   },
   button: {
     '&:hover': {
-      backgroundColor: hexToRgba('#c5e4ff', 1),
-      color: '#44596e',
+      backgroundColor: hexToRgba('#495771', 0.1),
+      color: '#495771',
     },
     [`&.${menuClasses.active}`]: {
       borderBottomStyle: 'solid',
       borderBottomWidth: '2px',
-      borderBottomColor: '#00a9ff',
-      backgroundColor: hexToRgba('#00a9ff', 0.2),
-      color: '#44596e'
+      borderBottomColor: '#7f56d9',
+      color: '#7f56d9'
     },
     paddingLeft: '14px',
     paddingRight: '14px',
@@ -68,22 +70,22 @@ const Nav = () => {
       >
         <MenuItem
           active={location.pathname === '/'}
-          icon={<Home />}
+          icon={<DashboardRounded />}
           component={<Link to={"/"} />}
-        >Home</MenuItem>
+        >Dashboard</MenuItem>
         <MenuItem
           active={location.pathname === '/calendar'}
-          icon={<CalendarMonth />}
+          icon={<CalendarMonthRounded />}
           component={<Link to={"/calendar"} />}
         >Calendar</MenuItem>
         <MenuItem
           active={location.pathname === '/work'}
-          icon={<EditNote />}
+          icon={<BorderColorRounded />}
           component={<Link to={"/work"} />}
         >Work</MenuItem>
         <MenuItem
           active={location.pathname === '/culture'}
-          icon={<Celebration />}
+          icon={<Diversity3Rounded />}
           component={<Link to={"/culture"} />}
         >Culture</MenuItem>
         <MenuItem
@@ -97,8 +99,8 @@ const Nav = () => {
         onMouseOver={()=>{setCollapsed(false)}}
         onMouseOut={()=>{setCollapsed(true)}}
       >
-        <MenuItem icon={<AccountCircleRounded />}>Logout</MenuItem>
-        <MenuItem icon={<Settings />}>Setting</MenuItem>
+        <MenuItem icon={<PersonRounded />}>Logout</MenuItem>
+        <MenuItem icon={<SettingsRounded />}>Setting</MenuItem>
       </Menu>
     </Sidebar>
   );
