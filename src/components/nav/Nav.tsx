@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Sidebar, Menu, MenuItem, menuClasses, MenuItemStyles } from 'react-pro-sidebar'
-import { Home, EditNote, Celebration, Rule, Settings, AccountCircleRounded } from '@mui/icons-material'
+import { Home, CalendarMonth, EditNote, Celebration, Rule, Settings, AccountCircleRounded } from '@mui/icons-material'
 
 import '@/components/nav/Nav.scss'
 
@@ -71,6 +71,11 @@ const Nav = () => {
           icon={<Home />}
           component={<Link to={"/"} />}
         >Home</MenuItem>
+        <MenuItem
+          active={location.pathname === '/calendar'}
+          icon={<CalendarMonth />}
+          component={<Link to={"/calendar"} />}
+        >Calendar</MenuItem>
         <MenuItem
           active={location.pathname === '/work'}
           icon={<EditNote />}
