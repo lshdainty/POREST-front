@@ -1,11 +1,13 @@
-import CalendarInfo from "@/components/calendar/Calendar";
+import CalendarSideBar from '@/components/calendar/SideBar'
+import CalendarContent from '@/components/calendar/Content'
 
 import '@/view/calendar/calendar.scss'
 
 const Calendar = () => {
     return (
         <div className='calendar'>
-            <CalendarInfo />
+            <CalendarSideBar />
+            <CalendarContent />
         </div>
     )
 }

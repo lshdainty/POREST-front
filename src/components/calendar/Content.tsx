@@ -5,7 +5,7 @@ import withDragAndDrop, { withDragAndDropProps } from 'react-big-calendar/lib/ad
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 
-const CalendarInfo = () => {
+const Content = () => {
   //캘린더를 DragAndDrop으로 바꿉니다.
   const DragAndDropCalendar = withDragAndDrop(Calendar);
   const localizer = momentLocalizer(moment);
@@ -21,4 +21,4 @@ const CalendarInfo = () => {
   );
 };
 
-export default CalendarInfo;
+export default Content;
