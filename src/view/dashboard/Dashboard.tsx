@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import {getUsers} from '@/api/user'
+import { getUsers, test} from '@/api/user'
 
 import '@/view/dashboard/dashboard.scss'
 
@@ -16,13 +16,17 @@ const Dashboard: React.FC = () => {
 
   const init = async () => {
     try {
-      const data = await getUsers();
-      console.log(data.data);
-      setUsers(data.data);
+      // const data = await getUsers();
+      // console.log(data);
+      // setUsers(data);
+      const data2 = await test();
     } catch (err) {
       console.log(err);
     }
   }
+
+  // const init2 = getUsers();
+  // console.log(init2)
 
   const usersElement = users.map((user, idx) =>
     <div>
@@ -35,7 +39,9 @@ const Dashboard: React.FC = () => {
   );
 
   useEffect(() => {
-    init();
+    init()
+    // test()
+    // console.log(getUsers())
   }, []);
 
   return (

@@ -6,7 +6,7 @@ export const useToken = (callback: (val: boolean) => void) => {
   const checkExpire = () => {
     let key = localStorage.getItem("key");
     console.log('useToken key : ', key);
-    // key='';
+    key='';
     let result = false;
 
     (key === null || key === undefined) ? result = false : result = true

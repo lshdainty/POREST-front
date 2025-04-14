@@ -4,12 +4,12 @@ import CalendarContent from '@/components/calendar/Content'
 import '@/view/calendar/calendar.scss'
 
 const Calendar: React.FC = () => {
-    return (
-        <div className='calendar'>
-            <CalendarSideBar />
-            <CalendarContent />
-        </div>
-    )
+  return (
+    <div className='calendar'>
+      <CalendarSideBar />
+      <CalendarContent />
+    </div>
+  )
 }
 
 export default Calendar;

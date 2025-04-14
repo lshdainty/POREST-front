@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
+import { useAxiosInterceptor } from '@/api/index'
 import { useToken } from '@/hooks/useToken'
 import Login from '@/view/login/Login'
 import Layout from '@/view/layout/Layout'
@@ -9,11 +10,11 @@ import Work from '@/view/work/Work'
 import Culture from '@/view/culture/Culture'
 import Rule from '@/view/rule/Rule'
 
-
 const Router = () => {
   const [home, setHome] = useState<boolean | undefined>(undefined);
   const navigate = useNavigate();
 
+  useAxiosInterceptor();
   useToken(setHome);
 
   useEffect(() => {

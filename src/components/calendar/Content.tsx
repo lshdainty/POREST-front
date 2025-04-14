@@ -11,13 +11,12 @@ const Content: React.FC = () => {
   const localizer = momentLocalizer(moment);
   
   return (
-      <DragAndDropCalendar
-        localizer={localizer}
-        resizable
-        selectable
-        style={{ height: '100%', width: '100%' }}
-      />
-
+    <DragAndDropCalendar
+      localizer={localizer}
+      resizable
+      selectable
+      style={{ height: '100%', width: '100%' }}
+    />
   );
 };
 

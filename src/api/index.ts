@@ -1,54 +1,73 @@
 import axios, { AxiosError, AxiosResponse } from 'axios'
+import { useEffect } from 'react';
+import { useLoadStateStore } from '@/store/LoadingStore'
 
 interface CustomHeaders {
-    [key: string]: any;
+  [key: string]: any;
 }
 
 const baseURL = 'http://localhost:8080/api/v1';
-const request = axios.create({
-    baseURL: baseURL,
-    headers: {
-        'Content-Type': 'application/json',
-    },
+const api = axios.create({
+  baseURL: baseURL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
-// Request interceptor
-request.interceptors.request.use(
+const useAxiosInterceptor = () => {
+  const { startLoading, endLoading, getState } = useLoadStateStore(s => s.actions);
+
+  // Request interceptor
+  const request = api.interceptors.request.use(
     (config: any) => {
-        const headers = config.headers as CustomHeaders;
-        // url에 따른 각종 header 세팅
-        // jwt 사용시 accessToken 세팅
-        return config;
+      startLoading();
+      console.log("request interceptor Load : ", getState())
+      const headers = config.headers as CustomHeaders;
+      // url에 따른 각종 header 세팅
+      // jwt 사용시 accessToken 세팅
+      return config;
     },
     (err: AxiosError) => {
-        console.log('this?? : ', err);
-        return Promise.reject(err);
+      endLoading()
+      console.log('this?? : ', err);
+      return Promise.reject(err);
     }
-);
+  );
 
-// Response interceptor
-request.interceptors.response.use(
+  // Response interceptor
+  const response = api.interceptors.response.use(
     (resp: AxiosResponse) => {
-        const res = resp.data;
-        return res;
+      endLoading();
+      console.log("response interceptor Load : ", getState())
+      const res = resp.data;
+      return res;
     },
     async (err: any) => {
-        console.log("resp err : ", err);
+      endLoading();
+      console.log("resp err : ", err);
 
-        if (err.response && err.response.status === 401) {
-            if (err.response.config.url !== `/api/relogin`) {
-                console.log('jwt relogin')
-            } else {
-                return err;
-            }
-
-            return err;
+      if (err.response && err.response.status === 401) {
+        if (err.response.config.url !== `/api/relogin`) {
+          console.log('jwt relogin')
+        } else {
+          return err;
         }
 
-        if (err.response && err.response.status !== 401) {
-            return err.response;
-        }
+        return err;
+      }
+
+      if (err.response && err.response.status !== 401) {
+        return err.response;
+      }
     }
-);
+  );
 
-export default request;
+  useEffect(() => {
+    return () => {
+      api.interceptors.request.eject(request);
+      api.interceptors.response.eject(response);
+    };
+  }, [request, response]);
+};
+
+export { useAxiosInterceptor, api };
