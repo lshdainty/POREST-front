@@ -3,16 +3,10 @@
 .calendar {
     display: flex;
 
-    margin-top: 70px;
-    margin-left: 10px;
-    margin-right: 10px;
-    margin-bottom: 10px;
     width: 100%;
     padding: 15px;
-    border-style: solid;
-    border-width: 2px;
-    border-radius: 8px;
-    border-color: rgb(255, 255, 255, 0);
+    margin: 70px 15px 15px 15px;
 
     box-shadow: var.$box-shadow;
+    border-radius: var.$box-radius;
 }

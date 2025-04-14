@@ -11,7 +11,7 @@ interface User {
   user_work_time: string,
 }
 
-const Dashboard = () => {
+const Dashboard: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
 
   const init = async () => {

@@ -1,6 +1,6 @@
 import '@/view/culture/culture.scss'
 
-const Culture = () => {
+const Culture: React.FC = () => {
   console.log("culture render");
   return (
     <div className='culture'>

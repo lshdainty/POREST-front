@@ -5,7 +5,7 @@ import { Outlet } from 'react-router-dom';
 
 import '@/view/layout/layout.scss'
 
-const Layout = () => {
+const Layout: React.FC = () => {
   return (
     <Suspense fallback={"Loading.............."}>
       <div className='layout'>

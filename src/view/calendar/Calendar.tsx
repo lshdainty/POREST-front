@@ -3,7 +3,7 @@ import CalendarContent from '@/components/calendar/Content'
 
 import '@/view/calendar/calendar.scss'
 
-const Calendar = () => {
+const Calendar: React.FC = () => {
     return (
         <div className='calendar'>
             <CalendarSideBar />

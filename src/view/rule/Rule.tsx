@@ -1,6 +1,6 @@
 import '@/view/rule/rule.scss'
 
-const Rule = () => {
+const Rule: React.FC = () => {
   console.log("Rule render");
   return (
     <div className='rule'>

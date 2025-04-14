@@ -1,6 +1,6 @@
 import '@/view/work/work.scss'
 
-const Work = () => {
+const Work: React.FC = () => {
   console.log("work render");
   return (
     <div className='work'>

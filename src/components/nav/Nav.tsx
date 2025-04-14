@@ -51,7 +51,7 @@ const menuItemStyles: MenuItemStyles = {
   }),
 }
 
-const Nav = () => {
+const Nav: React.FC = () => {
   const [collapsed, setCollapsed] = useState(true);
   const location = useLocation();
 

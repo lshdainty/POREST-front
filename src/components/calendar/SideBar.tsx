@@ -1,4 +1,4 @@
-const SideBar = () => {
+const SideBar: React.FC = () => {
   return (
     <div>
       test content
