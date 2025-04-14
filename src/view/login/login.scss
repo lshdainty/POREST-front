@@ -22,8 +22,6 @@ body {
         border-radius: var.$box-radius;
 
         .child:nth-child(1) {
-            flex-grow: 2;
-
             img {
                 height:80vh;
                 background: no-repeat center;
@@ -34,7 +32,6 @@ body {
         }
 
         .child:nth-child(2) {
-            flex-grow: 1;
             width: 100%;
             display: flex;
             flex-direction: column;
