@@ -6,7 +6,7 @@ const Header: React.FC = () => {
     <div className='header'>
       <div className='inner'>
         <div className='logo'>
-          <img src={Logo}></img>
+          <img src={Logo} alt='logo'></img>
         </div>
       </div>
     </div>

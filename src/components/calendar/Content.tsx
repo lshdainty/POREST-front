@@ -1,15 +1,26 @@
 import { Calendar, momentLocalizer } from 'react-big-calendar'
+import { useEffect } from 'react';
+import { getPeriodSchedules } from '@/api/schedule';
 import moment from 'moment';
 import withDragAndDrop, { withDragAndDropProps } from 'react-big-calendar/lib/addons/dragAndDrop'
 
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 
+
 const Content: React.FC = () => {
-  //캘린더를 DragAndDrop으로 바꿉니다.
   const DragAndDropCalendar = withDragAndDrop(Calendar);
   const localizer = momentLocalizer(moment);
-  
+
+  const fetchPeriodSchedules = async () => {
+    const resp = await getPeriodSchedules(moment().format("2025-01-01T00:00:00"), moment().format("2025-12-31T23:59:59"));
+    console.log(resp.data);
+  }
+
+  useEffect(() => {
+    fetchPeriodSchedules();
+  }, []);
+
   return (
     <DragAndDropCalendar
       localizer={localizer}

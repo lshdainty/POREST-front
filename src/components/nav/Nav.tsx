@@ -27,7 +27,7 @@ const menuItemStyles: MenuItemStyles = {
   },
   icon: {
     color: '#495771',
-    marginRight: '20px',
+    marginRight: '25px',
     [`&.${menuClasses.active}`]: {
       color: '#0080fc'
     },
@@ -65,7 +65,7 @@ const Nav: React.FC = () => {
     <Sidebar
       collapsed={collapsed}
       backgroundColor={'#fafafa'}
-      width={'200px'}
+      width={'230px'}
       collapsedWidth={'60px'}
       rootStyles={sidebarStyles}
     >

@@ -34,7 +34,7 @@ const Router = () => {
         <Route path='/culture' element={<Culture/>} />
         <Route path='/rule' element={<Rule/>} />
       </Route>
-      <Route path='*' element={<NotFound/>} />
+      <Route path='/*' element={<NotFound/>} />
     </Routes>
   )
 }

@@ -24,40 +24,40 @@ const Login: React.FC = () => {
         </div>
         <div className='child'>
           <div className='logo'>
-            <img src={Logo} />
+            <img src={Logo} alt = 'login' />
           </div>
           <div className='form'>
             <Form
-              name="login"
+              name='login'
               initialValues={{ remember: true }}
               style={{ maxWidth: 360 }}
               onFinish={onFinish}
             >
               <Form.Item
-                name="username"
+                name='username'
                 rules={[{ required: true, message: 'Please input your Username!' }]}
               >
-                <Input prefix={<UserOutlined />} placeholder="Username" />
+                <Input prefix={<UserOutlined />} placeholder='Username' />
               </Form.Item>
               <Form.Item
-                name="password"
+                name='password'
                 rules={[{ required: true, message: 'Please input your Password!' }]}
               >
-                <Input prefix={<LockOutlined />} type="password" placeholder="Password" />
+                <Input prefix={<LockOutlined />} type='password' placeholder='Password' />
               </Form.Item>
               <Form.Item>
-                <Flex justify="space-between" align="center">
-                  <Form.Item name="remember" valuePropName="checked" noStyle>
+                <Flex justify='space-between' align='center'>
+                  <Form.Item name='remember' valuePropName='checked' noStyle>
                     <Checkbox>Remember me</Checkbox>
                   </Form.Item>
-                  <a href="">Forgot password</a>
+                  <a href=''>Forgot password</a>
                 </Flex>
               </Form.Item>
               <Form.Item>
-                <Button block type="primary" htmlType="submit">
+                <Button block type='primary' htmlType='submit'>
                   Log in
                 </Button>
-                or <a href="">Register now!</a>
+                or <a href=''>Register now!</a>
               </Form.Item>
             </Form>
           </div>

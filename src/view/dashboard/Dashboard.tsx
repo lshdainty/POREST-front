@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getUsers, test} from '@/api/user'
+import { getUsers } from '@/api/user'
 
 import '@/view/dashboard/dashboard.scss'
 
@@ -14,19 +14,10 @@ interface User {
 const Dashboard: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
 
-  const init = async () => {
-    try {
-      // const data = await getUsers();
-      // console.log(data);
-      // setUsers(data);
-      const data2 = await test();
-    } catch (err) {
-      console.log(err);
-    }
+  const fetchUsers = async () => {
+    const resp = await getUsers();
+    setUsers(resp.data);
   }
-
-  // const init2 = getUsers();
-  // console.log(init2)
 
   const usersElement = users.map((user, idx) =>
     <div>
@@ -39,9 +30,7 @@ const Dashboard: React.FC = () => {
   );
 
   useEffect(() => {
-    init()
-    // test()
-    // console.log(getUsers())
+    fetchUsers();
   }, []);
 
   return (
