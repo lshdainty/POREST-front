@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Sidebar, Menu, MenuItem, menuClasses, MenuItemStyles } from 'react-pro-sidebar'
 import { DashboardRounded, CalendarMonthRounded, BorderColorRounded, Diversity3Rounded, Rule, SettingsRounded, PersonRounded } from '@mui/icons-material'
 
@@ -54,6 +54,12 @@ const menuItemStyles: MenuItemStyles = {
 const Nav: React.FC = () => {
   const [collapsed, setCollapsed] = useState(true);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const logout = () => {
+    localStorage.removeItem('key');
+    navigate('/login')
+  }
 
   return (
     <Sidebar
@@ -99,7 +105,9 @@ const Nav: React.FC = () => {
         onMouseOver={()=>{setCollapsed(false)}}
         onMouseOut={()=>{setCollapsed(true)}}
       >
-        <MenuItem icon={<PersonRounded />}>Logout</MenuItem>
+        <MenuItem
+          icon={<PersonRounded />}
+          onClick={logout}>Logout</MenuItem>
         <MenuItem icon={<SettingsRounded />}>Setting</MenuItem>
       </Menu>
     </Sidebar>

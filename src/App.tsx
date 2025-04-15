@@ -1,4 +1,6 @@
 import { BrowserRouter } from 'react-router-dom'
+// react19에서 antd 호환성 해결 package
+import '@ant-design/v5-patch-for-react-19';
 import Router from '@/Router'
 import '@/App.scss';
 

@@ -1,12 +1,18 @@
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input, Flex } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 import '@/view/login/login.scss'
 import LoginBG from '@/assets/img/loginbg.jpg'
 import Logo from '@/assets/img/logo.svg'
 
 const Login: React.FC = () => {
+  const navigate = useNavigate();
+
   const onFinish = (values: any) => {
+    // 로그인 로직 추가
+    localStorage.setItem('key', '');
+    navigate('/');
     console.log('Received values of form: ', values);
   };
 
@@ -47,7 +53,6 @@ const Login: React.FC = () => {
                   <a href="">Forgot password</a>
                 </Flex>
               </Form.Item>
-
               <Form.Item>
                 <Button block type="primary" htmlType="submit">
                   Log in
