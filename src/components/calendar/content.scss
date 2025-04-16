@@ -1,0 +1,82 @@
+@use "react-big-calendar/lib/sass/styles" as var;
+@use 'react-big-calendar/lib/addons/dragAndDrop/styles' as var2;
+
+$cell-border-width: 1px;
+$cell-border-style: solid;
+$cell-border-color: #e5e5e5;
+
+$text-color: #333333;
+
+.rbc-header {
+    border-bottom : $cell-border-width $cell-border-style $cell-border-color;
+    padding: 0 7px;
+    text-align: unset;
+    font-weight: unset;
+    font-size: 85%;
+    color: $text-color;
+    & + & {
+        border-left: 0px;
+    }
+}
+
+.rbc-month-view {
+    border-width: 0px;
+}
+
+.rbc-month-row {
+    border-right : $cell-border-width $cell-border-style $cell-border-color;
+    border-left : $cell-border-width $cell-border-style $cell-border-color;
+    border-bottom: $cell-border-width $cell-border-style $cell-border-color;
+
+    & + & {
+        border-top: 0px;
+    }
+}
+
+.rbc-off-range-bg {
+    background-color: unset;
+}
+
+.rbc-date-cell {
+    text-align: left;
+    padding-left: 3px;
+    padding-top: 3px;
+    &.rbc-date-cell > button {
+        width: 26px;
+        height: 26px;
+    }
+    &.rbc-now > button {
+        font-weight: bold;
+        color: #ffffff;
+        background-color: #135de6;
+        border-radius: 50%;
+    }
+}
+
+.rbc-day-bg {
+    & + & {
+        border-left: $cell-border-width $cell-border-style $cell-border-color;
+    }
+}
+
+.rbc-button-link {
+    font-size: 15px;
+    color: $text-color;
+}
+
+.rbc-today {
+    background-color: unset;
+}
+
+.rbc-selected-cell {
+    background-color: rgba(81, 92, 230, 0.05);
+    border: 1px $cell-border-style rgb(81, 92, 230);
+}
+
+.rbc-sunday {
+    color: #ff4040;
+}
+
+.rbc-saturday {
+    color: #4040ff;
+}
