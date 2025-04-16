@@ -34,7 +34,21 @@ $text-color: #333333;
 }
 
 .rbc-off-range-bg {
-    background-color: unset;
+    background-color: rgb(252, 252, 252);
+}
+
+.rbc-off-range {
+    button {
+        color: rgb(51, 51, 51, 0.3);
+    }
+
+    .rbc-sunday {
+        color: rgb(255, 64, 64, 0.3);
+    }
+
+    .rbc-saturday {
+        color: rgb(64, 64, 255, 0.3);
+    }
 }
 
 .rbc-date-cell {
