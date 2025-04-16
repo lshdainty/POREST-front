@@ -1,12 +1,24 @@
-import { Calendar, momentLocalizer, HeaderProps, DateHeaderProps } from 'react-big-calendar'
+import { Calendar, momentLocalizer, HeaderProps, DateHeaderProps, DateRangeFormatFunction, Views } from 'react-big-calendar'
 import { useEffect } from 'react';
 import { getPeriodSchedules } from '@/api/schedule';
 import withDragAndDrop, { withDragAndDropProps } from 'react-big-calendar/lib/addons/dragAndDrop'
+import CustomToolbar from '@/components/calendar/CustomToolbar'
 import moment from 'moment';
 // @ts-ignore
 import 'moment/dist/locale/ko';
 
 import '@/components/calendar/content.scss'
+
+const customDayRangeHeaderFormat:DateRangeFormatFunction = (range) => {
+  let start = range.start, end = range.end;
+  return `${moment(start).format('YY.MM.DD')} ~ ${moment(end).format('YY.MM.DD')}`;
+}
+
+const formats = {
+  monthHeaderFormat: 'YYYY.MM',
+  dayHeaderFormat: 'MM.DD ddd',
+  dayRangeHeaderFormat: customDayRangeHeaderFormat
+}
 
 const CustomMonthHeader: React.FC<HeaderProps> = ({ label, date }) => {
     let className:string = '';
@@ -40,9 +52,12 @@ const Content: React.FC = () => {
   return (
     <DragAndDropCalendar
       localizer={localizer}
+      formats={formats}
       resizable
       selectable
+      views={[Views.MONTH, Views.WEEK, Views.DAY]}
       components={{
+        toolbar: CustomToolbar,
         month: {
           header: CustomMonthHeader,
           dateHeader: CustomMonthDateHeader
