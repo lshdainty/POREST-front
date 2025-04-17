@@ -6,9 +6,9 @@ import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 
 import '@/components/calendar/customToolbar.scss'
 
-const CustomToolbar: React.FC<ToolbarProps> = (props) => {
+const CustomToolbarComponent: React.FC<ToolbarProps> = (props) => {
   const label = props.label;
-  const [ btnView , setBtnView] = useState<string>(Views.MONTH);
+  const [ btnView , setBtnView ] = useState<string>(Views.MONTH);
 
   return (
     <div className='rbc-toolbar'>
@@ -54,4 +54,4 @@ const CustomToolbar: React.FC<ToolbarProps> = (props) => {
   );
 };
 
-export default CustomToolbar;
+export default CustomToolbarComponent;

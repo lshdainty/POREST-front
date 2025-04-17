@@ -1,8 +1,9 @@
 import { Calendar, momentLocalizer, HeaderProps, DateHeaderProps, DateRangeFormatFunction, Views } from 'react-big-calendar'
-import { useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { getPeriodSchedules } from '@/api/schedule';
 import withDragAndDrop, { withDragAndDropProps } from 'react-big-calendar/lib/addons/dragAndDrop'
-import CustomToolbar from '@/components/calendar/CustomToolbar'
+import CustomToolbarComponent from '@/components/calendar/CustomToolbar'
+import CalendarEventsComponent, { CalendarEvent, convertCalendarEvent, convertEventStyle } from '@/components/calendar/CustomEvents'
 import moment from 'moment';
 // @ts-ignore
 import 'moment/dist/locale/ko';
@@ -39,15 +40,36 @@ const Content: React.FC = () => {
   moment.locale('ko');
   const DragAndDropCalendar = withDragAndDrop(Calendar);
   const localizer = momentLocalizer(moment);
+  const [ events, setEvents ] = useState<CalendarEvent[]>([]);
+  const [visibleRange, setVisibleRange] = useState<{start: Date, end: Date} | null>(null);
 
-  const fetchPeriodSchedules = async () => {
-    const resp = await getPeriodSchedules(moment().format("2025-01-01T00:00:00"), moment().format("2025-12-31T23:59:59"));
-    console.log(resp.data);
+  const fetchPeriodSchedules = async (start: Date, end: Date) => {
+    const resp = await getPeriodSchedules(moment(start).format("yyyy-MM-DDTHH:mm:ss"), moment(end).format("yyyy-MM-DDTHH:mm:ss"));
+    setEvents(convertCalendarEvent(resp.data));
   }
 
   useEffect(() => {
-    fetchPeriodSchedules();
+    const now = new Date();
+    fetchPeriodSchedules(
+      moment(now).startOf('month').startOf('week').toDate(),
+      moment(now).endOf('month').endOf('week').toDate()
+    );
   }, []);
+
+  // const handleRangeChange = (range: Date[] | { start: Date, end: Date }) => {
+  //   let start, end;
+    
+  //   if (Array.isArray(range)) {
+  //     start = range[0];
+  //     end = range[range.length - 1];
+  //   } else {
+  //     start = range.start;
+  //     end = range.end;
+  //   }
+    
+  //   // setVisibleRange({ start, end });
+  //   // fetchEventsAndSetOffDay(start, end);
+  // };
 
   return (
     <DragAndDropCalendar
@@ -55,15 +77,20 @@ const Content: React.FC = () => {
       formats={formats}
       resizable
       selectable
+      events={events}
       views={[Views.MONTH, Views.WEEK, Views.DAY]}
+      showAllEvents={true}
       components={{
-        toolbar: CustomToolbar,
+        toolbar: CustomToolbarComponent,
+        // event: CalendarEventsComponent,
         month: {
           header: CustomMonthHeader,
           dateHeader: CustomMonthDateHeader
         }
       }}
       style={{ height: '100%', width: '100%' }}
+      eventPropGetter={convertEventStyle}
+      // onRangeChange={handleRangeChange}
     />
   );
 };
