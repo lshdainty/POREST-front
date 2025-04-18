@@ -4,11 +4,14 @@ import { ToolbarProps } from 'react-big-calendar'
 import { Button, Flex, Radio } from 'antd'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 
-import '@/components/calendar/customToolbar.scss'
+import '@/components/calendar/toolbar.scss'
 
-const CustomToolbarComponent: React.FC<ToolbarProps> = (props) => {
+const Toolbar: React.FC<ToolbarProps> = (props) => {
   const label = props.label;
   const [ btnView , setBtnView ] = useState<string>(Views.MONTH);
+  const today = () => props.onNavigate('TODAY');
+  const prev = () => props.onNavigate('PREV');
+  const next = () => props.onNavigate('NEXT');
 
   return (
     <div className='rbc-toolbar'>
@@ -18,19 +21,19 @@ const CustomToolbarComponent: React.FC<ToolbarProps> = (props) => {
             color="default"
             variant="outlined"
             shape="round"
-            onClick={ () => props.onNavigate('TODAY') }
+            onClick={today}
           >Today</Button>
           <Button
             color="default"
             variant="outlined"
             shape="circle"
-            onClick={ () => props.onNavigate('PREV') }
+            onClick={prev}
           ><LeftOutlined /></Button>
           <Button
             color="default"
             variant="outlined"
             shape="circle"
-            onClick={ () => props.onNavigate('NEXT') }
+            onClick={next}
           ><RightOutlined /></Button>
         </Flex>
         <div className='rbc-toolbar-label-group'>
@@ -41,8 +44,8 @@ const CustomToolbarComponent: React.FC<ToolbarProps> = (props) => {
       {
         props.views && props.views.map((view) => (
           <Radio.Button
-            key={ view }
-            value={ view }
+            key={view}
+            value={view}
             onClick={() => props.onView(view)}
           >
             {view}
@@ -54,4 +57,4 @@ const CustomToolbarComponent: React.FC<ToolbarProps> = (props) => {
   );
 };
 
-export default CustomToolbarComponent;
+export default Toolbar;

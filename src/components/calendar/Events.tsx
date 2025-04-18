@@ -1,7 +1,7 @@
 import { EventProps } from 'react-big-calendar';
 import moment from 'moment';
 
-import '@/components/calendar/customEvents.scss'
+import '@/components/calendar/events.scss'
 
 export interface CalendarEvent {
   id: number;
@@ -11,9 +11,11 @@ export interface CalendarEvent {
 
   extendedProps?: {
     userNo?: number;
+    userName?: string;
     vacationId?: number;
     scheduleType?: string;
     scheduleDesc?: string;
+    scheduleTypeName?: string;
 
     isVisible?: boolean;
     isOffDay?: boolean;
@@ -23,14 +25,20 @@ export interface CalendarEvent {
 export interface Schedule {
   schedule_id: number;
   user_no: number;
+  user_name: string;
   vacation_id: number;
   schedule_type: string;
+  schedule_type_name: string;
   schedule_desc: string;
   start_date: Date;
   end_date: Date;
 }
 
-export const convertCalendarEvent = (apiData: Schedule[]) => {
+export const convertCalendarEvent = (apiData: Schedule[], start: Date, end: Date) => {
+  const sMonth = start.getMonth();
+  const eMonth = end.getMonth();
+  const cMonth = moment(document.getElementsByClassName('rbc-toolbar-label')[0].textContent, 'yyyy.MM').month();
+
   const data = apiData.map((d: Schedule) => ({
     id: d.schedule_id,
     title: d.schedule_desc || "제목 없음",
@@ -38,11 +46,16 @@ export const convertCalendarEvent = (apiData: Schedule[]) => {
     end: new Date(d.end_date),
     extendedProps: {
       userNo: d.user_no,
+      userName: d.user_name,
       vacationId: d.vacation_id,
       scheduleType: d.schedule_type,
+      scheduleTypeName: d.schedule_type_name,
       scheduleDesc: d.schedule_desc,
       isVisible: true,
-      isOffDay: false
+      isOffDay: (
+        (cMonth !== new Date(d.end_date).getMonth() && sMonth === new Date(d.end_date).getMonth()) || 
+        (cMonth !== new Date(d.start_date).getMonth() && eMonth === new Date(d.start_date).getMonth())
+      ) ? true : false
     }
   }));
   return data;
@@ -130,12 +143,10 @@ export const convertEventStyle = (event) => {
   };
 }
 
-const CalendarEventsComponent: React.FC<EventProps> = ({event}) => {
-  console.log("event component : ", event);
-
+const Events: React.FC<EventProps> = ({event}) => {
   return (
-    <></>
+    <span>{`${event.extendedProps.userName} ${event.extendedProps.scheduleTypeName}`}</span>
   )
 }
 
-export default CalendarEventsComponent;
+export default Events;

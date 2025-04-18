@@ -1,5 +1,5 @@
 import CalendarSideBar from '@/components/calendar/SideBar'
-import CalendarContent from '@/components/calendar/Content'
+import CalendarContent from '@/components/calendar'
 
 import '@/view/calendar/calendar.scss'
 
