@@ -39,7 +39,7 @@ export const useHolidayStore = create<{
     setHolidays: (d) => set({holidays: d}),
     checkHoliday: (d) => get().holidays.some(holiday => holiday.holidayDate === d),
     findHolidayName: (d) => {
-      const holiday = get().holidays.find(holiday => holiday.holidayDate === d)
+      const holiday = get().holidays.find(holiday => (holiday.holidayDate === d && holiday.holidayType === 'PUBLIC'))
       return holiday ? holiday.holidayName : '';
     }
   }
