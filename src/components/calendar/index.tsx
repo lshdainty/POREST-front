@@ -1,11 +1,13 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Calendar, momentLocalizer, Views } from 'react-big-calendar'
-import withDragAndDrop, { withDragAndDropProps } from 'react-big-calendar/lib/addons/dragAndDrop'
-import { Formats } from '@/components/calendar/Formats'
+import {useState, useEffect, useCallback} from 'react';
+import {Calendar, momentLocalizer, Views} from 'react-big-calendar'
+import withDragAndDrop, {withDragAndDropProps} from 'react-big-calendar/lib/addons/dragAndDrop'
+import {Formats} from '@/components/calendar/Formats'
 import Toolbar from '@/components/calendar/Toolbar'
-import Events, { CalendarEvent, convertCalendarEvent, convertEventStyle } from '@/components/calendar/Events'
-import { MonthHeader, MonthDateHeader } from '@/components/calendar/Headers'
-import { getPeriodSchedules } from '@/api/schedule';
+import Events, {CalendarEvent, convertCalendarEvent, convertEventStyle} from '@/components/calendar/Events'
+import {MonthHeader, MonthDateHeader} from '@/components/calendar/Headers'
+import {useHolidayStore, convertHoliday} from '@/store/HolidayStore'
+import {getPeriodSchedules} from '@/api/schedule';
+import {getHolidayByStartEndDate} from '@/api/holiday';
 import moment from 'moment';
 // @ts-ignore
 import 'moment/dist/locale/ko';
@@ -19,6 +21,13 @@ const Content: React.FC = () => {
   const localizer = momentLocalizer(moment);
   // schedule 관리
   const [events, setEvents] = useState<CalendarEvent[]>([]);
+  // 공휴일 관리
+  const {baseYear} = useHolidayStore();
+  const {setHolidays} = useHolidayStore(s => s.actions);
+
+  // view 관리
+  const [view, setView] = useState(Views.MONTH)
+  const onView = useCallback((newView) => setView(newView), [setView])
 
   // range 변경 부분
   const [date, setDate] = useState(new Date())
@@ -45,6 +54,11 @@ const Content: React.FC = () => {
     setEvents(convertCalendarEvent(resp.data, start, end))
   }
 
+  const fetchHolidays = async (start: string, end: string) => {
+    const resp = await getHolidayByStartEndDate(start, end);
+    setHolidays(convertHoliday(resp.data));
+  }
+
   useEffect(() => {
     const now = new Date();
     fetchPeriodSchedules(
@@ -52,6 +66,10 @@ const Content: React.FC = () => {
       moment(now).endOf('month').endOf('week').toDate()
     );
   }, []);
+
+  useEffect(() => {
+    fetchHolidays(`${baseYear}0101`, `${baseYear}1231`)
+  }, [baseYear]);
 
   return (
     <DragAndDropCalendar
@@ -64,6 +82,8 @@ const Content: React.FC = () => {
       // schedule data
       events={events}
       // calendar view option
+      view={view}
+      onView={onView}
       views={[Views.MONTH, Views.WEEK, Views.DAY]}
       // cell에 모든 이벤트 보이도록함
       showAllEvents={true}

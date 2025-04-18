@@ -1,17 +1,21 @@
-import { useState } from 'react'
-import { Views } from 'react-big-calendar'
-import { ToolbarProps } from 'react-big-calendar'
-import { Button, Flex, Radio } from 'antd'
-import { LeftOutlined, RightOutlined } from '@ant-design/icons'
+import {useState} from 'react'
+import {ToolbarProps} from 'react-big-calendar'
+import {Button, Flex, Radio} from 'antd'
+import {LeftOutlined, RightOutlined} from '@ant-design/icons'
+import {useHolidayStore} from '@/store/HolidayStore'
 
 import '@/components/calendar/toolbar.scss'
 
 const Toolbar: React.FC<ToolbarProps> = (props) => {
   const label = props.label;
-  const [ btnView , setBtnView ] = useState<string>(Views.MONTH);
+  const [btnView , setBtnView] = useState<string>(props.view);
+  const {baseYear} = useHolidayStore();
+  const {setBaseYear} = useHolidayStore(s => s.actions);
   const today = () => props.onNavigate('TODAY');
   const prev = () => props.onNavigate('PREV');
   const next = () => props.onNavigate('NEXT');
+
+  if (label.split(".")[0] !== baseYear) setBaseYear(label.split(".")[0]);
 
   return (
     <div className='rbc-toolbar'>

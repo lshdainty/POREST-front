@@ -1,6 +1,6 @@
-import axios, { AxiosError, AxiosResponse } from 'axios'
-import { useEffect } from 'react';
-import { useLoadStateStore } from '@/store/LoadingStore'
+import axios, {AxiosError, AxiosResponse} from 'axios'
+import {useEffect} from 'react';
+import {useLoadStateStore} from '@/store/LoadingStore'
 
 interface CustomHeaders {
   [key: string]: any;
@@ -15,13 +15,12 @@ const api = axios.create({
 });
 
 const useAxiosInterceptor = () => {
-  const { startLoading, endLoading, getState } = useLoadStateStore(s => s.actions);
+  const {startLoading, endLoading} = useLoadStateStore(s => s.actions);
 
   // Request interceptor
   const request = api.interceptors.request.use(
     (config: any) => {
       startLoading();
-      console.log("request interceptor Load : ", getState())
       const headers = config.headers as CustomHeaders;
       // url에 따른 각종 header 세팅
       // jwt 사용시 accessToken 세팅
@@ -38,7 +37,6 @@ const useAxiosInterceptor = () => {
   const response = api.interceptors.response.use(
     (resp: AxiosResponse) => {
       endLoading();
-      console.log("response interceptor Load : ", getState())
       const res = resp.data;
       return res;
     },
