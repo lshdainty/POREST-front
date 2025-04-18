@@ -1,10 +1,10 @@
-import { useEffect, useRef } from 'react';
+import {useEffect, useRef} from 'react';
 
 export const useToken = (callback: (val: boolean) => void) => {
   const savedCallback = useRef(callback);
 
   const checkExpire = () => {
-    let key = localStorage.getItem("key");
+    let key = localStorage.getItem('key');
     console.log('useToken key : ', key);
     let result = false;
 

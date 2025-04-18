@@ -1,7 +1,6 @@
-import '@/view/rule/rule.scss'
+import '@/view/rule/rule.scss';
 
 const Rule: React.FC = () => {
-  console.log("Rule render");
   return (
     <div className='rule'>
       <h1>rule page</h1>

@@ -1,7 +1,7 @@
-import CalendarSideBar from '@/components/calendar/SideBar'
-import CalendarContent from '@/components/calendar'
+import CalendarSideBar from '@/components/calendar/SideBar';
+import CalendarContent from '@/components/calendar';
 
-import '@/view/calendar/calendar.scss'
+import '@/view/calendar/calendar.scss';
 
 const Calendar: React.FC = () => {
   return (
@@ -9,7 +9,7 @@ const Calendar: React.FC = () => {
       <CalendarSideBar />
       <CalendarContent />
     </div>
-  )
+  );
 }
 
 export default Calendar;

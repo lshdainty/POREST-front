@@ -1,10 +1,10 @@
-import {useState} from 'react'
-import {ToolbarProps} from 'react-big-calendar'
-import {Button, Flex, Radio} from 'antd'
-import {LeftOutlined, RightOutlined} from '@ant-design/icons'
-import {useHolidayStore} from '@/store/HolidayStore'
+import {useState} from 'react';
+import {ToolbarProps} from 'react-big-calendar';
+import {Button, Flex, Radio} from 'antd';
+import {LeftOutlined, RightOutlined} from '@ant-design/icons';
+import {useHolidayStore} from '@/store/HolidayStore';
 
-import '@/components/calendar/toolbar.scss'
+import '@/components/calendar/toolbar.scss';
 
 const Toolbar: React.FC<ToolbarProps> = (props) => {
   const label = props.label;
@@ -15,28 +15,28 @@ const Toolbar: React.FC<ToolbarProps> = (props) => {
   const prev = () => props.onNavigate('PREV');
   const next = () => props.onNavigate('NEXT');
 
-  if (label.split(".")[0] !== baseYear) setBaseYear(label.split(".")[0]);
+  if (label.split('.')[0] !== baseYear) setBaseYear(label.split('.')[0]);
 
   return (
     <div className='rbc-toolbar'>
       <div className='rbc-toolbar-left'>
-        <Flex gap="small" wrap>
+        <Flex gap='small' wrap>
           <Button
-            color="default"
-            variant="outlined"
-            shape="round"
+            color='default'
+            variant='outlined'
+            shape='round'
             onClick={today}
           >Today</Button>
           <Button
-            color="default"
-            variant="outlined"
-            shape="circle"
+            color='default'
+            variant='outlined'
+            shape='circle'
             onClick={prev}
           ><LeftOutlined /></Button>
           <Button
-            color="default"
-            variant="outlined"
-            shape="circle"
+            color='default'
+            variant='outlined'
+            shape='circle'
             onClick={next}
           ><RightOutlined /></Button>
         </Flex>

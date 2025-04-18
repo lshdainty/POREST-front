@@ -1,4 +1,4 @@
-@use "react-big-calendar/lib/sass/styles" as var;
+@use 'react-big-calendar/lib/sass/styles' as var;
 @use 'react-big-calendar/lib/addons/dragAndDrop/styles' as var2;
 
 $cell-border-width: 1px;
@@ -49,6 +49,14 @@ $text-color: #333333;
     .rbc-saturday {
         color: rgb(64, 64, 255, 0.3);
     }
+
+    .rbc-public {
+        color: rgb(255, 64, 64, 0.3);
+    }
+
+    .rbc-recommend {
+        color: rgb(64, 64, 255, 0.3);
+    }
 }
 
 .rbc-date-cell {
@@ -92,5 +100,13 @@ $text-color: #333333;
 }
 
 .rbc-saturday {
+    color: #4040ff;
+}
+
+.rbc-public {
+    color: #ff4040;
+}
+
+.rbc-recommend {
     color: #4040ff;
 }

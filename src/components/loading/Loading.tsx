@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
-import { Spin } from 'antd';
-import { useLoadStateStore } from "@/store/LoadingStore";
+import React, {useEffect} from 'react';
+import {Spin} from 'antd';
+import {useLoadStateStore} from '@/store/LoadingStore';
 
 const Loading: React.FC = () => {
-  const { state } = useLoadStateStore();
-  console.log("layout Load : ", state)
+  const {state} = useLoadStateStore();
+  console.log('layout Load : ', state);
 
   useEffect(() => {
   
@@ -12,7 +12,7 @@ const Loading: React.FC = () => {
 
   return (
     <>
-      { (!state) ? '' : <Spin tip="Loading" size="large" fullscreen></Spin>}
+      {(!state) ? '' : <Spin tip='Loading' size='large' fullscreen></Spin>}
     </>
   )
 }

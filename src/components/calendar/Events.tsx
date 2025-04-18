@@ -1,4 +1,4 @@
-import { EventProps } from 'react-big-calendar';
+import {EventProps} from 'react-big-calendar';
 import moment from 'moment';
 
 import '@/components/calendar/events.scss'
@@ -41,7 +41,7 @@ export const convertCalendarEvent = (apiData: Schedule[], start: Date, end: Date
 
   const data = apiData.map((d: Schedule) => ({
     id: d.schedule_id,
-    title: d.schedule_desc || "제목 없음",
+    title: d.schedule_desc,
     start: new Date(d.start_date),
     end: new Date(d.end_date),
     extendedProps: {

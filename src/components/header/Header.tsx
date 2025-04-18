@@ -1,5 +1,5 @@
-import '@/components/header/header.scss'
-import Logo from '@/assets/img/logo.svg'
+import '@/components/header/header.scss';
+import Logo from '@/assets/img/logo.svg';
 
 const Header: React.FC = () => {
   return (
@@ -10,7 +10,7 @@ const Header: React.FC = () => {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default Header;

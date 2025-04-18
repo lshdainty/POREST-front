@@ -1,9 +1,9 @@
-import { useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Sidebar, Menu, MenuItem, menuClasses, MenuItemStyles } from 'react-pro-sidebar'
-import { DashboardRounded, CalendarMonthRounded, BorderColorRounded, Diversity3Rounded, Rule, SettingsRounded, PersonRounded } from '@mui/icons-material'
+import {useState} from 'react';
+import {Link, useLocation, useNavigate} from 'react-router-dom';
+import {Sidebar, Menu, MenuItem, menuClasses, MenuItemStyles} from 'react-pro-sidebar';
+import {DashboardRounded, CalendarMonthRounded, BorderColorRounded, Diversity3Rounded, Rule, SettingsRounded, PersonRounded} from '@mui/icons-material';
 
-import '@/components/nav/Nav.scss'
+import '@/components/nav/Nav.scss';
 
 // hex to rgba converter
 const hexToRgba = (hex: string, alpha: number) => {
@@ -58,7 +58,7 @@ const Nav: React.FC = () => {
 
   const logout = () => {
     localStorage.removeItem('key');
-    navigate('/login')
+    navigate('/login');
   }
 
   return (
@@ -77,27 +77,27 @@ const Nav: React.FC = () => {
         <MenuItem
           active={location.pathname === '/'}
           icon={<DashboardRounded />}
-          component={<Link to={"/"} />}
+          component={<Link to={'/'} />}
         >Dashboard</MenuItem>
         <MenuItem
           active={location.pathname === '/calendar'}
           icon={<CalendarMonthRounded />}
-          component={<Link to={"/calendar"} />}
+          component={<Link to={'/calendar'} />}
         >Calendar</MenuItem>
         <MenuItem
           active={location.pathname === '/work'}
           icon={<BorderColorRounded />}
-          component={<Link to={"/work"} />}
+          component={<Link to={'/work'} />}
         >Work</MenuItem>
         <MenuItem
           active={location.pathname === '/culture'}
           icon={<Diversity3Rounded />}
-          component={<Link to={"/culture"} />}
+          component={<Link to={'/culture'} />}
         >Culture</MenuItem>
         <MenuItem
           active={location.pathname === '/rule'}
           icon={<Rule />}
-          component={<Link to={"/rule"} />}
+          component={<Link to={'/rule'} />}
         >Rule</MenuItem>
       </Menu>
       <Menu

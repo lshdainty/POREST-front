@@ -1,8 +1,9 @@
-import { DateRangeFormatFunction } from 'react-big-calendar'
+import {DateRangeFormatFunction} from 'react-big-calendar'
 import moment from 'moment';
 
 const customDayRangeHeaderFormat:DateRangeFormatFunction = (range) => {
-  let start = range.start, end = range.end;
+  const start = range.start;
+  const end = range.end;
   return `${moment(start).format('YY.MM.DD')} ~ ${moment(end).format('YY.MM.DD')}`;
 }
 

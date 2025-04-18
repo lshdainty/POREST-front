@@ -1,7 +1,6 @@
-import '@/view/culture/culture.scss'
+import '@/view/culture/culture.scss';
 
 const Culture: React.FC = () => {
-  console.log("culture render");
   return (
     <div className='culture'>
       <h1>culture page</h1>

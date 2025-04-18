@@ -1,10 +1,10 @@
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Form, Input, Flex } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import {LockOutlined, UserOutlined} from '@ant-design/icons';
+import {Button, Checkbox, Form, Input, Flex} from 'antd';
+import {useNavigate} from 'react-router-dom';
 
-import '@/view/login/login.scss'
-import LoginBG from '@/assets/img/loginbg.jpg'
-import Logo from '@/assets/img/logo.svg'
+import '@/view/login/login.scss';
+import LoginBG from '@/assets/img/loginbg.jpg';
+import Logo from '@/assets/img/logo.svg';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -13,8 +13,7 @@ const Login: React.FC = () => {
     // 로그인 로직 추가
     localStorage.setItem('key', '');
     navigate('/');
-    console.log('Received values of form: ', values);
-  };
+  }
 
   return (
     <div className='login'>
@@ -24,24 +23,24 @@ const Login: React.FC = () => {
         </div>
         <div className='child'>
           <div className='logo'>
-            <img src={Logo} alt = 'login' />
+            <img src={Logo} alt='login' />
           </div>
           <div className='form'>
             <Form
               name='login'
-              initialValues={{ remember: true }}
-              style={{ maxWidth: 360 }}
+              initialValues={{remember: true}}
+              style={{maxWidth: 360}}
               onFinish={onFinish}
             >
               <Form.Item
                 name='username'
-                rules={[{ required: true, message: 'Please input your Username!' }]}
+                rules={[{required: true, message: 'Please input your Username!'}]}
               >
                 <Input prefix={<UserOutlined />} placeholder='Username' />
               </Form.Item>
               <Form.Item
                 name='password'
-                rules={[{ required: true, message: 'Please input your Password!' }]}
+                rules={[{required: true, message: 'Please input your Password!'}]}
               >
                 <Input prefix={<LockOutlined />} type='password' placeholder='Password' />
               </Form.Item>

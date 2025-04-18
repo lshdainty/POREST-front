@@ -1,18 +1,18 @@
 import {useState, useEffect, useCallback} from 'react';
-import {Calendar, momentLocalizer, Views} from 'react-big-calendar'
-import withDragAndDrop, {withDragAndDropProps} from 'react-big-calendar/lib/addons/dragAndDrop'
-import {Formats} from '@/components/calendar/Formats'
-import Toolbar from '@/components/calendar/Toolbar'
-import Events, {CalendarEvent, convertCalendarEvent, convertEventStyle} from '@/components/calendar/Events'
-import {MonthHeader, MonthDateHeader} from '@/components/calendar/Headers'
-import {useHolidayStore, convertHoliday} from '@/store/HolidayStore'
+import {Calendar, momentLocalizer, Views} from 'react-big-calendar';
+import withDragAndDrop, {withDragAndDropProps} from 'react-big-calendar/lib/addons/dragAndDrop';
+import {Formats} from '@/components/calendar/Formats';
+import Toolbar from '@/components/calendar/Toolbar';
+import Events, {CalendarEvent, convertCalendarEvent, convertEventStyle} from '@/components/calendar/Events';
+import {MonthHeader, MonthDateHeader} from '@/components/calendar/Headers';
+import {useHolidayStore, convertHoliday} from '@/store/HolidayStore';
 import {getPeriodSchedules} from '@/api/schedule';
 import {getHolidayByStartEndDate} from '@/api/holiday';
 import moment from 'moment';
 // @ts-ignore
 import 'moment/dist/locale/ko';
 
-import '@/components/calendar/index.scss'
+import '@/components/calendar/index.scss';
 
 const Content: React.FC = () => {
   const DragAndDropCalendar = withDragAndDrop(Calendar);
@@ -26,12 +26,12 @@ const Content: React.FC = () => {
   const {setHolidays} = useHolidayStore(s => s.actions);
 
   // view 관리
-  const [view, setView] = useState(Views.MONTH)
-  const onView = useCallback((newView) => setView(newView), [setView])
+  const [view, setView] = useState(Views.MONTH);
+  const onView = useCallback((newView) => setView(newView), [setView]);
 
   // range 변경 부분
-  const [date, setDate] = useState(new Date())
-  const onNavigate = useCallback((newDate: Date) => setDate(newDate), [setDate])
+  const [date, setDate] = useState(new Date());
+  const onNavigate = useCallback((newDate: Date) => setDate(newDate), [setDate]);
   const onRangeChange = useCallback((range: Date[] | {start: Date, end: Date}) => {
     let _start, _end;
 
@@ -43,15 +43,15 @@ const Content: React.FC = () => {
       _end = range.end;
     }
 
-    fetchPeriodSchedules(_start, _end)
-  }, [])
+    fetchPeriodSchedules(_start, _end);
+  }, []);
 
   const fetchPeriodSchedules = async (start: Date, end: Date) => {
     const resp = await getPeriodSchedules(
-      moment(start).format("yyyy-MM-DDTHH:mm:ss"),
-      moment(end).format("yyyy-MM-DDTHH:mm:ss")
+      moment(start).format('yyyy-MM-DDTHH:mm:ss'),
+      moment(end).format('yyyy-MM-DDTHH:mm:ss')
     );
-    setEvents(convertCalendarEvent(resp.data, start, end))
+    setEvents(convertCalendarEvent(resp.data, start, end));
   }
 
   const fetchHolidays = async (start: string, end: string) => {
@@ -68,7 +68,7 @@ const Content: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    fetchHolidays(`${baseYear}0101`, `${baseYear}1231`)
+    fetchHolidays(`${baseYear}0101`, `${baseYear}1231`);
   }, [baseYear]);
 
   return (

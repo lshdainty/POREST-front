@@ -1,15 +1,15 @@
-import { useState, useEffect } from 'react'
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
-import { useAxiosInterceptor } from '@/api/index'
-import { useToken } from '@/hooks/useToken'
-import Login from '@/view/login/Login'
-import Layout from '@/view/layout/Layout'
-import NotFound from '@/components/notFound/NotFound'
-import Dashboard from '@/view/dashboard/Dashboard'
-import Calendar from '@/view/calendar/Calendar'
-import Work from '@/view/work/Work'
-import Culture from '@/view/culture/Culture'
-import Rule from '@/view/rule/Rule'
+import {useState, useEffect} from 'react';
+import {Routes, Route, Navigate, useNavigate} from 'react-router-dom';
+import {useAxiosInterceptor} from '@/api/index';
+import {useToken } from '@/hooks/useToken';
+import Login from '@/view/login/Login';
+import Layout from '@/view/layout/Layout';
+import NotFound from '@/components/notFound/NotFound';
+import Dashboard from '@/view/dashboard/Dashboard';
+import Calendar from '@/view/calendar/Calendar';
+import Work from '@/view/work/Work';
+import Culture from '@/view/culture/Culture';
+import Rule from '@/view/rule/Rule';
 
 const Router = () => {
   const [home, setHome] = useState<boolean | undefined>(undefined);
@@ -36,7 +36,7 @@ const Router = () => {
       </Route>
       <Route path='/*' element={<NotFound/>} />
     </Routes>
-  )
+  );
 }
 
 export default Router;
