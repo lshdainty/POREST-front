@@ -8,11 +8,13 @@ import {MonthHeader, MonthDateHeader} from '@/components/calendar/Headers';
 import {useHolidayStore, convertHoliday} from '@/store/HolidayStore';
 import {getPeriodSchedules} from '@/api/schedule';
 import {getHolidayByStartEndDate} from '@/api/holiday';
+import {Button, Popover} from 'antd';
 import moment from 'moment';
 // @ts-ignore
 import 'moment/dist/locale/ko';
 
 import '@/components/calendar/index.scss';
+import { json } from 'react-router-dom';
 
 const Content: React.FC = () => {
   const DragAndDropCalendar = withDragAndDrop(Calendar);
@@ -45,6 +47,59 @@ const Content: React.FC = () => {
 
     fetchPeriodSchedules(_start, _end);
   }, []);
+
+  const moveEvent = useCallback(
+    ({ event, start, end, isAllDay: droppedOnAllDaySlot = false }) => {
+      console.log('moveEvent event : ', event)
+      console.log('moveEvent start : ', start)
+      console.log('moveEvent end : ', end)
+      console.log('moveEvent isAllDay : ', droppedOnAllDaySlot)
+
+
+      const { allDay } = event
+      if (!allDay && droppedOnAllDaySlot) {
+        event.allDay = true
+      }
+      if (allDay && !droppedOnAllDaySlot) {
+          event.allDay = false;
+      }
+
+      // setMyEvents((prev) => {
+      //   const existing = prev.find((ev) => ev.id === event.id) ?? {}
+      //   const filtered = prev.filter((ev) => ev.id !== event.id)
+      //   return [...filtered, { ...existing, start, end, allDay: event.allDay }]
+      // })
+    },
+    [setEvents]
+  );
+
+  const resizeEvent = useCallback(
+    ({ event, start, end }) => {
+      console.log('resizeEvent event : ', event)
+      console.log('resizeEvent start : ', start)
+      console.log('resizeEvent end : ', end)
+
+      // setMyEvents((prev) => {
+      //   const existing = prev.find((ev) => ev.id === event.id) ?? {}
+      //   const filtered = prev.filter((ev) => ev.id !== event.id)
+      //   return [...filtered, { ...existing, start, end }]
+      // })
+    },
+    [setEvents]
+  );
+
+  const handleSelectEvent = useCallback(
+    (event) => {
+      return (
+        <>
+          {/* <Popover content={JSON.stringify(event)} title="Title" trigger="click">
+            <Button>Click me</Button>
+          </Popover> */}
+        </>
+      )
+    },
+    []
+  );
 
   const fetchPeriodSchedules = async (start: Date, end: Date) => {
     const resp = await getPeriodSchedules(
@@ -102,6 +157,12 @@ const Content: React.FC = () => {
       date={date}
       onNavigate={onNavigate}
       onRangeChange={onRangeChange}
+
+      // drag and drop
+      onEventDrop={moveEvent}
+      onEventResize={resizeEvent}
+
+      onSelectEvent={handleSelectEvent}
     />
   );
 };
