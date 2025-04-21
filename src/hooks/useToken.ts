@@ -2,6 +2,7 @@ import {useEffect, useRef} from 'react';
 
 export const useToken = (callback: (val: boolean) => void) => {
   const savedCallback = useRef(callback);
+  const key = localStorage.getItem('key');
 
   const checkExpire = () => {
     let key = localStorage.getItem('key');
@@ -19,5 +20,5 @@ export const useToken = (callback: (val: boolean) => void) => {
 
   useEffect(() => {
     return (checkExpire()) ? callback(true) : callback(false);
-  }, []);
+  }, [key]);
 };

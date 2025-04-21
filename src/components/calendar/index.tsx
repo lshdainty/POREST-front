@@ -8,13 +8,11 @@ import {MonthHeader, MonthDateHeader} from '@/components/calendar/Headers';
 import {useHolidayStore, convertHoliday} from '@/store/HolidayStore';
 import {getPeriodSchedules} from '@/api/schedule';
 import {getHolidayByStartEndDate} from '@/api/holiday';
-import {Button, Popover} from 'antd';
 import moment from 'moment';
 // @ts-ignore
 import 'moment/dist/locale/ko';
 
 import '@/components/calendar/index.scss';
-import { json } from 'react-router-dom';
 
 const Content: React.FC = () => {
   const DragAndDropCalendar = withDragAndDrop(Calendar);
@@ -46,7 +44,7 @@ const Content: React.FC = () => {
     }
 
     fetchPeriodSchedules(_start, _end);
-  }, []);
+  }, [setEvents]);
 
   const moveEvent = useCallback(
     ({ event, start, end, isAllDay: droppedOnAllDaySlot = false }) => {
@@ -101,26 +99,54 @@ const Content: React.FC = () => {
     []
   );
 
-  const fetchPeriodSchedules = async (start: Date, end: Date) => {
-    const resp = await getPeriodSchedules(
-      moment(start).format('yyyy-MM-DDTHH:mm:ss'),
-      moment(end).format('yyyy-MM-DDTHH:mm:ss')
-    );
-    setEvents(convertCalendarEvent(resp.data, start, end));
-  }
+  // const fetchPeriodSchedules = async (start: Date, end: Date) => {
+  //   const resp = await getPeriodSchedules(
+  //     moment(start).format('yyyy-MM-DDTHH:mm:ss'),
+  //     moment(end).format('yyyy-MM-DDTHH:mm:ss')
+  //   );
+  //   setEvents(convertCalendarEvent(resp.data, start, end));
+  // }
+  const fetchPeriodSchedules = useCallback (
+    async (start: Date, end: Date) => {
+      const resp = await getPeriodSchedules(
+        moment(start).format('yyyy-MM-DDTHH:mm:ss'),
+        moment(end).format('yyyy-MM-DDTHH:mm:ss')
+      );
+      if (resp && resp.data) {
+        setEvents(convertCalendarEvent(resp.data, start, end));
+      }
+    },
+    [setEvents]
+  );
 
-  const fetchHolidays = async (start: string, end: string) => {
-    const resp = await getHolidayByStartEndDate(start, end);
-    setHolidays(convertHoliday(resp.data));
-  }
+  // const fetchHolidays = async (start: string, end: string) => {
+  //   const resp = await getHolidayByStartEndDate(start, end);
+  //   if (resp && resp.data) {
+  //     setHolidays(convertHoliday(resp.data));
+  //   }
+  // }
+  const fetchHolidays = useCallback (
+    async (start: string, end: string) => {
+      const resp = await getHolidayByStartEndDate(start, end);
+      if (resp && resp.data) {
+        setHolidays(convertHoliday(resp.data));
+      }
+    },
+    [setHolidays]
+  );
 
   useEffect(() => {
     const now = new Date();
+    // fetchPeriodSchedules(
+    //   moment(now).startOf('month').startOf('week').toDate(),
+    //   moment(now).endOf('month').endOf('week').toDate()
+    // );
+    setEvents([]);
     fetchPeriodSchedules(
       moment(now).startOf('month').startOf('week').toDate(),
       moment(now).endOf('month').endOf('week').toDate()
-    );
-  }, []);
+    )
+  }, [fetchPeriodSchedules]);
 
   useEffect(() => {
     fetchHolidays(`${baseYear}0101`, `${baseYear}1231`);
