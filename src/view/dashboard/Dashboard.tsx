@@ -20,12 +20,12 @@ const Dashboard: React.FC = () => {
   }
 
   const usersElement = users.map((user, idx) =>
-    <div>
-      <span key={idx}>ID : {user.user_no},</span>
-      <span key={idx}>이름 : {user.user_name},</span>
-      <span key={idx}>권한 : {user.user_employ},</span>
-      <span key={idx}>생일 : {user.user_birth},</span>
-      <span key={idx}>시간 : {user.user_work_time}</span>
+    <div key={idx}>
+      <span>ID : {user.user_no},</span>
+      <span>이름 : {user.user_name},</span>
+      <span>권한 : {user.user_employ},</span>
+      <span>생일 : {user.user_birth},</span>
+      <span>시간 : {user.user_work_time}</span>
     </div>
   );
 

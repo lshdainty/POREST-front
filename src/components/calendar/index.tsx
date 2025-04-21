@@ -46,65 +46,15 @@ const Content: React.FC = () => {
     fetchPeriodSchedules(_start, _end);
   }, [setEvents]);
 
-  const moveEvent = useCallback(
-    ({ event, start, end, isAllDay: droppedOnAllDaySlot = false }) => {
-      console.log('moveEvent event : ', event)
-      console.log('moveEvent start : ', start)
-      console.log('moveEvent end : ', end)
-      console.log('moveEvent isAllDay : ', droppedOnAllDaySlot)
-
-
-      const { allDay } = event
-      if (!allDay && droppedOnAllDaySlot) {
-        event.allDay = true
-      }
-      if (allDay && !droppedOnAllDaySlot) {
-          event.allDay = false;
-      }
-
-      // setMyEvents((prev) => {
-      //   const existing = prev.find((ev) => ev.id === event.id) ?? {}
-      //   const filtered = prev.filter((ev) => ev.id !== event.id)
-      //   return [...filtered, { ...existing, start, end, allDay: event.allDay }]
-      // })
-    },
-    [setEvents]
-  );
-
-  const resizeEvent = useCallback(
-    ({ event, start, end }) => {
-      console.log('resizeEvent event : ', event)
-      console.log('resizeEvent start : ', start)
-      console.log('resizeEvent end : ', end)
-
-      // setMyEvents((prev) => {
-      //   const existing = prev.find((ev) => ev.id === event.id) ?? {}
-      //   const filtered = prev.filter((ev) => ev.id !== event.id)
-      //   return [...filtered, { ...existing, start, end }]
-      // })
-    },
-    [setEvents]
-  );
-
-  const handleSelectEvent = useCallback(
-    (event) => {
-      return (
-        <>
-          {/* <Popover content={JSON.stringify(event)} title="Title" trigger="click">
-            <Button>Click me</Button>
-          </Popover> */}
-        </>
-      )
-    },
-    []
-  );
 
   // const fetchPeriodSchedules = async (start: Date, end: Date) => {
   //   const resp = await getPeriodSchedules(
   //     moment(start).format('yyyy-MM-DDTHH:mm:ss'),
   //     moment(end).format('yyyy-MM-DDTHH:mm:ss')
   //   );
-  //   setEvents(convertCalendarEvent(resp.data, start, end));
+  //   if (resp && resp.data) {
+  //     setEvents(convertCalendarEvent(resp.data, start, end));
+  //   }
   // }
   const fetchPeriodSchedules = useCallback (
     async (start: Date, end: Date) => {
@@ -112,40 +62,52 @@ const Content: React.FC = () => {
         moment(start).format('yyyy-MM-DDTHH:mm:ss'),
         moment(end).format('yyyy-MM-DDTHH:mm:ss')
       );
-      if (resp && resp.data) {
-        setEvents(convertCalendarEvent(resp.data, start, end));
-      }
+
+      const test = await resp.data;
+      const test2 = convertCalendarEvent(test, start, end);
+      setEvents(test2);
+
+      // if (resp && test) {
+      //   const datas = convertCalendarEvent(test, start, end);
+      //   console.log('calendar events : ',datas);
+      //   setEvents(datas);
+      // } else {
+      //   console.warn('API response data is undefined');
+      // }
     },
     [setEvents]
   );
 
-  // const fetchHolidays = async (start: string, end: string) => {
-  //   const resp = await getHolidayByStartEndDate(start, end);
-  //   if (resp && resp.data) {
-  //     setHolidays(convertHoliday(resp.data));
-  //   }
-  // }
-  const fetchHolidays = useCallback (
-    async (start: string, end: string) => {
-      const resp = await getHolidayByStartEndDate(start, end);
-      if (resp && resp.data) {
-        setHolidays(convertHoliday(resp.data));
-      }
-    },
-    [setHolidays]
-  );
+  const fetchHolidays = async (start: string, end: string) => {
+    const resp = await getHolidayByStartEndDate(start, end);
+    if (resp && resp.data) {
+      setHolidays(convertHoliday(resp.data));
+    }
+  }
+  // const fetchHolidays = useCallback (
+  //   async (start: string, end: string) => {
+  //     const resp = await getHolidayByStartEndDate(start, end);
+  //     if (resp && resp.data) {
+  //       const datas = convertHoliday(resp.data);
+  //       console.log('holidays : ',datas);
+  //       setHolidays(datas);
+  //     }
+  //   },
+  //   [setHolidays]
+  // );
 
   useEffect(() => {
     const now = new Date();
+    const start = moment(now).startOf('month').startOf('week').toDate();
+    const end = moment(now).endOf('month').endOf('week').toDate();
     // fetchPeriodSchedules(
     //   moment(now).startOf('month').startOf('week').toDate(),
     //   moment(now).endOf('month').endOf('week').toDate()
     // );
     setEvents([]);
-    fetchPeriodSchedules(
-      moment(now).startOf('month').startOf('week').toDate(),
-      moment(now).endOf('month').endOf('week').toDate()
-    )
+    fetchPeriodSchedules(start, end).then((res) =>
+      console.log(res)
+    );
   }, [fetchPeriodSchedules]);
 
   useEffect(() => {
@@ -185,10 +147,10 @@ const Content: React.FC = () => {
       onRangeChange={onRangeChange}
 
       // drag and drop
-      onEventDrop={moveEvent}
-      onEventResize={resizeEvent}
+      // onEventDrop={moveEvent}
+      // onEventResize={resizeEvent}
 
-      onSelectEvent={handleSelectEvent}
+      // onSelectEvent={handleSelectEvent}
     />
   );
 };
