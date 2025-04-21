@@ -41,7 +41,12 @@ export interface Schedule {
 export const convertCalendarEvent = (apiData: Schedule[], start: Date, end: Date) => {
   const sMonth = start.getMonth();
   const eMonth = end.getMonth();
-  const cMonth = moment(document.getElementsByClassName('rbc-toolbar-label')[0].textContent, 'yyyy.MM').month();
+  let cMonth = -1;
+  if (document.getElementsByClassName('rbc-toolbar-label').length === 0) {
+    cMonth = moment().month();
+  } else {
+    cMonth = moment(document.getElementsByClassName('rbc-toolbar-label')[0].textContent, 'yyyy.MM').month();
+  }
 
   const data = apiData.map((d: Schedule) => ({
     id: d.schedule_id,

@@ -1,4 +1,4 @@
-import {useState, useEffect, useCallback} from 'react';
+import {useState, useEffect, useCallback, useMemo} from 'react';
 import {Calendar, momentLocalizer, Views} from 'react-big-calendar';
 import withDragAndDrop, {withDragAndDropProps} from 'react-big-calendar/lib/addons/dragAndDrop';
 import {Formats} from '@/components/calendar/Formats';
@@ -20,10 +20,11 @@ const Content: React.FC = () => {
   moment.locale('ko');
   const localizer = momentLocalizer(moment);
   // schedule 관리
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [events, setEvents] = useState<CalendarEvent[]>();
   // 공휴일 관리
   const {baseYear} = useHolidayStore();
-  const {setHolidays} = useHolidayStore(s => s.actions);
+  const {setBaseYear, setHolidays} = useHolidayStore(s => s.actions);
+  const [dataLoad, setDataLoad] = useState(false);
 
   // view 관리
   const [view, setView] = useState(Views.MONTH);
@@ -47,36 +48,26 @@ const Content: React.FC = () => {
   }, [setEvents]);
 
 
-  // const fetchPeriodSchedules = async (start: Date, end: Date) => {
-  //   const resp = await getPeriodSchedules(
-  //     moment(start).format('yyyy-MM-DDTHH:mm:ss'),
-  //     moment(end).format('yyyy-MM-DDTHH:mm:ss')
-  //   );
-  //   if (resp && resp.data) {
-  //     setEvents(convertCalendarEvent(resp.data, start, end));
-  //   }
-  // }
-  const fetchPeriodSchedules = useCallback (
-    async (start: Date, end: Date) => {
+  const fetchPeriodSchedules = async (start: Date, end: Date) => {
+    try {
       const resp = await getPeriodSchedules(
         moment(start).format('yyyy-MM-DDTHH:mm:ss'),
         moment(end).format('yyyy-MM-DDTHH:mm:ss')
       );
+      const data = await resp.data;
+      setEvents(convertCalendarEvent(data, start, end));
+      setDataLoad(true);
 
-      const test = await resp.data;
-      const test2 = convertCalendarEvent(test, start, end);
-      setEvents(test2);
-
-      // if (resp && test) {
-      //   const datas = convertCalendarEvent(test, start, end);
-      //   console.log('calendar events : ',datas);
-      //   setEvents(datas);
+      // if (resp && resp.data) {
+      //   setEvents(convertCalendarEvent(resp.data, start, end));
       // } else {
-      //   console.warn('API response data is undefined');
+      //   console.log('여기로 들어오냐 시발넘아')
       // }
-    },
-    [setEvents]
-  );
+    } catch (err) {
+      console.log(err)
+    }
+    
+  }
 
   const fetchHolidays = async (start: string, end: string) => {
     const resp = await getHolidayByStartEndDate(start, end);
@@ -84,35 +75,21 @@ const Content: React.FC = () => {
       setHolidays(convertHoliday(resp.data));
     }
   }
-  // const fetchHolidays = useCallback (
-  //   async (start: string, end: string) => {
-  //     const resp = await getHolidayByStartEndDate(start, end);
-  //     if (resp && resp.data) {
-  //       const datas = convertHoliday(resp.data);
-  //       console.log('holidays : ',datas);
-  //       setHolidays(datas);
-  //     }
-  //   },
-  //   [setHolidays]
-  // );
 
   useEffect(() => {
     const now = new Date();
     const start = moment(now).startOf('month').startOf('week').toDate();
     const end = moment(now).endOf('month').endOf('week').toDate();
-    // fetchPeriodSchedules(
-    //   moment(now).startOf('month').startOf('week').toDate(),
-    //   moment(now).endOf('month').endOf('week').toDate()
-    // );
-    setEvents([]);
-    fetchPeriodSchedules(start, end).then((res) =>
-      console.log(res)
-    );
-  }, [fetchPeriodSchedules]);
+    fetchPeriodSchedules(start, end);
+  }, []);
 
   useEffect(() => {
     fetchHolidays(`${baseYear}0101`, `${baseYear}1231`);
-  }, [baseYear]);
+  }, [setBaseYear]);
+
+  if (!dataLoad) {
+    return '';
+  }
 
   return (
     <DragAndDropCalendar
