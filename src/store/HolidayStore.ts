@@ -1,4 +1,5 @@
 import {create} from 'zustand';
+import {THoliday} from '@/api/holiday';
 
 interface Holiday {
   holidayName: string
@@ -6,15 +7,8 @@ interface Holiday {
   holidayType: string
 }
 
-interface ApiHoliday {
-  holiday_seq: number
-  holiday_name: string
-  holiday_date: string
-  holiday_type: string
-}
-
-export const convertHoliday = (apiData: ApiHoliday[]) => {
-  const data = apiData.map((d: ApiHoliday) => ({
+export const convertHoliday = (apiData: THoliday[]) => {
+  const data = apiData.map((d: THoliday) => ({
     holidayName: d.holiday_name,
     holidayDate: d.holiday_date,
     holidayType: d.holiday_type

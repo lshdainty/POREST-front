@@ -1,4 +1,4 @@
-import {useState, useEffect, useCallback, useMemo} from 'react';
+import {useState, useEffect, useCallback} from 'react';
 import {Calendar, momentLocalizer, Views} from 'react-big-calendar';
 import withDragAndDrop, {withDragAndDropProps} from 'react-big-calendar/lib/addons/dragAndDrop';
 import {Formats} from '@/components/calendar/Formats';
@@ -6,13 +6,14 @@ import Toolbar from '@/components/calendar/Toolbar';
 import Events, {CalendarEvent, convertCalendarEvent, convertEventStyle} from '@/components/calendar/Events';
 import {MonthHeader, MonthDateHeader} from '@/components/calendar/Headers';
 import {useHolidayStore, convertHoliday} from '@/store/HolidayStore';
-import {getPeriodSchedules} from '@/api/schedule';
-import {getHolidayByStartEndDate} from '@/api/holiday';
+import {TSchedule, getPeriodSchedules, ScheduleQueryKey} from '@/api/schedule';
+import {THoliday, getHolidayByStartEndDate, HolidayQueryKey} from '@/api/holiday';
 import moment from 'moment';
 // @ts-ignore
 import 'moment/dist/locale/ko';
 
 import '@/components/calendar/index.scss';
+import { useQuery } from '@tanstack/react-query';
 
 const Content: React.FC = () => {
   const DragAndDropCalendar = withDragAndDrop(Calendar);
@@ -23,71 +24,62 @@ const Content: React.FC = () => {
   const [events, setEvents] = useState<CalendarEvent[]>();
   // 공휴일 관리
   const {baseYear} = useHolidayStore();
-  const {setBaseYear, setHolidays} = useHolidayStore(s => s.actions);
-  const [dataLoad, setDataLoad] = useState(false);
+  const {setHolidays} = useHolidayStore(s => s.actions);
+
+  const [range, setRange] = useState<{start: Date, end: Date}>({
+    start: moment(new Date()).startOf('month').startOf('week').toDate(),
+    end: moment(new Date()).endOf('month').endOf('week').toDate()
+  });
 
   // view 관리
   const [view, setView] = useState(Views.MONTH);
-  const onView = useCallback((newView) => setView(newView), [setView]);
+  const onView = useCallback((newView: any) => setView(newView), [setView]);
 
   // range 변경 부분
   const [date, setDate] = useState(new Date());
   const onNavigate = useCallback((newDate: Date) => setDate(newDate), [setDate]);
   const onRangeChange = useCallback((range: Date[] | {start: Date, end: Date}) => {
-    let _start, _end;
-
     if (Array.isArray(range)) {
-      _start = range[0];
-      _end = range[range.length - 1];
+      setRange({start: range[0], end: range[range.length - 1]});
     } else {
-      _start = range.start;
-      _end = range.end;
+      setRange({start: range.start, end: range.end});
     }
-
-    fetchPeriodSchedules(_start, _end);
   }, [setEvents]);
 
-
-  const fetchPeriodSchedules = async (start: Date, end: Date) => {
-    try {
-      const resp = await getPeriodSchedules(
-        moment(start).format('yyyy-MM-DDTHH:mm:ss'),
-        moment(end).format('yyyy-MM-DDTHH:mm:ss')
-      );
-      const data = await resp.data;
-      setEvents(convertCalendarEvent(data, start, end));
-      setDataLoad(true);
-
-      // if (resp && resp.data) {
-      //   setEvents(convertCalendarEvent(resp.data, start, end));
-      // } else {
-      //   console.log('여기로 들어오냐 시발넘아')
-      // }
-    } catch (err) {
-      console.log(err)
+  const {data, isLoading, isFetching} = useQuery(
+    {
+      queryKey: [HolidayQueryKey.GET_HOLIDAY_BY_START_END_DATE, baseYear],
+      queryFn: () => getHolidayByStartEndDate(`${baseYear}0101`, `${baseYear}1231`),
+      select: (data: any) => data.data
     }
-    
-  }
+  );
 
-  const fetchHolidays = async (start: string, end: string) => {
-    const resp = await getHolidayByStartEndDate(start, end);
-    if (resp && resp.data) {
-      setHolidays(convertHoliday(resp.data));
+  const {data: scheduleData, isLoading: scheduleLoading, isFetching: scheduleFetching} = useQuery(
+    {
+      queryKey: [ScheduleQueryKey.GET_PERIOD_SCHEDULES, range.start, range.end], 
+      queryFn: () => getPeriodSchedules(
+        moment(range.start).format('yyyy-MM-DDTHH:mm:ss'),
+        moment(range.end).format('yyyy-MM-DDTHH:mm:ss')
+      ),
+      select: (data: any) => data.data
     }
-  }
+  );
 
   useEffect(() => {
-    const now = new Date();
-    const start = moment(now).startOf('month').startOf('week').toDate();
-    const end = moment(now).endOf('month').endOf('week').toDate();
-    fetchPeriodSchedules(start, end);
-  }, []);
+    if (data && !isLoading) {
+      const holidayData = convertHoliday(data);
+      setHolidays(holidayData);
+    }
+  }, [data, isLoading, setHolidays]);
 
   useEffect(() => {
-    fetchHolidays(`${baseYear}0101`, `${baseYear}1231`);
-  }, [setBaseYear]);
+    if (scheduleData && !scheduleLoading && range) {
+      const formattedData = convertCalendarEvent(scheduleData, range.start, range.end);
+      setEvents(formattedData);
+    }
+  }, [scheduleData, scheduleLoading, range, setEvents]);
 
-  if (!dataLoad) {
+  if ((isLoading || isFetching) || (scheduleLoading || scheduleFetching)) {
     return '';
   }
 
