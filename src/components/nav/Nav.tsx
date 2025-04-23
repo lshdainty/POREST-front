@@ -1,7 +1,7 @@
-import {useState} from 'react';
-import {Link, useLocation, useNavigate} from 'react-router-dom';
-import {Sidebar, Menu, MenuItem, menuClasses, MenuItemStyles} from 'react-pro-sidebar';
-import {DashboardRounded, CalendarMonthRounded, BorderColorRounded, Diversity3Rounded, Rule, SettingsRounded, PersonRounded} from '@mui/icons-material';
+import { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Sidebar, Menu, MenuItem, menuClasses, MenuItemStyles } from 'react-pro-sidebar';
+import { DashboardRounded, CalendarMonthRounded, BorderColorRounded, Diversity3Rounded, Rule, SettingsRounded, PersonRounded } from '@mui/icons-material';
 
 import '@/components/nav/Nav.scss';
 

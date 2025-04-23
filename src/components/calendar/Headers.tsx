@@ -1,5 +1,5 @@
-import {HeaderProps, DateHeaderProps} from 'react-big-calendar';
-import {useHolidayStore} from '@/store/HolidayStore';
+import { HeaderProps, DateHeaderProps } from 'react-big-calendar';
+import { useHolidayStore } from '@/store/HolidayStore';
 import moment from 'moment';
 
 export const MonthHeader: React.FC<HeaderProps> = ({label, date}) => {

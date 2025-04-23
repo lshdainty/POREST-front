@@ -1,7 +1,6 @@
-import {useState, useEffect} from 'react';
-import {Routes, Route, Navigate, useNavigate} from 'react-router-dom';
-import {useAxiosInterceptor} from '@/api/index';
-import {useToken } from '@/hooks/useToken';
+import { useState, useEffect } from 'react';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { useToken } from '@/hooks/useToken';
 import Login from '@/view/login/Login';
 import Layout from '@/view/layout/Layout';
 import NotFound from '@/components/notFound/NotFound';
@@ -15,7 +14,6 @@ const Router = () => {
   const [home, setHome] = useState<boolean | undefined>(undefined);
   const navigate = useNavigate();
 
-  useAxiosInterceptor();
   useToken(setHome);
 
   useEffect(() => {

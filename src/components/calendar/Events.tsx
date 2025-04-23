@@ -1,7 +1,7 @@
-import {EventProps} from 'react-big-calendar';
+import { EventProps } from 'react-big-calendar';
 import moment from 'moment';
-import {Popover} from 'antd';
-import {AccessTime, Person, Circle, Description} from '@mui/icons-material';
+import { Popover } from 'antd';
+import { AccessTime, Person, Circle, Description } from '@mui/icons-material';
 
 import '@/components/calendar/events.scss'
 

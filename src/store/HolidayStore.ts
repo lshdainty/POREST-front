@@ -1,5 +1,5 @@
-import {create} from 'zustand';
-import {THoliday} from '@/api/holiday';
+import { create } from 'zustand';
+import { THoliday } from '@/api/holiday';
 
 interface Holiday {
   holidayName: string

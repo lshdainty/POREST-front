@@ -1,19 +1,19 @@
-import {useState, useEffect, useCallback} from 'react';
-import {Calendar, momentLocalizer, Views} from 'react-big-calendar';
-import withDragAndDrop, {withDragAndDropProps} from 'react-big-calendar/lib/addons/dragAndDrop';
-import {Formats} from '@/components/calendar/Formats';
+import { useState, useEffect, useCallback } from 'react';
+import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
+import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { Formats } from '@/components/calendar/Formats';
 import Toolbar from '@/components/calendar/Toolbar';
-import Events, {CalendarEvent, convertCalendarEvent, convertEventStyle} from '@/components/calendar/Events';
-import {MonthHeader, MonthDateHeader} from '@/components/calendar/Headers';
-import {useHolidayStore, convertHoliday} from '@/store/HolidayStore';
-import {TSchedule, getPeriodSchedules, ScheduleQueryKey} from '@/api/schedule';
-import {THoliday, getHolidayByStartEndDate, HolidayQueryKey} from '@/api/holiday';
+import Events, { CalendarEvent, convertCalendarEvent, convertEventStyle } from '@/components/calendar/Events';
+import { MonthHeader, MonthDateHeader } from '@/components/calendar/Headers';
+import { useHolidayStore, convertHoliday } from '@/store/HolidayStore';
+import { TSchedule, getPeriodSchedules, ScheduleQueryKey } from '@/api/schedule';
+import { THoliday, getHolidayByStartEndDate, HolidayQueryKey } from '@/api/holiday';
 import moment from 'moment';
 // @ts-ignore
 import 'moment/dist/locale/ko';
 
 import '@/components/calendar/index.scss';
-import { useQuery } from '@tanstack/react-query';
 
 const Content: React.FC = () => {
   const DragAndDropCalendar = withDragAndDrop(Calendar);
@@ -46,7 +46,7 @@ const Content: React.FC = () => {
     }
   }, [setEvents]);
 
-  const {data, isLoading, isFetching} = useQuery(
+  const {data, isLoading} = useSuspenseQuery(
     {
       queryKey: [HolidayQueryKey.GET_HOLIDAY_BY_START_END_DATE, baseYear],
       queryFn: () => getHolidayByStartEndDate(`${baseYear}0101`, `${baseYear}1231`),
@@ -54,7 +54,7 @@ const Content: React.FC = () => {
     }
   );
 
-  const {data: scheduleData, isLoading: scheduleLoading, isFetching: scheduleFetching} = useQuery(
+  const {data: scheduleData, isLoading: scheduleLoading} = useSuspenseQuery(
     {
       queryKey: [ScheduleQueryKey.GET_PERIOD_SCHEDULES, range.start, range.end], 
       queryFn: () => getPeriodSchedules(
@@ -70,18 +70,14 @@ const Content: React.FC = () => {
       const holidayData = convertHoliday(data);
       setHolidays(holidayData);
     }
-  }, [data, isLoading, setHolidays]);
+  }, [data]);
 
   useEffect(() => {
     if (scheduleData && !scheduleLoading && range) {
       const formattedData = convertCalendarEvent(scheduleData, range.start, range.end);
       setEvents(formattedData);
     }
-  }, [scheduleData, scheduleLoading, range, setEvents]);
-
-  if ((isLoading || isFetching) || (scheduleLoading || scheduleFetching)) {
-    return '';
-  }
+  }, [scheduleData, range]);
 
   return (
     <DragAndDropCalendar
