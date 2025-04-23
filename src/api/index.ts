@@ -1,6 +1,4 @@
-import axios, {AxiosError, AxiosResponse} from 'axios'
-import {useEffect} from 'react';
-import {useLoadStateStore} from '@/store/LoadingStore'
+import axios, { AxiosError, AxiosResponse } from 'axios'
 
 interface CustomHeaders {
   [key: string]: any;
@@ -14,58 +12,43 @@ const api = axios.create({
   },
 });
 
-const useAxiosInterceptor = () => {
-  const {startLoading, endLoading} = useLoadStateStore(s => s.actions);
+// Request interceptor
+api.interceptors.request.use(
+  (config: any) => {
+    const headers = config.headers as CustomHeaders;
+    // url에 따른 각종 header 세팅
+    // jwt 사용시 accessToken 세팅
+    return config;
+  },
+  (err: AxiosError) => {
+    console.log('this?? : ', err);
+    return Promise.reject(err);
+  }
+);
 
-  // Request interceptor
-  const request = api.interceptors.request.use(
-    (config: any) => {
-      startLoading();
-      const headers = config.headers as CustomHeaders;
-      // url에 따른 각종 header 세팅
-      // jwt 사용시 accessToken 세팅
-      return config;
-    },
-    (err: AxiosError) => {
-      endLoading()
-      console.log('this?? : ', err);
-      return Promise.reject(err);
-    }
-  );
+// Response interceptor
+api.interceptors.response.use(
+  (resp: AxiosResponse) => {
+    const res = resp.data;
+    return res;
+  },
+  async (err: any) => {
+    console.log("resp err : ", err);
 
-  // Response interceptor
-  const response = api.interceptors.response.use(
-    (resp: AxiosResponse) => {
-      endLoading();
-      const res = resp.data;
-      return res;
-    },
-    async (err: any) => {
-      endLoading();
-      console.log("resp err : ", err);
-
-      if (err.response && err.response.status === 401) {
-        if (err.response.config.url !== `/api/relogin`) {
-          console.log('jwt relogin')
-        } else {
-          return err;
-        }
-
+    if (err.response && err.response.status === 401) {
+      if (err.response.config.url !== `/api/relogin`) {
+        console.log('jwt relogin')
+      } else {
         return err;
       }
 
-      if (err.response && err.response.status !== 401) {
-        return err.response;
-      }
+      return err;
     }
-  );
 
-  useEffect(() => {
-    return () => {
-      api.interceptors.request.eject(request);
-      api.interceptors.response.eject(response);
-    };
-  }, [request, response]);
-};
+    if (err.response && err.response.status !== 401) {
+      return err.response;
+    }
+  }
+);
 
-export { useAxiosInterceptor, api };
+export {api};

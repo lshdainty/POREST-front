@@ -1,8 +1,8 @@
-import {useState} from 'react';
-import {ToolbarProps} from 'react-big-calendar';
-import {Button, Flex, Radio} from 'antd';
-import {LeftOutlined, RightOutlined} from '@ant-design/icons';
-import {useHolidayStore} from '@/store/HolidayStore';
+import { useState } from 'react';
+import { ToolbarProps } from 'react-big-calendar';
+import { useHolidayStore } from '@/store/HolidayStore';
+import { Button, Flex, Radio } from 'antd';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 
 import '@/components/calendar/toolbar.scss';
 

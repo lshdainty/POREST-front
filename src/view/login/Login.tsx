@@ -1,6 +1,6 @@
-import {LockOutlined, UserOutlined} from '@ant-design/icons';
-import {Button, Checkbox, Form, Input, Flex} from 'antd';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { Button, Checkbox, Form, Input, Flex } from 'antd';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
 
 import '@/view/login/login.scss';
 import LoginBG from '@/assets/img/loginbg.jpg';
