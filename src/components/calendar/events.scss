@@ -1,13 +1,17 @@
 .rbc-row-segment {
-    padding: 0px 0px 1px 0px !important;
+    padding: 0px 0px 2px 0px !important;
 
-    .rbc-addons-dnd-resize-ew-anchor {
-        top: 7px !important;
-    }
+    .rbc-event {
+        padding: 1px 5px !important;
 
-    .rbc-event-content {
-        div {
-            padding-left: 5px;
+        .rbc-addons-dnd-resize-ew-anchor {
+            top: 7px !important;
+        }
+    
+        .rbc-event-content {
+            div {
+                padding-left: 5px;
+            }
         }
     }
 }
@@ -48,3 +52,8 @@
     border: none;
     top: 0;
 }
+
+
+
+// .rbc-event-continues-after
+// .rbc-event-continues-prior
