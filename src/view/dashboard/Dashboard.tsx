@@ -1,12 +1,12 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { TUser, getUsers, QueryKey } from '@/api/user';
+import { TUser, getUsers, UserQueryKey } from '@/api/user';
 
 import '@/view/dashboard/dashboard.scss';
 
 const Dashboard: React.FC = () => {
   const { data } = useSuspenseQuery(
     {
-      queryKey: [QueryKey.GET_USERS], 
+      queryKey: [UserQueryKey.GET_USERS], 
       queryFn: () => getUsers(),
       select: (data: any) => data.data as TUser[]
     }

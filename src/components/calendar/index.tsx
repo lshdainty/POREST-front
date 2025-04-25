@@ -1,14 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
-import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
+import withDragAndDrop, { EventInteractionArgs } from 'react-big-calendar/lib/addons/dragAndDrop';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Formats } from '@/components/calendar/Formats';
 import Toolbar from '@/components/calendar/Toolbar';
 import Events, { CalendarEvent, convertCalendarEvent, convertEventStyle } from '@/components/calendar/Events';
 import { MonthHeader, MonthDateHeader } from '@/components/calendar/Headers';
 import { useHolidayStore, convertHoliday } from '@/store/HolidayStore';
-import { TSchedule, getPeriodSchedules, ScheduleQueryKey } from '@/api/schedule';
-import { THoliday, getHolidayByStartEndDate, HolidayQueryKey } from '@/api/holiday';
+import { getPeriodSchedules, ScheduleQueryKey } from '@/api/schedule';
+import { getHolidayByStartEndDate, HolidayQueryKey } from '@/api/holiday';
 import moment from 'moment';
 // @ts-ignore
 import 'moment/dist/locale/ko';
@@ -20,20 +20,23 @@ const Content: React.FC = () => {
   // local화
   moment.locale('ko');
   const localizer = momentLocalizer(moment);
+
   // schedule 관리
   const [events, setEvents] = useState<CalendarEvent[]>();
+
   // 공휴일 관리
   const {baseYear} = useHolidayStore();
   const {setHolidays} = useHolidayStore(s => s.actions);
 
+  // view 관리
+  const [view, setView] = useState(Views.MONTH);
+  const onView = useCallback((newView: any) => setView(newView), [setView]);
+
+  // month 달력 범위 관리
   const [range, setRange] = useState<{start: Date, end: Date}>({
     start: moment(new Date()).startOf('month').startOf('week').toDate(),
     end: moment(new Date()).endOf('month').endOf('week').toDate()
   });
-
-  // view 관리
-  const [view, setView] = useState(Views.MONTH);
-  const onView = useCallback((newView: any) => setView(newView), [setView]);
 
   // range 변경 부분
   const [date, setDate] = useState(new Date());
@@ -46,7 +49,7 @@ const Content: React.FC = () => {
     }
   }, [setEvents]);
 
-  const {data, isLoading} = useSuspenseQuery(
+  const {data: holidayData, isLoading: holidayLoading} = useSuspenseQuery(
     {
       queryKey: [HolidayQueryKey.GET_HOLIDAY_BY_START_END_DATE, baseYear],
       queryFn: () => getHolidayByStartEndDate(`${baseYear}0101`, `${baseYear}1231`),
@@ -65,12 +68,18 @@ const Content: React.FC = () => {
     }
   );
 
+  const test = ({event, start, end}: EventInteractionArgs<object>) => {
+    console.log(event);
+    console.log(start);
+    console.log(end);
+  }
+
   useEffect(() => {
-    if (data && !isLoading) {
-      const holidayData = convertHoliday(data);
-      setHolidays(holidayData);
+    if (holidayData && !holidayLoading) {
+      const formattedData = convertHoliday(holidayData);
+      setHolidays(formattedData);
     }
-  }, [data]);
+  }, [holidayData]);
 
   useEffect(() => {
     if (scheduleData && !scheduleLoading && range) {
@@ -112,7 +121,7 @@ const Content: React.FC = () => {
       onRangeChange={onRangeChange}
 
       // drag and drop
-      // onEventDrop={moveEvent}
+      onEventDrop={test}
       // onEventResize={resizeEvent}
 
       // onSelectEvent={handleSelectEvent}

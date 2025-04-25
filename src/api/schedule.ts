@@ -20,5 +20,5 @@ export const getPeriodSchedules = (start: string, end: string): Promise<TSchedul
   return api.request({
     method: 'get',
     url: `/schedules/period?startDate=${start}&endDate=${end}`
-  })
+  });
 }
