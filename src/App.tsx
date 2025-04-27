@@ -11,7 +11,6 @@ import '@ant-design/v5-patch-for-react-19';
 import '@/App.scss';
 
 const App: React.FC = () => {
-
   return (
     <ClientProviders>
       <BrowserRouter basename='/web' future={{v7_startTransition: true, v7_relativeSplatPath: true }}>

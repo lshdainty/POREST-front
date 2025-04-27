@@ -1,60 +1,84 @@
 @use '@/assets/scss/variables' as var;
 
-body {
+#root {
+    display: grid;
+    place-items: center;
+    align-content: center;
+    height: 100vh;
     overflow: hidden;
+    background-color: #f1f1f1;
 }
 
 .login {
-    height: 100vh;
-    width: 100%;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f1f1f1;
+    flex-direction: column;
+    background-color: var.$white;
+    width: 65%;
+    max-width: 1290px;
+    box-shadow: var.$box-shadow;
+    border-radius: var.$box-radius !important;
 
-    .content {
-        height: 80vh;
-        width: 72vw;
-        display: flex;
-        background-color: var.$white;
+    .login-bg {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        height: 280px;
 
-        box-shadow: var.$box-shadow;
-        border-radius: var.$box-radius;
-
-        .child:nth-child(1) {
-            img {
-                height:80vh;
-                background: no-repeat center;
-                background-size: cover;
-                border-top-left-radius : var.$box-radius;
-                border-bottom-left-radius : var.$box-radius;
-            }
-        }
-
-        .child:nth-child(2) {
+        img {
+            position: absolute;
             width: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            aspect-ratio: 1.143 / 1;
+            object-fit: cover;
+            border-top-left-radius : var.$box-radius;
+            border-top-right-radius : var.$box-radius;
+        }
+    }
 
-            .logo {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                margin-bottom: 50px;
+    .login-content {
+        flex: 1 1 50%;
+        padding: 0 20px 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
 
-                img {
-                    width: 200px;
-                }
-            }
+        img {
+            width: 160px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+    }
+}
 
-            .form {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-            }
+@media (width >= 780px) {
+    .login {
+        width: 85%;
+        padding-right: 0;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .login-bg {
+        height: auto;
+        align-self: stretch;
+        height: 729px !important;
+
+        img {
+            height: 100%;
+            border-top-left-radius : var.$box-radius;
+            border-top-right-radius : unset !important;
+            border-bottom-left-radius : var.$box-radius;
+        }
+    }
+
+    .login-content {
+        align-items: flex-start;
+        padding: 0 32px 20px;
+
+        img {
+            width: 200px !important;
+            margin-top: 60px;
+            margin-bottom: 20px;
         }
     }
 }
