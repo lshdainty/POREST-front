@@ -6,6 +6,8 @@ interface Visible {
 }
 
 export const useCalendarVisibleStore = create<{
+  userAllVisible: boolean
+  calendarAllVisible: boolean
   userVisibles: Visible[]
   calendarVisibles: Visible[]
   actions: {
@@ -13,8 +15,13 @@ export const useCalendarVisibleStore = create<{
     resetCalendarVisible: (calendarIds: string[]) => void
     setUserVisible: (userNo: number) => void
     setCalendarVisible: (calendarId: string) => void
+    setUserAllVisible: (visible: boolean) => void
+    setCalendarAllVisible: (visible: boolean) => void
+    setAllVisible: (visible: boolean) => void
   }
 }>((set, get) => ({
+  userAllVisible: true,
+  calendarAllVisible: true,
   userVisibles: [],
   calendarVisibles: [],
   actions: {
@@ -23,14 +30,14 @@ export const useCalendarVisibleStore = create<{
         id: userNo,
         isVisible: true,
       }));
-      set({ userVisibles: _userVisibles });
+      set({ userAllVisible: true, userVisibles: _userVisibles });
     },
     resetCalendarVisible: (calendarIds) => {
       const _calendarVisibles = calendarIds.map(calendarId => ({
         id: calendarId,
         isVisible: true,
       }));
-      set({ calendarVisibles: _calendarVisibles });
+      set({ calendarAllVisible: true, calendarVisibles: _calendarVisibles });
     },
     setUserVisible: (userNo) => {
       set((state) => ({
@@ -48,6 +55,26 @@ export const useCalendarVisibleStore = create<{
             ? { ...calendar, isVisible: !calendar.isVisible } 
             : calendar
         )
+      }));
+    },
+    setUserAllVisible: (visible: boolean) => {
+      set((state) => ({
+        userAllVisible: visible,
+        userVisibles: state.userVisibles.map(user => ({ ...user, isVisible: visible })),
+      }));
+    },
+    setCalendarAllVisible: (visible: boolean) => {
+      set((state) => ({
+        calendarAllVisible: visible,
+        calendarVisibles: state.calendarVisibles.map(calendar => ({ ...calendar, isVisible: visible })),
+      }));
+    },
+    setAllVisible: (visible: boolean) => {
+      set((state) => ({
+        userAllVisible: visible,
+        calendarAllVisible: visible,
+        userVisibles: state.userVisibles.map(user => ({ ...user, isVisible: visible })),
+        calendarVisibles: state.calendarVisibles.map(calendar => ({ ...calendar, isVisible: visible })),
       }));
     }
   }

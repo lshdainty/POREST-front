@@ -4,9 +4,11 @@ import withDragAndDrop, { EventInteractionArgs } from 'react-big-calendar/lib/ad
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Formats } from '@/components/calendar/Formats';
 import Toolbar from '@/components/calendar/Toolbar';
-import Events, { CalendarEvent, convertCalendarEvent, convertEventStyle } from '@/components/calendar/Events';
+import Events, { convertEventStyle } from '@/components/calendar/Events';
 import { MonthHeader, MonthDateHeader } from '@/components/calendar/Headers';
+import { CalendarEvent, useCalendarEventsStore } from '@/store/CalendarEventStore';
 import { useHolidayStore, convertHoliday } from '@/store/HolidayStore';
+import { useCalendarVisibleStore } from '@/store/CalendarVisibleStore';
 import { getPeriodSchedules, ScheduleQueryKey } from '@/api/schedule';
 import { getHolidayByStartEndDate, HolidayQueryKey } from '@/api/holiday';
 import moment from 'moment';
@@ -24,11 +26,13 @@ const Content: React.FC = () => {
   const localizer = momentLocalizer(moment);
 
   // schedule 관리
-  const [events, setEvents] = useState<CalendarEvent[]>();
+  const { events } = useCalendarEventsStore();
+  const { resetEvents, setEventVisible } = useCalendarEventsStore(s => s.actions);
+  const { userVisibles, calendarVisibles } = useCalendarVisibleStore();
 
   // 공휴일 관리
-  const {baseYear} = useHolidayStore();
-  const {setHolidays} = useHolidayStore(s => s.actions);
+  const { baseYear } = useHolidayStore();
+  const { setHolidays } = useHolidayStore(s => s.actions);
 
   // view 관리
   const [view, setView] = useState(Views.MONTH);
@@ -49,7 +53,7 @@ const Content: React.FC = () => {
     } else {
       setRange({start: range.start, end: range.end});
     }
-  }, [setEvents]);
+  }, [resetEvents]);
 
   const {data: holidayData, isLoading: holidayLoading} = useSuspenseQuery(
     {
@@ -76,12 +80,6 @@ const Content: React.FC = () => {
     console.log(end);
   }
 
-  const EventWrapperComponent = ({ event, children }: any) => {
-    console.log(event);
-    console.log(children);
-    return <>{children}</>
-  }
-
   useEffect(() => {
     if (holidayData && !holidayLoading) {
       const formattedData = convertHoliday(holidayData);
@@ -91,8 +89,13 @@ const Content: React.FC = () => {
 
   useEffect(() => {
     if (scheduleData && !scheduleLoading && range) {
-      const formattedData = convertCalendarEvent(scheduleData, range.start, range.end);
-      setEvents(formattedData);
+      resetEvents(scheduleData, range.start, range.end);
+      calendarVisibles.forEach(calendar => {
+        setEventVisible(calendar.id, calendar.isVisible, 'calendar');
+      });
+      userVisibles.forEach(user => {
+        setEventVisible(user.id, user.isVisible, 'user');
+      });
     }
   }, [scheduleData, range]);
 
@@ -105,7 +108,7 @@ const Content: React.FC = () => {
       resizable
       selectable
       // schedule data
-      events={events}
+      events={events.filter((ev: CalendarEvent) => ev.rawData.isUserVisible && ev.rawData.isCalendarVisible)}
       // calendar view option
       view={view}
       onView={onView}
