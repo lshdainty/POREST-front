@@ -76,6 +76,12 @@ const Content: React.FC = () => {
     console.log(end);
   }
 
+  const EventWrapperComponent = ({ event, children }: any) => {
+    console.log(event);
+    console.log(children);
+    return <>{children}</>
+  }
+
   useEffect(() => {
     if (holidayData && !holidayLoading) {
       const formattedData = convertHoliday(holidayData);
