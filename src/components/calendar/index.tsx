@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
 import withDragAndDrop, { EventInteractionArgs } from 'react-big-calendar/lib/addons/dragAndDrop';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Formats } from '@/components/calendar/Formats';
 import Toolbar from '@/components/calendar/Toolbar';
 import Events, { convertEventStyle } from '@/components/calendar/Events';
@@ -10,6 +10,7 @@ import { CalendarEvent, useCalendarEventsStore } from '@/store/CalendarEventStor
 import { useHolidayStore, convertHoliday } from '@/store/HolidayStore';
 import { useCalendarVisibleStore } from '@/store/CalendarVisibleStore';
 import { getPeriodSchedules, ScheduleQueryKey } from '@/api/schedule';
+import { checkPossible } from '@/api/vacation';
 import { getHolidayByStartEndDate, HolidayQueryKey } from '@/api/holiday';
 import moment from 'moment';
 // @ts-ignore
@@ -18,6 +19,7 @@ import 'moment/dist/locale/ko';
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
 import '@/components/calendar/index.scss';
+import { VacationQueryKey } from '@/api/vacation';
 
 const Content: React.FC = () => {
   const DragAndDropCalendar = withDragAndDrop(Calendar);
@@ -55,24 +57,45 @@ const Content: React.FC = () => {
     }
   }, [resetEvents]);
 
-  const {data: holidayData, isLoading: holidayLoading} = useSuspenseQuery(
-    {
+  const {data: holidayData, isLoading: holidayLoading} = useSuspenseQuery({
       queryKey: [HolidayQueryKey.GET_HOLIDAY_BY_START_END_DATE, baseYear],
       queryFn: () => getHolidayByStartEndDate(`${baseYear}0101`, `${baseYear}1231`),
       select: (data: any) => data.data
-    }
-  );
+  });
 
-  const {data: scheduleData, isLoading: scheduleLoading} = useSuspenseQuery(
-    {
+  const {data: scheduleData, isLoading: scheduleLoading} = useSuspenseQuery({
       queryKey: [ScheduleQueryKey.GET_PERIOD_SCHEDULES, range.start, range.end], 
       queryFn: () => getPeriodSchedules(
         moment(range.start).format('yyyy-MM-DDTHH:mm:ss'),
         moment(range.end).format('yyyy-MM-DDTHH:mm:ss')
       ),
       select: (data: any) => data.data
-    }
-  );
+  });
+
+
+//  test 시작
+  const [selectRange, setSelectRange] = useState<{start: Date, end: Date}>({
+    start: new Date(),
+    end: new Date()
+  }); 
+
+  const {data: checked, isLoading: checkedLoading} = useQuery({
+    queryKey: [VacationQueryKey.CHECK_POSSIBLE, selectRange.start, selectRange.end],
+    queryFn: () => checkPossible(
+      moment(selectRange.start).format('yyyy-MM-DDTHH:mm:ss'),
+      moment(selectRange.end).format('yyyy-MM-DDTHH:mm:ss')
+    ),
+    select: (data: any) => data.data
+  });
+
+  const handleSelectSlot = (slotInfo) => {
+    console.log(slotInfo);
+    setSelectRange({start: slotInfo.start, end: slotInfo.end});
+    
+    console.log(test);
+  }
+//  test 종료
+
 
   const test = ({event, start, end}: EventInteractionArgs<object>) => {
     console.log(event);
@@ -135,7 +158,7 @@ const Content: React.FC = () => {
       onEventDrop={test}
       // onEventResize={resizeEvent}
 
-      // onSelectEvent={handleSelectEvent}
+      onSelectSlot={handleSelectSlot}
     />
   );
 };
