@@ -77,7 +77,7 @@ const Content: React.FC = () => {
   const [selectRange, setSelectRange] = useState<{start: Date, end: Date}>({
     start: new Date(),
     end: new Date()
-  }); 
+  });
 
   const {data: checked, isLoading: checkedLoading} = useQuery({
     queryKey: [VacationQueryKey.CHECK_POSSIBLE, selectRange.start, selectRange.end],
@@ -88,12 +88,13 @@ const Content: React.FC = () => {
     select: (data: any) => data.data
   });
 
-  const handleSelectSlot = (slotInfo) => {
+  const handleSelectSlot2 = (slotInfo) => {
     console.log(slotInfo);
-    setSelectRange({start: slotInfo.start, end: slotInfo.end});
-    
-    console.log(test);
+    const possibleData = setSelectRange({start: slotInfo.start, end: slotInfo.end});
+    console.log(possibleData);
   }
+
+  const handleSelectSlot = useCallback((start: Date, end: Date) => setSelectRange({start: start, end: end}), [setSelectRange]);
 //  test 종료
 
 
@@ -121,6 +122,12 @@ const Content: React.FC = () => {
       });
     }
   }, [scheduleData, range]);
+
+  useEffect(() => {
+    if (checked && !checkedLoading) {
+      console.log(checked);
+    }
+  }, [checked]);
 
   return (
     <DragAndDropCalendar
