@@ -1,7 +1,16 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Sidebar, Menu, MenuItem, menuClasses, MenuItemStyles } from 'react-pro-sidebar';
-import { DashboardRounded, CalendarMonthRounded, BorderColorRounded, Diversity3Rounded, Rule, SettingsRounded, PersonRounded } from '@mui/icons-material';
+import { 
+  DashboardRounded, 
+  CalendarMonthRounded, 
+  BorderColorRounded, 
+  Diversity3Rounded, 
+  Rule, 
+  SettingsRounded, 
+  PersonRounded,
+  PersonAddAltOutlined,
+} from '@mui/icons-material';
 
 import '@/components/nav/Nav.scss';
 
@@ -99,6 +108,11 @@ const Nav: React.FC = () => {
           icon={<Rule />}
           component={<Link to={'/rule'} />}
         >Rule</MenuItem>
+        <MenuItem
+          active={location.pathname === '/user'}
+          icon={<PersonAddAltOutlined />}
+          component={<Link to={'/user'} />}
+        >User</MenuItem>
       </Menu>
       <Menu
         menuItemStyles={menuItemStyles}

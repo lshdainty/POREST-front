@@ -9,6 +9,7 @@ import Calendar from '@/view/calendar/Calendar';
 import Work from '@/view/work/Work';
 import Culture from '@/view/culture/Culture';
 import Rule from '@/view/rule/Rule';
+import User from '@/view/user/User';
 
 const Router = () => {
   const [home, setHome] = useState<boolean | undefined>(undefined);
@@ -31,6 +32,7 @@ const Router = () => {
         <Route path='/work' element={<Work/>} />
         <Route path='/culture' element={<Culture/>} />
         <Route path='/rule' element={<Rule/>} />
+        <Route path='/user' element={<User/>} />
       </Route>
       <Route path='/*' element={<NotFound/>} />
     </Routes>
