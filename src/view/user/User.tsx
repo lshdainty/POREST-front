@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Table, Tag, Typography, Popconfirm, Input, Select } from 'antd';
+import { Form, Table, Tag, Typography, Input, Select } from 'antd';
 import type { TableProps } from 'antd';
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { TUser, getUsers, UserQueryKey } from '@/api/user';
@@ -106,10 +106,6 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
       break
   }
 
-  console.log('editing log : ', editing);
-  console.log('editing log : ', dataIndex);
-  console.log('-----------------------------')
-
   return (
     <td {...restProps}>
       {editing ? (
@@ -135,13 +131,11 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
 const User: React.FC = () => {
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState('');
-
   const isEditing = (record: TUser) => record.user_no.toString() === editingKey;
 
   const saveFC = async ( user_no : React.Key) => {
     try {
       const row = (await form.validateFields()) as TUser;
-
       console.log('HELLO WORLD', row);
     } catch (errInfo) {
       console.log('saveFC console.log : ', errInfo)
@@ -149,19 +143,19 @@ const User: React.FC = () => {
   }
 
   const editFC = (record: Partial<TUser> & { user_no: React.Key }) => {
-    console.log('test log edit click : ', record);
-    form.setFieldsValue({ user_name: '', user_employ: '', user_work_time: '', user_birth: '', lunar_yn: '', ...record });
+    form.setFieldsValue({
+      user_name: '',
+      user_employ: '',
+      user_work_time: '',
+      user_birth: '',
+      lunar_yn: '',
+      ...record 
+    });
     setEditingKey(record.user_no.toString());
   };
 
-  const cancelFC = () => {
-    setEditingKey('');
-  };
-
-  const actionRender = (_:any, record: TUser) => {
-    const editable = isEditing(record);
-
-    return editable ? (
+  const actionRender = (_: any, record: TUser) => {
+    return isEditing(record) ? (
       <span>
         <Typography.Link
           onClick={() => saveFC(record.user_no.toString())}
@@ -169,12 +163,12 @@ const User: React.FC = () => {
         >
           Save
         </Typography.Link>
-        <Popconfirm
-          title="Sure to cancel?"
-          onConfirm={cancelFC}
+        <Typography.Link
+          onClick={() => setEditingKey('')}
+          style={{ marginInlineEnd: 8 }}
         >
-          <a>Cancel</a>
-        </Popconfirm>
+          Cancel
+        </Typography.Link>
       </span>
     ) : (
       <Typography.Link
@@ -191,39 +185,39 @@ const User: React.FC = () => {
       title: '이름',
       dataIndex: 'user_name',
       editable: true,
-      width: `${100/6}%`,
+      width: `${90/5}%`,
     },
     {
       title: '소속',
       dataIndex: 'user_employ',
       editable: true,
       render: employRender,
-      width: `${100/6}%`,
+      width: `${90/5}%`,
     },
     {
       title: '유연근무제',
       dataIndex: 'user_work_time',
       editable: true,
       render: workTimeRender,
-      width: `${100/6}%`,
+      width: `${90/5}%`,
     },
     {
       title: '생일',
       dataIndex: 'user_birth',
       editable: true,
-      width: `${100/6}%`,
+      width: `${90/5}%`,
     },
     {
       title: '음력여부',
       dataIndex: 'lunar_yn',
       editable: true,
-      width: `${100/6}%`,
+      width: `${90/5}%`,
     },
     {
       title: '수정',
       dataIndex: 'action',
       render: actionRender,
-      width: `${100/6}%`,
+      width: `${10}%`,
     }
   ]
 
