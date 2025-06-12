@@ -1,6 +1,7 @@
 import { BrowserRouter } from 'react-router-dom';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ClientProviders } from '@/ClientProviders';
+import { ThemeProvider } from '@/components/theme-provider';
 import Router from '@/Router';
 /*
   react19에서 antd 호환성 해결
@@ -12,12 +13,14 @@ import '@/App.scss';
 
 const App: React.FC = () => {
   return (
-    <ClientProviders>
-      <BrowserRouter basename='/web' future={{v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <Router />
-        <ReactQueryDevtools />
-      </BrowserRouter>
-    </ClientProviders>
+    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+      <ClientProviders>
+        <BrowserRouter basename='/web' future={{v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <Router />
+          <ReactQueryDevtools />
+        </BrowserRouter>
+      </ClientProviders>
+    </ThemeProvider>
   );
 }
 
