@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useToken } from '@/hooks/useToken';
 import Login from '@/view/login/Login';
+import Layout2 from '@/view2/layout';
 import Layout from '@/view/layout/Layout';
 import NotFound from '@/components/notFound/NotFound';
 import Dashboard from '@/view/dashboard/Dashboard';
@@ -26,6 +27,8 @@ const Router = () => {
   return (
     <Routes>
       <Route path='/login' element={!home ? <Login/> : <Navigate replace to ='/' />} />
+      <Route element={<Layout2 />}>
+      </Route>
       <Route element={<Layout />}>
         <Route path='/' element={<Dashboard/>} />
         <Route path='/calendar' element={<Calendar/>} />
