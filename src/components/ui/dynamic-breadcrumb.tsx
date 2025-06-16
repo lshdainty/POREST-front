@@ -1,4 +1,4 @@
-"useLocation client"
+"use client";
 
 import React from "react"
 import { useLocation } from "react-router-dom"

@@ -28,6 +28,7 @@ const Router = () => {
     <Routes>
       <Route path='/login' element={!home ? <Login/> : <Navigate replace to ='/' />} />
       <Route element={<Layout2/>}>
+        <Route path='/test' element={<></>} />
         <Route path='/test/calendar' element={<Work/>} />
       </Route>
       <Route element={<Layout />}>

@@ -1,30 +1,6 @@
-@use 'tailwindcss';
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
 @custom-variant dark (&:is(.dark *));
-
-/* body {
-    margin: 0;
-    background-color: white;
-    font-family: 'Noto-M';
-} */
-
-/* button {
-    margin: 0;
-    padding: 0;
-    background-color: transparent;
-    border: none;
-    outline: none;
-    cursor: pointer;
-} */
-
-/* p {
-    padding: 0;
-    margin: 0;
-} */
 
 @font-face {
     font-family: 'Noto-M';
