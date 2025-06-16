@@ -26,8 +26,17 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar"
 
-interface SidebarProps {
+interface AppSidebarProps {
   className?: string
   onItemClick?: () => void
   isCollapsed?: boolean
@@ -89,7 +98,7 @@ const navigationData = [
   },
 ]
 
-export function Sidebar({ className, onItemClick, isCollapsed = false }: SidebarProps) {
+export function AppSidebar({ className, onItemClick, isCollapsed = false }: AppSidebarProps) {
   const { pathname } = useLocation();
   const [expandedItems, setExpandedItems] = useState<string[]>(["Dashboard"]);
 
@@ -136,22 +145,21 @@ export function Sidebar({ className, onItemClick, isCollapsed = false }: Sidebar
         )}
       >
         {/* Header */}
-        <div className="flex h-16 items-center px-4 bg-background">
-          <div className="flex items-center gap-2 w-full">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <Users className="h-4 w-4" />
-            </div>
-            <div
-              className={cn(
-                "flex flex-col items-start transition-all duration-200 ease-linear",
-                isCollapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100 w-auto",
-              )}
-            >
-              <span className="text-sm font-semibold whitespace-nowrap">HR Department</span>
-              <span className="text-xs text-muted-foreground whitespace-nowrap">Enterprise</span>
-            </div>
-          </div>
-        </div>
+        <SidebarHeader>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                className="data-[slot=sidebar-menu-button]:!p-1.5"
+              >
+                <a href="#">
+                  {/* <IconInnerShadowTop className="!size-5" /> */}
+                  <span className="text-base font-semibold">Acme Inc.</span>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarHeader>
 
         {/* Navigation */}
         <div className="flex-1 overflow-auto px-4 pb-4">

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { Outlet } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/useMobile';
 import { cn } from "@/lib/utils";
-import { Sidebar } from "@/view2/sidebar"
+import { AppSidebar } from "@/view2/sidebar"
 import { SidebarToggle } from "@/components/ui/sidebarToggle"
 import { ModeToggle } from "@/components/ui/modeToggle"
 import { Separator } from "@/components/ui/separator"
@@ -59,7 +59,7 @@ const Layout = () => {
       {/* Desktop Sidebar */}
       {!isMobile && (
         <div className={cn("transition-all duration-300 ease-in-out", sidebarCollapsed ? "w-16" : "w-64")}>
-          <Sidebar className="transition-all duration-300" isCollapsed={sidebarCollapsed} />
+          <AppSidebar className="transition-all duration-300" isCollapsed={sidebarCollapsed} />
         </div>
       )}
 
@@ -82,7 +82,7 @@ const Layout = () => {
               sidebarOpen ? "translate-x-0" : "-translate-x-full",
             )}
           >
-            <Sidebar onItemClick={handleSidebarClose} isCollapsed={false} />
+            <AppSidebar onItemClick={handleSidebarClose} isCollapsed={false} />
           </div>
         </>
       )}
