@@ -1,8 +1,7 @@
 import type React from "react"
 
 import { useState } from "react"
-import { usePathname } from "next/navigation"
-import Link from "next/link"
+import { Link, useLocation } from "react-router-dom"
 import { cn } from "@/lib/utils"
 import {
   ChevronRight,
@@ -24,7 +23,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdownMenu"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
@@ -37,7 +36,7 @@ interface SidebarProps {
 const navigationData = [
   {
     title: "Dashboard",
-    href: "/dashboard",
+    href: "/test",
     icon: Home,
     items: [
       { title: "Overview", href: "/dashboard/overview" },
@@ -47,52 +46,52 @@ const navigationData = [
   },
   {
     title: "Calendar",
-    href: "/dashboard/calendar",
+    href: "/test/calendar",
     icon: Calendar,
     items: [
-      { title: "Schedule", href: "/dashboard/calendar/schedule" },
-      { title: "Events", href: "/dashboard/calendar/events" },
-      { title: "Meetings", href: "/dashboard/calendar/meetings" },
+      // { title: "Schedule", href: "/dashboard/calendar/schedule" },
+      // { title: "Events", href: "/dashboard/calendar/events" },
+      // { title: "Meetings", href: "/dashboard/calendar/meetings" },
     ],
   },
   {
     title: "Work",
-    href: "/dashboard/work",
+    href: "/test/work",
     icon: Briefcase,
     items: [
-      { title: "Attendance", href: "/dashboard/work/attendance" },
-      { title: "Time Tracking", href: "/dashboard/work/time-tracking" },
-      { title: "Projects", href: "/dashboard/work/projects" },
-      { title: "Performance", href: "/dashboard/work/performance" },
+      // { title: "Attendance", href: "/dashboard/work/attendance" },
+      // { title: "Time Tracking", href: "/dashboard/work/time-tracking" },
+      // { title: "Projects", href: "/dashboard/work/projects" },
+      // { title: "Performance", href: "/dashboard/work/performance" },
     ],
   },
   {
-    title: "Dues",
-    href: "/dashboard/dues",
+    title: "Culture",
+    href: "/test/culture",
     icon: DollarSign,
     items: [
-      { title: "Payroll", href: "/dashboard/dues/payroll" },
-      { title: "Benefits", href: "/dashboard/dues/benefits" },
-      { title: "Expenses", href: "/dashboard/dues/expenses" },
-      { title: "Tax Documents", href: "/dashboard/dues/tax-documents" },
+      // { title: "Payroll", href: "/dashboard/dues/payroll" },
+      // { title: "Benefits", href: "/dashboard/dues/benefits" },
+      // { title: "Expenses", href: "/dashboard/dues/expenses" },
+      // { title: "Tax Documents", href: "/dashboard/dues/tax-documents" },
     ],
   },
   {
     title: "Rule",
-    href: "/dashboard/rule",
+    href: "/test/rule",
     icon: BookOpen,
     items: [
-      { title: "Policies", href: "/dashboard/rule/policies" },
-      { title: "Procedures", href: "/dashboard/rule/procedures" },
-      { title: "Compliance", href: "/dashboard/rule/compliance" },
-      { title: "Training", href: "/dashboard/rule/training" },
+      // { title: "Policies", href: "/dashboard/rule/policies" },
+      // { title: "Procedures", href: "/dashboard/rule/procedures" },
+      // { title: "Compliance", href: "/dashboard/rule/compliance" },
+      // { title: "Training", href: "/dashboard/rule/training" },
     ],
   },
 ]
 
-export function CustomSidebar({ className, onItemClick, isCollapsed = false }: SidebarProps) {
-  const pathname = usePathname()
-  const [expandedItems, setExpandedItems] = useState<string[]>(["Dashboard"])
+export function Sidebar({ className, onItemClick, isCollapsed = false }: SidebarProps) {
+  const { pathname } = useLocation();
+  const [expandedItems, setExpandedItems] = useState<string[]>(["Dashboard"]);
 
   const toggleExpanded = (title: string) => {
     setExpandedItems((prev) => (prev.includes(title) ? prev.filter((item) => item !== title) : [...prev, title]))
@@ -163,7 +162,7 @@ export function CustomSidebar({ className, onItemClick, isCollapsed = false }: S
                 isCollapsed ? "opacity-0 h-0 overflow-hidden" : "opacity-100 h-auto",
               )}
             >
-              <h4 className="mb-1 text-sm font-semibold text-muted-foreground">HR Management</h4>
+              <h4 className="mb-1 text-sm font-semibold text-muted-foreground">myHR</h4>
             </div>
             {navigationData.map((item) => (
               <div key={item.title}>
@@ -199,7 +198,7 @@ export function CustomSidebar({ className, onItemClick, isCollapsed = false }: S
                       </div>
                     ) : (
                       <Link
-                        href={item.href}
+                        to={item.href}
                         className={cn(
                           "flex w-full items-center transition-all duration-200 ease-linear",
                           isCollapsed && "justify-center",
@@ -245,7 +244,7 @@ export function CustomSidebar({ className, onItemClick, isCollapsed = false }: S
                           )}
                           asChild
                         >
-                          <Link href={subItem.href} onClick={handleLinkClick}>
+                          <Link to={subItem.href} onClick={handleLinkClick}>
                             <span className="truncate">{subItem.title}</span>
                           </Link>
                         </Button>

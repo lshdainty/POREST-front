@@ -1,13 +1,14 @@
-import type React from 'react';
 import { useState, useEffect } from "react"
+import { Outlet } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/useMobile';
+import { cn } from "@/lib/utils";
+import { Sidebar } from "@/view2/sidebar"
+import { SidebarToggle } from "@/components/ui/sidebarToggle"
+import { ModeToggle } from "@/components/ui/modeToggle"
+import { Separator } from "@/components/ui/separator"
+import { DynamicBreadcrumb } from "@/components/ui/dynamic-breadcrumb"
 
-
-const Layout = ({
-  children,
-}: {
-  children: React.ReactNode
-}) => {
+const Layout = () => {
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -58,7 +59,7 @@ const Layout = ({
       {/* Desktop Sidebar */}
       {!isMobile && (
         <div className={cn("transition-all duration-300 ease-in-out", sidebarCollapsed ? "w-16" : "w-64")}>
-          <CustomSidebar className="transition-all duration-300" isCollapsed={sidebarCollapsed} />
+          <Sidebar className="transition-all duration-300" isCollapsed={sidebarCollapsed} />
         </div>
       )}
 
@@ -81,7 +82,7 @@ const Layout = ({
               sidebarOpen ? "translate-x-0" : "-translate-x-full",
             )}
           >
-            <CustomSidebar onItemClick={handleSidebarClose} isCollapsed={false} />
+            <Sidebar onItemClick={handleSidebarClose} isCollapsed={false} />
           </div>
         </>
       )}
@@ -101,7 +102,7 @@ const Layout = ({
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-auto p-6 space-y-6">{children}</main>
+        <main className="flex-1 overflow-auto p-6 space-y-6">{<Outlet/>}</main>
       </div>
     </div>
   )
