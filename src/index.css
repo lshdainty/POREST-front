@@ -1,31 +1,35 @@
 @use 'tailwindcss';
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @custom-variant dark (&:is(.dark *));
 
-// body {
-//     margin: 0;
-//     background-color: white;
-//     font-family: 'Noto-M';
-// }
+/* body {
+    margin: 0;
+    background-color: white;
+    font-family: 'Noto-M';
+} */
 
-// button {
-//     margin: 0;
-//     padding: 0;
-//     background-color: transparent;
-//     border: none;
-//     outline: none;
-//     cursor: pointer;
-// }
+/* button {
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+} */
 
-// p {
-//     padding: 0;
-//     margin: 0;
-// }
+/* p {
+    padding: 0;
+    margin: 0;
+} */
 
-// @font-face {
-//     font-family: 'Noto-M';
-//     src: url('assets/font/NotoSansKR-Medium.ttf');
-// }
+@font-face {
+    font-family: 'Noto-M';
+    src: url('assets/font/NotoSansKR-Medium.ttf');
+}
 
 @theme inline {
     --radius-sm: calc(var(--radius) - 4px);
