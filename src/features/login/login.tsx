@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/shadcn/button"
 import { Card, CardContent } from "@/components/shadcn/card"
@@ -9,9 +10,16 @@ export function Login({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const navigate = useNavigate();
+  const onFinish = (values: any) => {
+    // 로그인 로직 추가
+    localStorage.setItem('key', '');
+    navigate('/overview');
+  }
+
   return (
     <div className="bg-muted flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
-      <div className="w-full max-w-sm md:max-w-5xl">
+      <div className="w-full max-w-sm md:max-w-6xl">
         <div className={cn("flex flex-col gap-6 h-[700px]", className)} {...props}>
           <Card className="overflow-hidden p-0 h-full">
             <CardContent className="grid p-0 md:[grid-template-columns:2fr_1fr] h-full">
@@ -22,7 +30,10 @@ export function Login({
                   className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
                 />
               </div>
-              <form className="p-6 md:p-8 h-full flex justify-center">
+              <form
+                className="p-6 md:p-8 h-full flex justify-center"
+                onSubmit={onFinish}
+              >
                 <div className="flex flex-col justify-center gap-6">
                   <div className="flex flex-col items-center text-center">
                     <h1 className="text-2xl font-bold">Welcome back</h1>
@@ -51,7 +62,10 @@ export function Login({
                     </div>
                     <Input id="password" type="password" required />
                   </div>
-                  <Button type="submit" className="w-full">
+                  <Button
+                    type="submit"
+                    className="w-full"
+                  >
                     Login
                   </Button>
                   <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
