@@ -4,9 +4,10 @@ import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/a11y-dark.css";
 
-import '@/view/rule/rule.scss';
+import { cn } from "@/lib/utils"
+import '@/features/rule/rule.scss';
 
-const Rule: React.FC = () => {
+export default function Rule() {
   const [markdown, setMarkdown] = useState("");
 
   useEffect(() => {
@@ -16,7 +17,11 @@ const Rule: React.FC = () => {
   }, []);
 
   return (
-    <div className='rule'>
+    <div
+      className={cn(
+        "flex w-full h-full p-[10px]" 
+      )}
+    >
       <div className='content'>
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
@@ -28,5 +33,3 @@ const Rule: React.FC = () => {
     </div>
   );
 }
-
-export default Rule;

@@ -9,8 +9,6 @@ import Router from '@/Router';
 */ 
 import '@ant-design/v5-patch-for-react-19';
 
-import '@/App.scss';
-
 const App: React.FC = () => {
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">

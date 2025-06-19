@@ -2,15 +2,15 @@ import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useToken } from '@/hooks/useToken';
 import Login from '@/view/login/Login';
-import Layout2 from '@/view2/layout';
-import Layout from '@/view/layout/Layout';
+import Layout from '@/features/layout/layout';
+import Dashboard from '@/features/dashboard/Dashboard';
+import Calendar from '@/features/calendar/Calendar';
+import Work from '@/features/work/Work';
+import Culture from '@/features/culture/Culture';
+import Rule from '@/features/rule/Rule';
+import User from '@/features/user/User';
+
 import NotFound from '@/components/notFound/NotFound';
-import Dashboard from '@/view/dashboard/Dashboard';
-import Calendar from '@/view/calendar/Calendar';
-import Work from '@/view/work/Work';
-import Culture from '@/view/culture/Culture';
-import Rule from '@/view/rule/Rule';
-import User from '@/view/user/User';
 
 const Router = () => {
   const [home, setHome] = useState<boolean | undefined>(undefined);
@@ -27,11 +27,7 @@ const Router = () => {
   return (
     <Routes>
       <Route path='/login' element={!home ? <Login/> : <Navigate replace to ='/' />} />
-      <Route element={<Layout2/>}>
-        <Route path='/test' element={<></>} />
-        <Route path='/test/calendar' element={<Work/>} />
-      </Route>
-      <Route element={<Layout />}>
+      <Route element={<Layout/>}>
         <Route path='/' element={<Dashboard/>} />
         <Route path='/calendar' element={<Calendar/>} />
         <Route path='/work' element={<Work/>} />

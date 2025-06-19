@@ -3,8 +3,7 @@ import { Form, Table, Tag, Typography, Input, Select } from 'antd';
 import type { TableProps } from 'antd';
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { TUser, getUsers, UserQueryKey } from '@/api/user';
-
-import '@/view/user/user.scss';
+import { cn } from "@/lib/utils"
 
 const employRender = (employ: string): React.ReactNode => {
   let colorCode = '';
@@ -128,7 +127,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   );
 }
 
-const User: React.FC = () => {
+export default function User() {
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState('');
   const isEditing = (record: TUser) => record.user_no.toString() === editingKey;
@@ -247,7 +246,11 @@ const User: React.FC = () => {
   console.log(userData);
 
   return (
-    <div className='user'>
+    <div
+      className={cn(
+        "flex w-full h-full p-[10px]" 
+      )}
+    >
       <Form form={form} component={false}>
         <Table<TUser>
           columns={mergeColumns}
@@ -262,5 +265,3 @@ const User: React.FC = () => {
     </div>
   );
 }
-
-export default User;
