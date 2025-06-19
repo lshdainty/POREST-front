@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useToken } from '@/hooks/useToken';
-import Login from '@/view/login/Login';
+
+// import Login from '@/view/login/Login';
+import { Login } from '@/features/login/login';
+
 import Layout from '@/features/layout/layout';
 import Dashboard from '@/features/dashboard/Dashboard';
 import Calendar from '@/features/calendar/Calendar';
@@ -26,14 +29,14 @@ const Router = () => {
 
   return (
     <Routes>
-      <Route path='/login' element={!home ? <Login/> : <Navigate replace to ='/' />} />
+      <Route path='/login' element={!home ? <Login/> : <Navigate replace to ='/overview' />} />
       <Route element={<Layout/>}>
-        <Route path='/' element={<Dashboard/>} />
-        <Route path='/calendar' element={<Calendar/>} />
-        <Route path='/work' element={<Work/>} />
-        <Route path='/culture' element={<Culture/>} />
-        <Route path='/rule' element={<Rule/>} />
-        <Route path='/user' element={<User/>} />
+        <Route path='/overview' element={<Dashboard/>} />
+        <Route path='/calendar/overview' element={<Calendar/>} />
+        <Route path='/work/overview' element={<Work/>} />
+        <Route path='/culture/overview' element={<Culture/>} />
+        <Route path='/rule/overview' element={<Rule/>} />
+        <Route path='/user/overview' element={<User/>} />
       </Route>
       <Route path='/*' element={<NotFound/>} />
     </Routes>

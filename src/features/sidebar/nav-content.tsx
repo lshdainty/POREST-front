@@ -14,6 +14,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/shadcn/sidebar"
+import { Link } from "react-router-dom"
 
 export function NavContent({
   items,
@@ -21,8 +22,7 @@ export function NavContent({
   items: {
     title: string
     url: string
-    // icon?: LucideIcon
-    icon?: any
+    icon?: LucideIcon
     isActive?: boolean
     items?: {
       title: string
@@ -54,9 +54,9 @@ export function NavContent({
                   {item.items?.map((subItem) => (
                     <SidebarMenuSubItem key={subItem.title}>
                       <SidebarMenuSubButton asChild>
-                        <a href={subItem.url}>
+                        <Link to={subItem.url} >
                           <span>{subItem.title}</span>
-                        </a>
+                        </Link>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   ))}

@@ -12,7 +12,7 @@ const Login: React.FC = () => {
   const onFinish = (values: any) => {
     // 로그인 로직 추가
     localStorage.setItem('key', '');
-    navigate('/');
+    navigate('/overview');
   }
 
   return (

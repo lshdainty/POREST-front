@@ -4,6 +4,7 @@ import {
   Briefcase,
   BookOpen,
   Cake,
+  UserPen,
 } from "lucide-react"
 
 import {
@@ -29,30 +30,48 @@ const navDatas = [
     icon: Home,
     isActive: true,
     items: [
-      { title: "Overview", url: "/dashboard/overview" },
-      { title: "Analytics", url: "/dashboard/analytics" },
-      { title: "Reports", url: "/dashboard/reports" },
+      { title: "Overview", url: "/overview" },
     ],
   },
   {
     title: "Calendar",
     url: "/calendar",
-    icon: Calendar
+    icon: Calendar,
+    items: [
+      { title: "Overview", url: "/calendar/overview" },
+    ],
   },
   {
     title: "Work",
     url: "work",
-    icon: Briefcase
+    icon: Briefcase,
+    items: [
+      { title: "Overview", url: "/work/overview" },
+    ],
   },
   {
     title: "Culture",
     url: "/culture",
-    icon: Cake
+    icon: Cake,
+    items: [
+      { title: "Overview", url: "/culture/overview" },
+    ],
   },
   {
     title: "Rule",
     url: "/rule",
-    icon: BookOpen
+    icon: BookOpen,
+    items: [
+      { title: "Overview", url: "/rule/overview" },
+    ],
+  },
+  {
+    title: "User",
+    url: "/user",
+    icon: UserPen,
+    items: [
+      { title: "Overview", url: "/user/overview" },
+    ],
   },
 ]
 

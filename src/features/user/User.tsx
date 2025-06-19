@@ -251,10 +251,16 @@ export default function User() {
         "flex w-full h-full p-[10px]" 
       )}
     >
-      <Form form={form} component={false}>
+      <Form
+        form={form}
+        component={false}
+      >
         <Table<TUser>
           columns={mergeColumns}
           dataSource={userData}
+          style={{
+            width: "100%"
+          }}
           components={{
             body: {
               cell: EditableCell
