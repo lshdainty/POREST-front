@@ -2,11 +2,11 @@ import { useState, useEffect } from "react"
 import { Outlet } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/useMobile';
 import { cn } from "@/lib/utils";
-import { SidebarProvider } from "@/components/ui/sidebar"
+import { SidebarProvider } from "@/components/shadcn/sidebar"
 import { AppSidebar } from "@/view2/sidebar"
 import { SidebarToggle } from "@/components/ui/sidebarToggle"
 import { ModeToggle } from "@/components/ui/modeToggle"
-import { Separator } from "@/components/ui/separator"
+import { Separator } from "@/components/shadcn/separator"
 import { DynamicBreadcrumb } from "@/components/ui/dynamic-breadcrumb"
 
 const Layout = () => {

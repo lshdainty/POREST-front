@@ -1,10 +1,10 @@
 "use client";
 
 import { Moon, Sun } from "lucide-react"
-import { useTheme } from "@/components/themeProvider"
+import { useTheme } from "@/components/shadcn/themeProvider"
 import { useEffect, useState } from "react"
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/shadcn/button"
 
 export function ModeToggle() {
   const { theme, setTheme } = useTheme()

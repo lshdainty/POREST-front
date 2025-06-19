@@ -15,7 +15,7 @@ import {
   LogOut,
   User,
 } from "lucide-react" //icon
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/shadcn/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,9 +23,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+} from "@/components/shadcn/dropdown-menu"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/shadcn/tooltip"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/shadcn/avatar"
 import {
   Sidebar,
   SidebarContent,
@@ -34,7 +34,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/shadcn/sidebar"
 
 interface AppSidebarProps {
   className?: string
