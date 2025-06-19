@@ -4,6 +4,7 @@ import {
 } from "@/components/shadcn/sidebar"
 
 import { AppSidebar } from "@/view2/sidebar/app-sidebar"
+import { LayoutHeader } from "@/view2/layout-header"
 import { Outlet } from "react-router-dom"
 
 export default function Layout() {
@@ -18,6 +19,7 @@ export default function Layout() {
     >
       <AppSidebar variant="inset" />
       <SidebarInset>
+        <LayoutHeader />
         <Outlet/>
       </SidebarInset>
     </SidebarProvider>
