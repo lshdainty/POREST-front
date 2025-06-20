@@ -11,7 +11,7 @@ import { CalendarEvent, useCalendarEventsStore } from '@/store/CalendarEventStor
 import { useHolidayStore, convertHoliday } from '@/store/HolidayStore';
 import { useCalendarVisibleStore } from '@/store/CalendarVisibleStore';
 import { useCalendarSlotStore } from '@/store/CalendarSlotStore';
-import { getPeriodSchedules, ScheduleQueryKey } from '@/api/schedule';
+import { getPeriodCalendar, CalendarQueryKey } from '@/api/calendar';
 import { getHolidayByStartEndDate, HolidayQueryKey } from '@/api/holiday';
 import moment from 'moment';
 // @ts-ignore
@@ -66,9 +66,9 @@ const Content: React.FC = () => {
       select: (data: any) => data.data
   });
 
-  const {data: scheduleData, isLoading: scheduleLoading} = useSuspenseQuery({
-      queryKey: [ScheduleQueryKey.GET_PERIOD_SCHEDULES, range.start, range.end], 
-      queryFn: () => getPeriodSchedules(
+  const {data: calendarData, isLoading: calendarLoading} = useSuspenseQuery({
+      queryKey: [CalendarQueryKey.GET_PERIOD_CALENDAR, range.start, range.end], 
+      queryFn: () => getPeriodCalendar(
         moment(range.start).format('yyyy-MM-DDTHH:mm:ss'),
         moment(range.end).format('yyyy-MM-DDTHH:mm:ss')
       ),
@@ -94,8 +94,10 @@ const Content: React.FC = () => {
   }, [holidayData]);
 
   useEffect(() => {
-    if (scheduleData && !scheduleLoading && range) {
-      resetEvents(scheduleData, range.start, range.end);
+    if (calendarData && !calendarLoading && range) {
+      console.log('test log : ', calendarData);
+
+      resetEvents(calendarData, range.start, range.end);
       calendarVisibles.forEach(calendar => {
         setEventVisible(calendar.id, calendar.isVisible, 'calendar');
       });
@@ -103,7 +105,7 @@ const Content: React.FC = () => {
         setEventVisible(user.id, user.isVisible, 'user');
       });
     }
-  }, [scheduleData, range]);
+  }, [calendarData, range]);
 
   return (
     <>

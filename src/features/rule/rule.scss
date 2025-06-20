@@ -1,0 +1,24 @@
+@use '@/assets/scss/variables' as var;
+
+.rule {
+    .content {
+        display: flex;
+        flex-direction: column;
+        flex: 1 0 0;
+        overflow-y: auto;
+        padding-left: 15px;
+        -ms-overflow-style: none; /* 인터넷 익스플로러 */
+        scrollbar-width: none; /* 파이어폭스 */
+    }
+
+    .content::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+code {
+    padding: 3px 6px;
+    border: none;
+    border-radius: 3px;
+    background-color: #e9ecef;
+}
