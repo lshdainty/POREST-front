@@ -1,8 +1,16 @@
 import { useState } from 'react';
 import { ToolbarProps } from 'react-big-calendar';
 import { useHolidayStore } from '@/store/HolidayStore';
-import { Button, Flex, Radio } from 'antd';
-import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { Flex, Radio } from 'antd';
+import { Settings, ChevronLeft, ChevronRight } from "lucide-react"
+import { Button } from "@/components/shadcn/button"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/shadcn/popover"
+import { Label } from "@/components/shadcn/label"
+import { Switch } from "@/components/shadcn/switch"
 
 import '@/components/calendar/toolbar.scss';
 
@@ -14,49 +22,70 @@ const Toolbar: React.FC<ToolbarProps> = (props) => {
   const today = () => props.onNavigate('TODAY');
   const prev = () => props.onNavigate('PREV');
   const next = () => props.onNavigate('NEXT');
+  const [userView, setUserView] = useState(true);
 
   if (label.split('.')[0] !== baseYear) setBaseYear(label.split('.')[0]);
+
+  const userViewOption = (value: boolean) => {
+    value ?
+      document.getElementsByClassName('calendar_sidebar')[0].style.display = 'flex' :
+      document.getElementsByClassName('calendar_sidebar')[0].style.display = 'none';
+    setUserView(prev => !prev);
+  }
 
   return (
     <div className='rbc-toolbar'>
       <div className='rbc-toolbar-left'>
         <Flex gap='small' wrap>
-          <Button
-            color='default'
-            variant='outlined'
-            shape='round'
-            onClick={today}
-          >Today</Button>
-          <Button
-            color='default'
-            variant='outlined'
-            shape='circle'
-            onClick={prev}
-          ><LeftOutlined /></Button>
-          <Button
-            color='default'
-            variant='outlined'
-            shape='circle'
-            onClick={next}
-          ><RightOutlined /></Button>
+          <Button variant='outline' size="sm" className="!rounded-full" onClick={today}>
+            Today
+          </Button>
+          <Button variant="outline" size="icon" className="size-8 !flex !rounded-full" onClick={prev}>
+            <ChevronLeft />
+          </Button>
+          <Button variant="outline" size="icon" className="size-8 !flex !rounded-full" onClick={next}>
+            <ChevronRight />
+          </Button>
         </Flex>
         <div className='rbc-toolbar-label-group'>
           <span className='rbc-toolbar-label'>{label}</span>
         </div>
       </div>
-      <Radio.Group value={btnView} onChange={(e) => setBtnView(e.target.value)}>
-      {
-        props.views && props.views.map((view) => (
-          <Radio.Button
-            key={view}
-            value={view}
-            onClick={() => props.onView(view)}
-          >
-            {view}
-          </Radio.Button>
-        ))
-      }
-      </Radio.Group>
+      <div className="flex items-center">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" size="icon" className="size-8 !flex !mr-1.5 !rounded-full">
+              <Settings />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-40">
+            <div className="grid gap-3">
+              <div>
+                <h4 className="leading-none font-medium">Calendar Option</h4>
+              </div>
+              <div className="grid gap-2">
+                <div className="grid grid-cols-2 gap-4">
+                  <Label htmlFor="userView">userView</Label>
+                  <Switch className="justify-self-end" id="userView" checked={userView} onCheckedChange={userViewOption}/>
+                </div>
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
+        <Radio.Group value={btnView} onChange={(e) => setBtnView(e.target.value)}>
+        {
+          props.views && props.views.map((view) => (
+            <Radio.Button
+              key={view}
+              value={view}
+              onClick={() => props.onView(view)}
+            >
+              {view}
+            </Radio.Button>
+          ))
+        }
+        </Radio.Group>
+      </div>
     </div>
   );
 };

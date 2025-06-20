@@ -28,7 +28,7 @@ const navDatas = [
     title: "Dashboard",
     url: "/",
     icon: Home,
-    isActive: true,
+    // isActive: true,
     items: [
       { title: "Overview", url: "/overview" },
     ],

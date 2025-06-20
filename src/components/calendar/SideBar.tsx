@@ -60,7 +60,7 @@ const SideBar: React.FC = () => {
   }, []);
 
   return (
-    <div className='sidebar'>
+    <div className='calendar_sidebar'>
       <div className='sidebar_all'>
         <Checkbox
           checked={allChecked}
