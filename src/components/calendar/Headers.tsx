@@ -21,8 +21,8 @@ export const MonthDateHeader: React.FC<DateHeaderProps> = ({label, date}) => {
   return (
     <>
       <button type='button' className={`rbc-button-link ${className}`}>{label}</button>
-      {holiday.holidayType === 'PUBLIC' ? <span className={`rbc-public`}>{`${holiday.holidayName}`}</span> : null}
-      {holiday.holidayType === 'RECOMMEND' ? <span className={`rbc-recommend`}>{`${holiday.holidayName}`}</span> : null}
+      {holiday.holidayType === 'PUBLIC' ? <span className={`rbc-public text-xs`}>{`${holiday.holidayName}`}</span> : null}
+      {holiday.holidayType === 'RECOMMEND' ? <span className={`rbc-recommend text-xs`}>{`${holiday.holidayName}`}</span> : null}
     </>
   )
 }

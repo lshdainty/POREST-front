@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ToolbarProps } from 'react-big-calendar';
 import { useHolidayStore } from '@/store/HolidayStore';
 import { Flex, Radio } from 'antd';
@@ -11,8 +11,10 @@ import {
 } from "@/components/shadcn/popover"
 import { Label } from "@/components/shadcn/label"
 import { Switch } from "@/components/shadcn/switch"
+import { useIsMobile } from '@/hooks/use-mobile';
 
 import '@/components/calendar/toolbar.scss';
+
 
 const Toolbar: React.FC<ToolbarProps> = (props) => {
   const label = props.label;
@@ -23,6 +25,7 @@ const Toolbar: React.FC<ToolbarProps> = (props) => {
   const prev = () => props.onNavigate('PREV');
   const next = () => props.onNavigate('NEXT');
   const [userView, setUserView] = useState(true);
+  const isMobile = useIsMobile();
 
   if (label.split('.')[0] !== baseYear) setBaseYear(label.split('.')[0]);
 
@@ -32,6 +35,10 @@ const Toolbar: React.FC<ToolbarProps> = (props) => {
       document.getElementsByClassName('calendar_sidebar')[0].style.display = 'none';
     setUserView(prev => !prev);
   }
+
+  useEffect(() => {
+    isMobile ? userViewOption(false) : userViewOption(true);
+  }, [isMobile]);
 
   return (
     <div className='rbc-toolbar'>
