@@ -1,7 +1,7 @@
 import { BrowserRouter } from 'react-router-dom';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { ClientProviders } from '@/ClientProviders';
-import { ThemeProvider } from '@/components/shadcn/themeProvider';
+import { ClientProviders } from '@/Client-providers';
+import { ThemeProvider } from '@/components/shadcn/theme-provider';
 import Router from '@/Router';
 /*
   react19에서 antd 호환성 해결
