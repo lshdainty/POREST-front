@@ -1,6 +1,4 @@
-import {
-  IconInnerShadowTop,
-} from "@tabler/icons-react"
+import Logo from '@/assets/img/logo.svg';
 
 import {
   SidebarMenu,
@@ -14,12 +12,9 @@ export function NavLogo() {
       <SidebarMenuItem>
         <SidebarMenuButton
           asChild
-          className="data-[slot=sidebar-menu-button]:!p-1.5"
+          className="data-[slot=sidebar-menu-button]:!p-0"
         >
-          <a href="#">
-            <IconInnerShadowTop className="!size-5" />
-            <span className="text-base font-semibold">Acme Inc.</span>
-          </a>
+          <img src={Logo} alt='logo' className="h-10"></img>
         </SidebarMenuButton>
       </SidebarMenuItem>
     </SidebarMenu>

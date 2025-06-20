@@ -5,8 +5,9 @@ import { Card, CardContent } from "@/components/shadcn/card"
 import { Input } from "@/components/shadcn/input"
 import { Label } from "@/components/shadcn/label"
 import loginBG from '@/assets/img/loginbg.jpg';
+import logo from '@/assets/img/logo.svg';
 
-export function Login({
+export default function Login({
   className,
   ...props
 }: React.ComponentProps<"div">) {
@@ -36,17 +37,14 @@ export function Login({
               >
                 <div className="flex flex-col justify-center gap-6">
                   <div className="flex flex-col items-center text-center">
-                    <h1 className="text-2xl font-bold">Welcome back</h1>
-                    <p className="text-muted-foreground text-balance">
-                      Login to your Acme Inc account
-                    </p>
+                    <img src={logo} alt="Image"></img>
                   </div>
                   <div className="grid gap-3">
                     <Label htmlFor="email">Email</Label>
                     <Input
                       id="email"
                       type="email"
-                      placeholder="m@example.com"
+                      placeholder="example@gmail.com"
                       required
                     />
                   </div>
@@ -55,7 +53,7 @@ export function Login({
                       <Label htmlFor="password">Password</Label>
                       <a
                         href="#"
-                        className="ml-auto text-sm underline-offset-2 hover:underline"
+                        className="ml-auto text-sm underline-offset-2 hover:underline pl-4"
                       >
                         Forgot your password?
                       </a>
