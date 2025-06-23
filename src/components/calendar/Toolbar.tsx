@@ -13,9 +13,6 @@ import { Label } from "@/components/shadcn/label"
 import { Switch } from "@/components/shadcn/switch"
 import { useIsMobile } from '@/hooks/use-mobile';
 
-import '@/components/calendar/toolbar.scss';
-
-
 const Toolbar: React.FC<ToolbarProps> = (props) => {
   const label = props.label;
   const [btnView , setBtnView] = useState<string>(props.view);
@@ -33,7 +30,7 @@ const Toolbar: React.FC<ToolbarProps> = (props) => {
     value ?
       document.getElementsByClassName('calendar_sidebar')[0].style.display = 'flex' :
       document.getElementsByClassName('calendar_sidebar')[0].style.display = 'none';
-    setUserView(prev => !prev);
+    setUserView(value);
   }
 
   useEffect(() => {
@@ -41,27 +38,27 @@ const Toolbar: React.FC<ToolbarProps> = (props) => {
   }, [isMobile]);
 
   return (
-    <div className='rbc-toolbar'>
-      <div className='rbc-toolbar-left'>
+    <div className='flex justify-between items-center mb-2.5'>
+      <div className='flex'>
         <Flex gap='small' wrap>
-          <Button variant='outline' size="sm" className="!rounded-full" onClick={today}>
+          <Button variant='outline' size="sm" className="rounded-full" onClick={today}>
             Today
           </Button>
-          <Button variant="outline" size="icon" className="size-8 !flex !rounded-full" onClick={prev}>
+          <Button variant="outline" size="icon" className="size-8 rounded-full" onClick={prev}>
             <ChevronLeft />
           </Button>
-          <Button variant="outline" size="icon" className="size-8 !flex !rounded-full" onClick={next}>
+          <Button variant="outline" size="icon" className="size-8 rounded-full" onClick={next}>
             <ChevronRight />
           </Button>
         </Flex>
-        <div className='rbc-toolbar-label-group'>
-          <span className='rbc-toolbar-label'>{label}</span>
+        <div className='flex justify-center items-center pl-1'>
+          <span className='text-lg mx-2'>{label}</span>
         </div>
       </div>
       <div className="flex items-center">
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="outline" size="icon" className="size-8 !flex !mr-1.5 !rounded-full">
+            <Button variant="outline" size="icon" className="size-8 mr-2 rounded-full">
               <Settings />
             </Button>
           </PopoverTrigger>
