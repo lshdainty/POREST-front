@@ -1,16 +1,13 @@
 $cell-border-width: 1px;
 $cell-border-style: solid;
-$cell-border-color: #e5e5e5;
-
-$text-color: #333333;
 
 .rbc-header {
-    border-bottom : $cell-border-width $cell-border-style $cell-border-color;
+    border-bottom : $cell-border-width $cell-border-style var(--border);
     padding: 0 7px;
     text-align: unset;
     font-weight: unset;
     font-size: 85%;
-    color: $text-color;
+    color: var(--foreground);
     & + & {
         border-left: 0px;
     }
@@ -21,9 +18,9 @@ $text-color: #333333;
 }
 
 .rbc-month-row {
-    border-right : $cell-border-width $cell-border-style $cell-border-color;
-    border-left : $cell-border-width $cell-border-style $cell-border-color;
-    border-bottom: $cell-border-width $cell-border-style $cell-border-color;
+    border-right : $cell-border-width $cell-border-style var(--border);
+    border-left : $cell-border-width $cell-border-style var(--border);
+    border-bottom: $cell-border-width $cell-border-style var(--border);
 
     & + & {
         border-top: 0px;
@@ -31,28 +28,34 @@ $text-color: #333333;
 }
 
 .rbc-off-range-bg {
-    background-color: rgb(252, 252, 252);
+    background-color: var(--muted);
+    opacity: 0.5;
 }
 
 .rbc-off-range {
     button {
-        color: rgb(51, 51, 51, 0.3);
+        color: var(--foreground);
+        opacity: 0.2;
     }
 
     .rbc-sunday {
-        color: rgb(255, 64, 64, 0.3);
+        color: #ff4040;
+        opacity: 0.3;
     }
 
     .rbc-saturday {
-        color: rgb(64, 64, 255, 0.3);
+        color: #4040ff;
+        opacity: 0.3;
     }
 
     .rbc-public {
-        color: rgb(255, 64, 64, 0.3);
+        color: #ff4040;
+        opacity: 0.3;
     }
 
     .rbc-recommend {
-        color: rgb(64, 64, 255, 0.3);
+        color: #4040ff;
+        opacity: 0.3;
     }
 }
 
@@ -74,13 +77,13 @@ $text-color: #333333;
 
 .rbc-day-bg {
     & + & {
-        border-left: $cell-border-width $cell-border-style $cell-border-color;
+        border-left: $cell-border-width $cell-border-style var(--border);
     }
 }
 
 .rbc-button-link {
     font-size: 15px;
-    color: $text-color;
+    color: var(--foreground);
 }
 
 .rbc-today {
@@ -89,7 +92,7 @@ $text-color: #333333;
 
 .rbc-selected-cell {
     background-color: rgba(81, 92, 230, 0.05);
-    border: 1px $cell-border-style rgb(81, 92, 230);
+    border: $cell-border-width $cell-border-style rgb(81, 92, 230);
 }
 
 .rbc-sunday {
