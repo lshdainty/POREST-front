@@ -4,7 +4,9 @@ import { useCalendarType } from '@/hooks/useCalendarType';
 import { useCalendarVisibleStore } from '@/store/CalendarVisibleStore';
 import { useCalendarEventsStore } from '@/store/CalendarEventStore';
 import { UserQueryKey, getUsers } from '@/api/user';
-import { Checkbox, Divider } from 'antd';
+import { Divider } from 'antd';
+import { Checkbox } from '@/components/shadcn/checkbox';
+import { Label } from '@/components/shadcn/label';
 import { Circle } from '@mui/icons-material';
 
 import '@/components/calendar/sideBar.scss';
@@ -63,8 +65,9 @@ const SideBar: React.FC = () => {
     <div className='calendar_sidebar'>
       <div className='sidebar_all'>
         <Checkbox
+          id='viewAll'
           checked={allChecked}
-          onChange={() => {
+          onCheckedChange={() => {
             setAllChecked(prev => !prev);
             setAllVisible(!allChecked);
             userVisibles.forEach(visible => {
@@ -74,8 +77,8 @@ const SideBar: React.FC = () => {
               setEventVisible(visible.id as string, !allChecked, 'calendar');
             });
           }}
-        >View all
-        </Checkbox>
+        / >
+        <Label htmlFor='viewAll' className='pl-2.5'>View all</Label>
       </div>
       <Divider />
       <div className='sidebar_btn_group'>
