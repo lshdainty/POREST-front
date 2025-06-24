@@ -1,11 +1,4 @@
 import {
-  IconCreditCard,
-  IconDotsVertical,
-  IconLogout,
-  IconNotification,
-  IconUserCircle,
-} from "@tabler/icons-react"
-import {
   Avatar,
   AvatarFallback,
   AvatarImage,
@@ -25,6 +18,13 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/shadcn/sidebar"
+import {
+  EllipsisVertical,
+  CircleUser,
+  CreditCard,
+  MessageSquareDot,
+  LogOut
+} from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
 export function NavUser({
@@ -58,7 +58,7 @@ export function NavUser({
                   {user.email}
                 </span>
               </div>
-              <IconDotsVertical className="ml-auto size-4" />
+              <EllipsisVertical className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -84,15 +84,15 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <IconUserCircle />
+                <CircleUser />
                 Account
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <IconCreditCard />
+                <CreditCard />
                 Billing
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <IconNotification />
+                <MessageSquareDot />
                 Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -104,7 +104,7 @@ export function NavUser({
                 }
               }
             >
-              <IconLogout />
+              <LogOut />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
