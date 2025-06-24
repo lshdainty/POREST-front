@@ -4,8 +4,7 @@ const config: Config = {
 	darkMode: "class",
 	content: [
 		"./src/index.css",
-		"./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-		"./src/view2/**/*.{js,ts,jsx,tsx,mdx}",
+		"./src/**/*.{js,jsx,ts,tsx}",
 		"*.{js,ts,jsx,tsx,mdx}"
 	],
 	theme: {
@@ -91,6 +90,9 @@ const config: Config = {
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [
+		require("tailwindcss-animate"),
+		require('@tailwindcss/typography')
+	],
 };
 export default config;
