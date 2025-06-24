@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { ToolbarProps } from 'react-big-calendar';
 import { useHolidayStore } from '@/store/HolidayStore';
-import { Flex, Radio } from 'antd';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Flex } from 'antd';
 import { Settings, ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/shadcn/button"
 import {
@@ -9,45 +10,46 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/shadcn/popover"
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger
+} from "@/components/shadcn/tabs"
 import { Label } from "@/components/shadcn/label"
 import { Switch } from "@/components/shadcn/switch"
-import { useIsMobile } from '@/hooks/use-mobile';
 
 const Toolbar: React.FC<ToolbarProps> = (props) => {
   const label = props.label;
-  const [btnView , setBtnView] = useState<string>(props.view);
-  const {baseYear} = useHolidayStore();
-  const {setBaseYear} = useHolidayStore(s => s.actions);
-  const today = () => props.onNavigate('TODAY');
-  const prev = () => props.onNavigate('PREV');
-  const next = () => props.onNavigate('NEXT');
-  const [userView, setUserView] = useState(true);
   const isMobile = useIsMobile();
+  const [calendarView , setCalendarView] = useState<string>(props.view);
+  const { baseYear } = useHolidayStore();
+  const { setBaseYear } = useHolidayStore(s => s.actions);
+  const [calendarSidebarView, setCalendarSidebarView] = useState(true);
 
   if (label.split('.')[0] !== baseYear) setBaseYear(label.split('.')[0]);
 
-  const userViewOption = (value: boolean) => {
+  const calendarSidebarViewOption = (value: boolean) => {
     value ?
       document.getElementsByClassName('calendar_sidebar')[0].style.display = 'flex' :
       document.getElementsByClassName('calendar_sidebar')[0].style.display = 'none';
-    setUserView(value);
+    setCalendarSidebarView(value);
   }
 
   useEffect(() => {
-    isMobile ? userViewOption(false) : userViewOption(true);
+    isMobile ? calendarSidebarViewOption(false) : calendarSidebarViewOption(true);
   }, [isMobile]);
 
   return (
     <div className='flex justify-between items-center mb-2.5'>
       <div className='flex'>
         <Flex gap='small' wrap>
-          <Button variant='outline' size="sm" className="rounded-full" onClick={today}>
+          <Button variant='outline' size="sm" className="rounded-full" onClick={ () => props.onNavigate('TODAY') }>
             Today
           </Button>
-          <Button variant="outline" size="icon" className="size-8 rounded-full" onClick={prev}>
+          <Button variant="outline" size="icon" className="size-8 rounded-full" onClick={ () => props.onNavigate('PREV') }>
             <ChevronLeft />
           </Button>
-          <Button variant="outline" size="icon" className="size-8 rounded-full" onClick={next}>
+          <Button variant="outline" size="icon" className="size-8 rounded-full" onClick={ () => props.onNavigate('NEXT') }>
             <ChevronRight />
           </Button>
         </Flex>
@@ -69,26 +71,32 @@ const Toolbar: React.FC<ToolbarProps> = (props) => {
               </div>
               <div className="grid gap-2">
                 <div className="grid grid-cols-2 gap-4">
-                  <Label htmlFor="userView">userView</Label>
-                  <Switch className="justify-self-end" id="userView" checked={userView} onCheckedChange={userViewOption}/>
+                  <Label htmlFor="calendarSidebarView">Sidebar</Label>
+                  <Switch className="justify-self-end" id="calendarSidebarView" checked={calendarSidebarView} onCheckedChange={calendarSidebarViewOption}/>
                 </div>
               </div>
             </div>
           </PopoverContent>
         </Popover>
-        <Radio.Group value={btnView} onChange={(e) => setBtnView(e.target.value)}>
-        {
-          props.views && props.views.map((view) => (
-            <Radio.Button
-              key={view}
-              value={view}
-              onClick={() => props.onView(view)}
-            >
-              {view}
-            </Radio.Button>
-          ))
-        }
-        </Radio.Group>
+        <Tabs
+          defaultValue='month'
+          value={calendarView}
+          onValueChange={ (v) => setCalendarView(v) }
+        >
+          <TabsList>
+            {
+              props.views && props.views.map((view) => (
+                <TabsTrigger
+                  key={view}
+                  value={view}
+                  onClick={ () => props.onView(view) }
+                >
+                  {view}
+                </TabsTrigger>
+              ))
+            }
+          </TabsList>
+        </Tabs>
       </div>
     </div>
   );
