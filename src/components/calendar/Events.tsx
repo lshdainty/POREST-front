@@ -1,7 +1,9 @@
+import { useEffect } from 'react';
 import { EventProps } from 'react-big-calendar';
 import { convertColorCode } from '@/hooks/useCalendarType';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { Popover } from 'antd';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { AccessTime, Person, Circle, Description } from '@mui/icons-material';
 
 import '@/components/calendar/events.scss'
@@ -17,8 +19,8 @@ export const convertEventStyle = (event) => {
 
 const EventPopup: React.FC<EventProps> = (props) => {
   const event = props.event;
-  const start = (event.rawData.isAllDay === true) ? moment(event.start).format('yyyy-MM-DD') : moment(event.start).format('yyyy-MM-DD HH:mm');
-  const end = (event.rawData.isAllDay === true) ? moment(event.end).format('yyyy-MM-DD') : moment(event.end).format('HH:mm');
+  const start = (event.rawData.isAllDay === true) ? dayjs(event.start).format('YYYY-MM-DD') : dayjs(event.start).format('YYYY-MM-DD HH:mm');
+  const end = (event.rawData.isAllDay === true) ? dayjs(event.end).format('YYYY-MM-DD') : dayjs(event.end).format('HH:mm');
 
   return (
     <>
@@ -36,10 +38,27 @@ const EventPopup: React.FC<EventProps> = (props) => {
 
 const Events: React.FC<EventProps> = (props) => {
   const event = props.event;
+  const isMobile = useIsMobile();
+
+  useEffect(() => {
+    const anchorEl = document.getElementsByClassName('rbc-addons-dnd-resize-ew-anchor');
+    for (let i = 0; i < anchorEl.length; i++) {
+      isMobile ? anchorEl[i].style.top = '5px' : anchorEl[i].style.top = '7px';
+    }
+  }, [isMobile]);
 
   return (
     <Popover content={<EventPopup {...props} />} trigger="click">
-      <div>{`${event.rawData.userName} ${event.rawData.calendarName}`}</div>
+      <div
+        className={
+          isMobile ? 
+            "text-sm"
+          : 
+            "text-base"
+        }
+      >
+        {`${event.rawData.userName} ${event.rawData.calendarName}`}
+      </div>
     </Popover>
   );
 }
