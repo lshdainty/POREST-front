@@ -6,7 +6,7 @@ import { Formats } from '@/components/calendar/Formats';
 import Toolbar from '@/components/calendar/Toolbar';
 import Events, { convertEventStyle } from '@/components/calendar/Events';
 import { MonthHeader, MonthDateHeader } from '@/components/calendar/Headers';
-import EventDrawer from '@/components/calendar/EventDrawer';
+import { RegistEventDialog } from '@/components/calendar/RegistEventDialog';
 import { CalendarEvent, useCalendarEventsStore } from '@/store/CalendarEventStore';
 import { useHolidayStore, convertHoliday } from '@/store/HolidayStore';
 import { useCalendarVisibleStore } from '@/store/CalendarVisibleStore';
@@ -80,12 +80,6 @@ const Content: React.FC = () => {
     setOpen(true);
   }, [setSlots, setOpen]);
 
-  const test = ({event, start, end}: EventInteractionArgs<object>) => {
-    console.log(event);
-    console.log(start);
-    console.log(end);
-  }
-
   useEffect(() => {
     if (holidayData && !holidayLoading) {
       const formattedData = convertHoliday(holidayData);
@@ -95,8 +89,6 @@ const Content: React.FC = () => {
 
   useEffect(() => {
     if (calendarData && !calendarLoading && range) {
-      console.log('test log : ', calendarData);
-
       resetEvents(calendarData, range.start, range.end);
       calendarVisibles.forEach(calendar => {
         setEventVisible(calendar.id, calendar.isVisible, 'calendar');
@@ -141,12 +133,12 @@ const Content: React.FC = () => {
         onRangeChange={onRangeChange}
 
         // drag and drop
-        onEventDrop={test}
+        // onEventDrop={test}
         // onEventResize={resizeEvent}
 
         onSelectSlot={handleSelectSlot}
       />
-      <EventDrawer />
+      <RegistEventDialog />
     </>
   );
 };

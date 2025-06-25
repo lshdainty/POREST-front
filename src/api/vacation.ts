@@ -13,12 +13,12 @@ export interface TSchedule {
 }
 
 export const enum VacationQueryKey {
-  CHECK_POSSIBLE = 'checkPossible'
+  GET_AVAILABLE_VACATION = 'getAvailableVacation',
 }
 
-export const checkPossible = (start: string, end: string): Promise<boolean> => {
+export const getAvailableVacation = (userNo: number, startDate: string): Promise<boolean> => {
   return api.request({
     method: 'get',
-    url: `/vacation/check-possible/${1}?startDate=${start}&endDate=${end}`
+    url: `/vacation/available/${userNo}?startDate=${startDate}`
   });
 }
