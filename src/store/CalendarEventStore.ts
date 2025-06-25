@@ -43,10 +43,10 @@ export const useCalendarEventsStore = create<{
       let cMonth = -1;
       let idx = 0;
 
-      if (document.getElementsByClassName('rbc-toolbar-label').length === 0) {
+      if (document.getElementById('calendarLabel') === undefined || document.getElementById('calendarLabel') === null) {
         cMonth = moment().month();
       } else {
-        cMonth = moment(document.getElementsByClassName('rbc-toolbar-label')[0].textContent, 'yyyy.MM').month();
+        cMonth = moment(document.getElementById('calendarLabel').textContent, 'yyyy.MM').month();
       }
 
       const _events: CalendarEvent[] = calendar.map(c => ({

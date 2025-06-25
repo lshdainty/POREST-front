@@ -54,7 +54,7 @@ const Toolbar: React.FC<ToolbarProps> = (props) => {
           </Button>
         </Flex>
         <div className='flex justify-center items-center pl-1'>
-          <span className='text-lg mx-2'>{label}</span>
+          <span id='calendarLabel' className='text-lg mx-2'>{label}</span>
         </div>
       </div>
       <div className="flex items-center">
