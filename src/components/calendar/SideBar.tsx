@@ -4,10 +4,11 @@ import { useCalendarType } from '@/hooks/useCalendarType';
 import { useCalendarVisibleStore } from '@/store/CalendarVisibleStore';
 import { useCalendarEventsStore } from '@/store/CalendarEventStore';
 import { UserQueryKey, getUsers } from '@/api/user';
-import { Divider } from 'antd';
+import { useTheme } from "@/components/shadcn/theme-provider"
 import { Checkbox } from '@/components/shadcn/checkbox';
 import { Label } from '@/components/shadcn/label';
 import { Circle } from '@mui/icons-material';
+import { Separator } from '@/components/shadcn/separator';
 
 import '@/components/calendar/sideBar.scss';
 
@@ -34,6 +35,7 @@ const SideBar: React.FC = () => {
   } = useCalendarVisibleStore(s => s.actions);
   const { userVisibles, calendarVisibles, userAllVisible, calendarAllVisible } = useCalendarVisibleStore();
   const { setEventVisible } = useCalendarEventsStore(s => s.actions);
+  const { theme } = useTheme();
 
   const editCss = (id: number | string, type: string, colorCode: string) => {
     let findVisible
@@ -49,8 +51,8 @@ const SideBar: React.FC = () => {
     return (findVisible?.isVisible) ? {
       color: colorCode
     } : {
-      color: '#040f1f',
-      opacity: 0.2
+      color: theme === 'light' ? '#f4f4f4' : '#404040',
+      opacity: theme === 'light' ? 1.0 : 0.5
     }
   }
 
@@ -80,7 +82,7 @@ const SideBar: React.FC = () => {
         / >
         <Label htmlFor='viewAll' className='pl-2.5'>View all</Label>
       </div>
-      <Divider />
+      <Separator className="my-3" />
       <div className='sidebar_btn_group'>
         <ul id='user_group' className='sidebar_list'>
           <li
@@ -96,8 +98,8 @@ const SideBar: React.FC = () => {
               (userAllVisible) ? {
                 color: '#495771'
               } : {
-                color: '#040f1f',
-                opacity: 0.2
+                color: theme === 'light' ? '#f4f4f4' : '#404040',
+                opacity: theme === 'light' ? 1.0 : 0.5
               }
             } />
             <div className='sidebar_list_name'>User all</div>
@@ -120,7 +122,7 @@ const SideBar: React.FC = () => {
             ))
           }
         </ul>
-        <Divider />
+        <Separator className="my-3" />
         <ul id='calendar_group' className='sidebar_list'>
           <li
             key={'calendarAllVisible'}
@@ -135,9 +137,9 @@ const SideBar: React.FC = () => {
               (calendarAllVisible) ? {
                 color: '#495771'
               } : {
-                color: '#040f1f',
-                opacity: 0.2
-              } 
+                color: theme === 'light' ? '#f4f4f4' : '#404040',
+                opacity: theme === 'light' ? 1.0 : 0.5
+              }
             } />
             <div className='sidebar_list_name'>Calendar all</div>
           </li>

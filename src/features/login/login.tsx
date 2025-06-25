@@ -4,14 +4,17 @@ import { Button } from "@/components/shadcn/button"
 import { Card, CardContent } from "@/components/shadcn/card"
 import { Input } from "@/components/shadcn/input"
 import { Label } from "@/components/shadcn/label"
+import { useTheme } from "@/components/shadcn/theme-provider"
 import loginBG from '@/assets/img/loginbg.jpg';
-import logo from '@/assets/img/logo.svg';
+import Logo from '@/assets/img/logo.svg';
+import LogoDark from '@/assets/img/logo_dark.svg';
 
 export default function Login({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const navigate = useNavigate();
+  const { theme } = useTheme();
   const onFinish = (values: any) => {
     // 로그인 로직 추가
     localStorage.setItem('key', '');
@@ -28,7 +31,7 @@ export default function Login({
                 <img
                   src={loginBG}
                   alt="Image"
-                  className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+                  className="absolute inset-0 h-full w-full object-cover"
                 />
               </div>
               <form
@@ -37,7 +40,7 @@ export default function Login({
               >
                 <div className="flex flex-col justify-center gap-6">
                   <div className="flex flex-col items-center text-center">
-                    <img src={logo} alt="Image"></img>
+                    <img src={ theme == "light" ? Logo : LogoDark } alt="logo"></img>
                   </div>
                   <div className="grid gap-3">
                     <Label htmlFor="email">Email</Label>
