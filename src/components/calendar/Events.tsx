@@ -4,9 +4,8 @@ import { convertColorCode } from '@/hooks/useCalendarType';
 import dayjs from 'dayjs';
 import { Popover } from 'antd';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { AccessTime, Person, Circle, Description } from '@mui/icons-material';
-
-import '@/components/calendar/events.scss'
+import { Circle } from '@mui/icons-material';
+import { Clock4, UserRound, FileText } from 'lucide-react';
 
 export const convertEventStyle = (event) => {
   return {
@@ -24,14 +23,14 @@ const EventPopup: React.FC<EventProps> = (props) => {
 
   return (
     <>
-    <div className='rbc-event-content-detail'>
-      <div className='rbc-event-content-detail-title'>{`${event.rawData.userName} ${event.rawData.calendarName}`}</div>
-      <div className='rbc-event-content-detail-text'><AccessTime />{`${start} - ${end}`}</div>
-      <div className='rbc-event-content-detail-text'><Person />{event.rawData.userName}</div>
-      <div className='rbc-event-content-detail-text'><Circle sx={{color:event.rawData.colorCode}} />{event.rawData.calendarName}</div>
-      <div className='rbc-event-content-detail-text'><Description />{event.rawData.calendarDesc}</div>
-    </div>
-    <div className='rbc-event-content-detail-line' style={{backgroundColor:event.rawData.colorCode}}></div>
+      <div className='p-4'>
+        <div className='text-sm font-bold leading-relaxed break-all mb-2.5'>{`${event.rawData.userName} ${event.rawData.calendarName}`}</div>
+        <div className='flex items-center text-xs leading-[1.7]'><Clock4 className='w-3 h-3 mr-1' />{`${start} - ${end}`}</div>
+        <div className='flex items-center text-xs leading-[1.7]'><UserRound className='w-3 h-3 mr-1' />{event.rawData.userName}</div>
+        <div className='flex items-center text-xs leading-[1.7]'><Circle sx={{fontSize: '12px', lineHeight: '1.7', marginRight: '4px', color:event.rawData.colorCode}} />{event.rawData.calendarName}</div>
+        <div className='flex items-center text-xs leading-[1.7]'><FileText className='w-3 h-3 mr-1' />{event.rawData.calendarDesc}</div>
+      </div>
+      <div className='absolute rounded-t-[4px] w-full h-1 border-0 top-0' style={{backgroundColor:event.rawData.colorCode}}></div>
     </>
   );
 }
@@ -41,22 +40,39 @@ const Events: React.FC<EventProps> = (props) => {
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    const anchorEl = document.getElementsByClassName('rbc-addons-dnd-resize-ew-anchor');
-    for (let i = 0; i < anchorEl.length; i++) {
-      isMobile ? anchorEl[i].style.top = '5px' : anchorEl[i].style.top = '7px';
-    }
+    const anchorEl = document.querySelectorAll('.rbc-addons-dnd-resize-ew-anchor');
+    anchorEl.forEach((element) => {
+      const el = element as HTMLElement;
+      isMobile ? el.style.top = '5px' : el.style.top = '7px';
+    });
   }, [isMobile]);
 
+  useEffect(() => {
+    const rbcRowSegmentEl = document.querySelectorAll('.rbc-row-segment');
+    rbcRowSegmentEl.forEach((element) => {
+      const el = element as HTMLElement;
+      el.style.padding = '1px 4px 1px 3px';
+    });
+
+    const rbcEventEl = document.querySelectorAll('.rbc-event');
+    rbcEventEl.forEach((element) => {
+      const el = element as HTMLElement;
+      el.style.padding = '1px 5px';
+    });
+  }, [])
+
   return (
-    <Popover content={<EventPopup {...props} />} trigger="click">
-      <div
-        className={
-          isMobile ? 
-            "text-sm"
-          : 
-            "text-base"
+    <Popover
+      content={<EventPopup {...props} />}
+      trigger="click"
+      styles={{
+        body: {
+          borderRadius: '4px',
+          padding: 'unset'
         }
-      >
+      }}
+    >
+      <div className={isMobile ? "text-sm pl-1" : "text-base pl-1"}>
         {`${event.rawData.userName} ${event.rawData.calendarName}`}
       </div>
     </Popover>

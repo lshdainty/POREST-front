@@ -25,18 +25,36 @@ const Toolbar: React.FC<ToolbarProps> = (props) => {
   const { baseYear } = useHolidayStore();
   const { setBaseYear } = useHolidayStore(s => s.actions);
   const [calendarSidebarView, setCalendarSidebarView] = useState(true);
+  const [holidayTextView, setholidayTextView] = useState(true);
 
   if (label.split('.')[0] !== baseYear) setBaseYear(label.split('.')[0]);
 
   const calendarSidebarViewOption = (value: boolean) => {
-    value ?
-      document.getElementsByClassName('calendar_sidebar')[0].style.display = 'flex' :
-      document.getElementsByClassName('calendar_sidebar')[0].style.display = 'none';
+    const calendarSidebarEl = document.querySelectorAll('.calendar_sidebar');
+    calendarSidebarEl && calendarSidebarEl.forEach(element => {
+      const el = element as HTMLElement;
+      value ? el.style.display = 'flex' : el.style.display = 'none';
+    });
     setCalendarSidebarView(value);
+  }
+
+  const holidayTextViewOption = (value: boolean) => {
+    const holidayPublicEl = document.querySelectorAll('.holiday-public');
+    holidayPublicEl && holidayPublicEl.forEach(element => {
+      const el = element as HTMLElement;
+      value ? el.style.display = 'inline' : el.style.display = 'none';
+    });
+    const holidayRecommendEl = document.querySelectorAll('.holiday-recommend');
+    holidayRecommendEl && holidayRecommendEl.forEach(element => {
+      const el = element as HTMLElement;
+      value ? el.style.display = 'inline' : el.style.display = 'none';
+    });
+    setholidayTextView(value);
   }
 
   useEffect(() => {
     isMobile ? calendarSidebarViewOption(false) : calendarSidebarViewOption(true);
+    isMobile ? holidayTextViewOption(false) : holidayTextViewOption(true);
   }, [isMobile]);
 
   return (
@@ -73,6 +91,10 @@ const Toolbar: React.FC<ToolbarProps> = (props) => {
                 <div className="grid grid-cols-2 gap-4">
                   <Label htmlFor="calendarSidebarView">Sidebar</Label>
                   <Switch className="justify-self-end" id="calendarSidebarView" checked={calendarSidebarView} onCheckedChange={calendarSidebarViewOption}/>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <Label htmlFor="HolidayView">Holiday Text</Label>
+                  <Switch className="justify-self-end" id="HolidayView" checked={holidayTextView} onCheckedChange={holidayTextViewOption}/>
                 </div>
               </div>
             </div>

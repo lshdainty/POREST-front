@@ -13,14 +13,6 @@ import { Separator } from '@/components/shadcn/separator';
 import '@/components/calendar/sideBar.scss';
 
 const SideBar: React.FC = () => {
-  const {data: usersData, isLoading: usersLoading} = useSuspenseQuery(
-    {
-      queryKey: [UserQueryKey.GET_USERS],
-      queryFn: () => getUsers(),
-      select: (data: any) => data.data
-    }
-  );
-
   const calendarType = useCalendarType();
   const [allChecked, setAllChecked] = useState(true);
 
@@ -55,6 +47,14 @@ const SideBar: React.FC = () => {
       opacity: theme === 'light' ? 1.0 : 0.5
     }
   }
+
+  const {data: usersData, isLoading: usersLoading} = useSuspenseQuery(
+    {
+      queryKey: [UserQueryKey.GET_USERS],
+      queryFn: () => getUsers(),
+      select: (data: any) => data.data
+    }
+  );
 
   useEffect(() => {
     if (usersData && !usersLoading) {
@@ -95,13 +95,14 @@ const SideBar: React.FC = () => {
             }}
           >
             <Circle sx={
-              (userAllVisible) ? {
-                color: '#495771'
-              } : {
-                color: theme === 'light' ? '#f4f4f4' : '#404040',
-                opacity: theme === 'light' ? 1.0 : 0.5
+                (userAllVisible) ? {
+                  color: '#495771'
+                } : {
+                  color: theme === 'light' ? '#f4f4f4' : '#404040',
+                  opacity: theme === 'light' ? 1.0 : 0.5
+                }
               }
-            } />
+            />
             <div className='sidebar_list_name'>User all</div>
           </li>
           {
@@ -134,13 +135,14 @@ const SideBar: React.FC = () => {
             }}
           >
             <Circle sx={
-              (calendarAllVisible) ? {
-                color: '#495771'
-              } : {
-                color: theme === 'light' ? '#f4f4f4' : '#404040',
-                opacity: theme === 'light' ? 1.0 : 0.5
+                (calendarAllVisible) ? {
+                  color: '#495771'
+                } : {
+                  color: theme === 'light' ? '#f4f4f4' : '#404040',
+                  opacity: theme === 'light' ? 1.0 : 0.5
+                }
               }
-            } />
+            />
             <div className='sidebar_list_name'>Calendar all</div>
           </li>
           {

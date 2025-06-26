@@ -86,33 +86,6 @@ $cell-border-style: solid;
     opacity: 0.5;
 }
 
-.rbc-off-range {
-    button {
-        color: var(--foreground);
-        opacity: 0.2;
-    }
-
-    .rbc-sunday {
-        color: #ff4040;
-        opacity: 0.3;
-    }
-
-    .rbc-saturday {
-        color: #4040ff;
-        opacity: 0.3;
-    }
-
-    .rbc-public {
-        color: #ff4040;
-        opacity: 0.3;
-    }
-
-    .rbc-recommend {
-        color: #4040ff;
-        opacity: 0.3;
-    }
-}
-
 .rbc-date-cell {
     text-align: left;
     padding-left: 3px;
@@ -135,11 +108,6 @@ $cell-border-style: solid;
     }
 }
 
-.rbc-button-link {
-    font-size: 15px;
-    color: var(--foreground);
-}
-
 .rbc-today {
     background-color: unset;
 }
@@ -147,20 +115,4 @@ $cell-border-style: solid;
 .rbc-selected-cell {
     background-color: rgba(81, 92, 230, 0.05);
     border: $cell-border-width $cell-border-style rgb(81, 92, 230);
-}
-
-.rbc-sunday {
-    color: #ff4040;
-}
-
-.rbc-saturday {
-    color: #4040ff;
-}
-
-.rbc-public {
-    color: #ff4040;
-}
-
-.rbc-recommend {
-    color: #4040ff;
 }
