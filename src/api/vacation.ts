@@ -13,7 +13,16 @@ export interface TSchedule {
 }
 
 export const enum VacationQueryKey {
+  POST_USE_VACATION = 'postUseVacation',
   GET_AVAILABLE_VACATION = 'getAvailableVacation',
+}
+
+export const postUseVacation = (vacation_id: number, vacation_data: object): Promise<boolean> => {
+  return api.request({
+    method: 'post',
+    url: `/vacation/use/${vacation_id}`,
+    data: vacation_data
+  });
 }
 
 export const getAvailableVacation = (userNo: number, startDate: string): Promise<boolean> => {
