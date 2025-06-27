@@ -1,6 +1,5 @@
 import { api } from '@/api/index'
 import { useQuery } from '@tanstack/react-query';
-import { THoliday } from '@/types/holiday';
 
 interface ApiResponse<T = any> {
   code: number
@@ -9,13 +8,13 @@ interface ApiResponse<T = any> {
   data: T
 }
 
-export const enum HolidayQueryKey {
+const enum HolidayQueryKey {
   GET_HOLIDAYS_BY_START_END_DATE = 'getHolidaysByStartEndDate'
 }
 
 interface getHolidaysReq {
-  startDate: string
-  endDate: string
+  start_date: string
+  end_date: string
 }
 
 interface getHolidays {
@@ -25,22 +24,26 @@ interface getHolidays {
   holiday_type: string
 }
 
-export const useGetHolidaysByStartEndDate = (d: getHolidaysReq) => {
+const useGetHolidaysByStartEndDate = (d: getHolidaysReq) => {
   return useQuery({
-    queryKey: [HolidayQueryKey.GET_HOLIDAYS_BY_START_END_DATE, d.startDate, d.endDate],
-    queryFn: async (): Promise<THoliday[]> => {
+    queryKey: [HolidayQueryKey.GET_HOLIDAYS_BY_START_END_DATE, d.start_date, d.end_date],
+    queryFn: async (): Promise<getHolidays[]> => {
       const resp: ApiResponse = await api.request({
         method: 'get',
-        url: `/holidays/date?start=${d.startDate}&end=${d.endDate}`
+        url: `/holidays/date?start=${d.start_date}&end=${d.end_date}`
       });
 
       if (resp.code !== 200) throw new Error('Failed to fetch holidays');
 
-      return resp.data.map((h: getHolidays) => ({
-        holidayName: h.holiday_name,
-        holidayDate: h.holiday_date,
-        holidayType: h.holiday_type
-      }));
+      return resp.data;
     }
   });
-};
+}
+
+export {
+  // QueryKey
+  HolidayQueryKey,
+
+  // API Hook
+  useGetHolidaysByStartEndDate
+}

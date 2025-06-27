@@ -1,6 +1,5 @@
 import { api } from '@/api/index'
 import { useQuery } from '@tanstack/react-query';
-import { TCalendar } from '@/types/calendar';
 
 interface ApiResponse<T = any> {
   code: number
@@ -9,13 +8,13 @@ interface ApiResponse<T = any> {
   data: T
 }
 
-export const enum CalendarQueryKey {
+const enum CalendarQueryKey {
   GET_EVENTS_BY_PERIOD = 'getEventsByPeriod'
 }
 
 interface getEventsByPeriodReq {
-  startDate: string
-  endDate: string
+  start_date: string
+  end_date: string
 }
 
 interface getEventsByPeriodResp {
@@ -31,29 +30,26 @@ interface getEventsByPeriodResp {
   schedule_id: number
 }
 
-export const useGetEventsByPeriod = (d: getEventsByPeriodReq) => {
+const useGetEventsByPeriod = (d: getEventsByPeriodReq) => {
   return useQuery({
-    queryKey: [CalendarQueryKey.GET_EVENTS_BY_PERIOD, d.startDate, d.endDate],
-    queryFn: async (): Promise<TCalendar[]> => {
+    queryKey: [CalendarQueryKey.GET_EVENTS_BY_PERIOD, d.start_date, d.end_date],
+    queryFn: async (): Promise<getEventsByPeriodResp[]> => {
       const resp: ApiResponse = await api.request({
         method: 'get',
-        url: `/calendar/period?startDate=${d.startDate}&endDate=${d.endDate}`
+        url: `/calendar/period?startDate=${d.start_date}&endDate=${d.end_date}`
       });
 
       if (resp.code !== 200) throw new Error('Failed to fetch event');
 
-      return resp.data.map((e: getEventsByPeriodResp) => ({
-        userNo: e.user_no,
-        userName: e.user_name,
-        calendarName: e.calendar_name,
-        calendarType: e.calendar_type,
-        calendarDesc: e.calendar_desc,
-        startDate: e.start_date,
-        endDate: e.end_date,
-        domainType: e.domain_type,
-        historyIds: e.history_ids,
-        scheduleId: e.schedule_id
-      }));
+      return resp.data;
     }
   });
+}
+
+export {
+  // QueryKey
+  CalendarQueryKey,
+
+  // API Hook
+  useGetEventsByPeriod
 }

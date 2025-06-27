@@ -1,6 +1,5 @@
 import { api } from '@/api/index'
 import { useQuery } from '@tanstack/react-query';
-import { TUser } from '@/types/user';
 
 interface ApiResponse<T = any> {
   code: number
@@ -9,7 +8,7 @@ interface ApiResponse<T = any> {
   data: T
 }
 
-export const enum UserQueryKey {
+const enum UserQueryKey {
   GET_USERS = 'getUsers'
 }
 
@@ -22,10 +21,10 @@ interface getUsersResp {
   lunar_yn: string
 }
 
-export const useGetUsers = () => {
+const useGetUsers = () => {
   return useQuery({
     queryKey: [UserQueryKey.GET_USERS],
-    queryFn: async (): Promise<TUser[]> => {
+    queryFn: async (): Promise<getUsersResp[]> => {
       const resp: ApiResponse = await api.request({
         method: 'get',
         url: `/users`
@@ -33,14 +32,15 @@ export const useGetUsers = () => {
 
       if (resp.code !== 200) throw new Error('Failed to fetch users');
 
-      return resp.data.map((u: getUsersResp) => ({
-        userNo: u.user_no,
-        userName: u.user_name,
-        userEmploy: u.user_employ,
-        userBirth: u.user_birth,
-        userWorkTime: u.user_work_time,
-        lunarYN: u.lunar_yn,
-      }));
+      return resp.data;
     }
   });
 };
+
+export {
+  // QueryKey
+  UserQueryKey,
+
+  // API Hook
+  useGetUsers
+}

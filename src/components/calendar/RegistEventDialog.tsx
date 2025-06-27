@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import dayjs from 'dayjs';
-import { useCalendarSlotStore } from '@/store/calendarSlotStore';
-import { getAvailableVacation, postUseVacation, VacationQueryKey } from '@/api/vacation';
-import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+import { useCalendarSlotStore } from '@/store/CalendarSlotStore';
+import { useGetAvailableVacations, usePostUseVacation } from '@/api/vacation';
 import { CalendarIcon } from 'lucide-react'
 import { useCalendarType } from '@/hooks/useCalendarType';
 import {
@@ -51,30 +50,9 @@ export const RegistEventDialog: React.FC = () => {
   const [startHour, setStartHour] = React.useState('9');
   const [startMinute, setStartMinute] = React.useState('0');
 
-  const {data: available, isLoading: availableLoading} = useQuery({
-    queryKey: [VacationQueryKey.GET_AVAILABLE_VACATION, 1, start],
-    queryFn: () => getAvailableVacation(
-      1,
-      dayjs(start).format('YYYY-MM-DDTHH:mm:ss')
-    ),
-    select: (data: any) => data.data
-  });
-
-  const vacationMutation = useMutation({
-    mutationFn: ({vacation_id, vacation_data} : {vacation_id: number, vacation_data: object}) => postUseVacation(
-      vacation_id,
-      vacation_data
-    ),
-    onSuccess: (data) => {
-      // POST 성공 후 데이터를 alert로 출력
-      console.log(`POST 성공! 생성된 데이터: ${JSON.stringify(data, null, 2)}`);
-      
-      // 캐시 무효화 후 다시 조회
-      // queryClient.invalidateQueries({ queryKey: [VacationQueryKey.GET_AVAILABLE_VACATION] });
-    },
-    onError: (error) => {
-      console.log(`POST 실패: ${error.message}`);
-    }
+  const {data: vacations} = useGetAvailableVacations({
+    user_no: 1,
+    start_date: dayjs(start).format('YYYY-MM-DDTHH:mm:ss')
   });
 
   const onSubmit = () => {
@@ -142,8 +120,8 @@ export const RegistEventDialog: React.FC = () => {
 
       console.log(data);
 
-      vacationMutation.mutate({
-        vacation_id: selectVacationId,
+      usePostUseVacation({
+        vacation_id: Number(selectVacationId),
         vacation_data: data
       });
     } else {
@@ -151,12 +129,6 @@ export const RegistEventDialog: React.FC = () => {
       data['schedule_desc'] = desc;
     }
   }
-
-  useEffect(() => {
-    if (available && !availableLoading) {
-        console.log('test log : ', available);
-    }
-  }, [available]);
 
   useEffect(() => {
     setStartDate(start);
@@ -222,9 +194,9 @@ export const RegistEventDialog: React.FC = () => {
                     </SelectTrigger>
                     <SelectContent>
                       {
-                        !availableLoading && available.map(v => {
+                        vacations && vacations.map(v => {
                           return (
-                            <SelectItem key={v.vacation_id} value={v.vacation_id}>
+                            <SelectItem key={v.vacation_id} value={String(v.vacation_id)}>
                               {`${v.vacation_type_name} (${v.remain_time})`}
                             </SelectItem>
                           )

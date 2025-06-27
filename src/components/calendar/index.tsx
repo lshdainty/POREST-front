@@ -9,7 +9,7 @@ import { RegistEventDialog } from '@/components/calendar/RegistEventDialog';
 import { CalendarEvent, useCalendarEventsStore } from '@/store/CalendarEventStore';
 import { useHolidayStore } from '@/store/holidayStore';
 import { useCalendarVisibleStore } from '@/store/CalendarVisibleStore';
-import { useCalendarSlotStore } from '@/store/calendarSlotStore';
+import { useCalendarSlotStore } from '@/store/CalendarSlotStore';
 import { useGetEventsByPeriod } from '@/api/calendar';
 import { useGetHolidaysByStartEndDate } from '@/api/holiday';
 import moment from 'moment';
@@ -61,13 +61,13 @@ const Content: React.FC = () => {
   }, [resetEvents]);
 
   const {data: holidays, isLoading: holidaysLoading} = useGetHolidaysByStartEndDate({
-    startDate: `${baseYear}0101`,
-    endDate: `${baseYear}1231`
+    start_date: `${baseYear}0101`,
+    end_date: `${baseYear}1231`
   });
 
   const {data: calendarData, isLoading: calendarLoading} = useGetEventsByPeriod({
-    startDate: dayjs(range.start).format('YYYY-MM-DDTHH:mm:ss'),
-    endDate: dayjs(range.end).format('YYYY-MM-DDTHH:mm:ss')
+    start_date: dayjs(range.start).format('YYYY-MM-DDTHH:mm:ss'),
+    end_date: dayjs(range.end).format('YYYY-MM-DDTHH:mm:ss')
   });
 
   const handleSelectSlot = useCallback(({start, end}: { start: Date; end: Date; }) => {

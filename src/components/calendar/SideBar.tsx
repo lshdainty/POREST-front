@@ -50,7 +50,7 @@ const SideBar: React.FC = () => {
 
   useEffect(() => {
     if (users && !usersLoading) {
-      resetUserVisible(users.map((user) => user.userNo));
+      resetUserVisible(users.map((user) => user.user_no));
       resetCalendarVisible(calendarType.map((calendar) => calendar.id));
     }
   }, []);
@@ -100,17 +100,17 @@ const SideBar: React.FC = () => {
           {
             users && users.map((u) => (
               <li
-                key={u.userNo}
+                key={u.user_no}
                 onClick={() => {
-                  setUserVisible(u.userNo);
-                  const findVisible = userVisibles.find(visible => visible.id === u.userNo);
+                  setUserVisible(u.user_no);
+                  const findVisible = userVisibles.find(visible => visible.id === u.user_no);
                   if (findVisible) {
-                    setEventVisible(u.userNo, !findVisible.isVisible, 'user');
+                    setEventVisible(u.user_no, !findVisible.isVisible, 'user');
                   }
                 }}
               >
-                <Circle sx={ editCss(u.userNo, 'user', '#0080fc') } />
-                <div className='sidebar_list_name'>{u.userName}</div>
+                <Circle sx={ editCss(u.user_no, 'user', '#0080fc') } />
+                <div className='sidebar_list_name'>{u.user_name}</div>
               </li>
             ))
           }
