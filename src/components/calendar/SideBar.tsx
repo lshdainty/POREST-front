@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useSuspenseQuery } from '@tanstack/react-query';
 import { useCalendarType } from '@/hooks/useCalendarType';
 import { useCalendarVisibleStore } from '@/store/CalendarVisibleStore';
 import { useCalendarEventsStore } from '@/store/CalendarEventStore';
-import { UserQueryKey, getUsers } from '@/api/user';
+import { useGetUsers } from '@/hooks/useUserApi';
 import { useTheme } from "@/components/shadcn/theme-provider"
 import { Checkbox } from '@/components/shadcn/checkbox';
 import { Label } from '@/components/shadcn/label';
@@ -15,6 +14,7 @@ import '@/components/calendar/sideBar.scss';
 const SideBar: React.FC = () => {
   const calendarType = useCalendarType();
   const [allChecked, setAllChecked] = useState(true);
+  const {data: users, isLoading: usersLoading} = useGetUsers();
 
   const {
     resetUserVisible,
@@ -48,17 +48,9 @@ const SideBar: React.FC = () => {
     }
   }
 
-  const {data: usersData, isLoading: usersLoading} = useSuspenseQuery(
-    {
-      queryKey: [UserQueryKey.GET_USERS],
-      queryFn: () => getUsers(),
-      select: (data: any) => data.data
-    }
-  );
-
   useEffect(() => {
-    if (usersData && !usersLoading) {
-      resetUserVisible(usersData.map((user) => user.user_no));
+    if (users && !usersLoading) {
+      resetUserVisible(users.map((user) => user.userNo));
       resetCalendarVisible(calendarType.map((calendar) => calendar.id));
     }
   }, []);
@@ -106,19 +98,19 @@ const SideBar: React.FC = () => {
             <div className='sidebar_list_name'>User all</div>
           </li>
           {
-            usersData.map((user) => (
+            users && users.map((u) => (
               <li
-                key={user.user_no}
+                key={u.userNo}
                 onClick={() => {
-                  setUserVisible(user.user_no);
-                  const findVisible = userVisibles.find(visible => visible.id === user.user_no);
+                  setUserVisible(u.userNo);
+                  const findVisible = userVisibles.find(visible => visible.id === u.userNo);
                   if (findVisible) {
-                    setEventVisible(user.user_no as number, !findVisible.isVisible, 'user');
+                    setEventVisible(u.userNo, !findVisible.isVisible, 'user');
                   }
                 }}
               >
-                <Circle sx={ editCss(user.user_no, 'user', '#0080fc') } />
-                <div className='sidebar_list_name'>{user.user_name}</div>
+                <Circle sx={ editCss(u.userNo, 'user', '#0080fc') } />
+                <div className='sidebar_list_name'>{u.userName}</div>
               </li>
             ))
           }

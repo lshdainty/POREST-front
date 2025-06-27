@@ -51,8 +51,6 @@ export const RegistEventDialog: React.FC = () => {
   const [startHour, setStartHour] = React.useState('9');
   const [startMinute, setStartMinute] = React.useState('0');
 
-  const queryClient = useQueryClient();
-
   const {data: available, isLoading: availableLoading} = useQuery({
     queryKey: [VacationQueryKey.GET_AVAILABLE_VACATION, 1, start],
     queryFn: () => getAvailableVacation(

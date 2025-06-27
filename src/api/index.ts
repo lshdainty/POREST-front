@@ -29,11 +29,10 @@ api.interceptors.request.use(
 // Response interceptor
 api.interceptors.response.use(
   (resp: AxiosResponse) => {
-    const res = resp.data;
-    return res;
+    return resp.data;
   },
   async (err: any) => {
-    console.log("resp err : ", err);
+    console.log("API Error:", err);
 
     if (err.response && err.response.status === 401) {
       if (err.response.config.url !== `/api/relogin`) {
