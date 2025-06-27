@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils"
 
-import { useGetUsers } from '@/hooks/useUserApi';
+import { useGetUsers } from '@/api/user';
 
 export default function Culture() {
   const { data, isLoading, error } = useGetUsers();

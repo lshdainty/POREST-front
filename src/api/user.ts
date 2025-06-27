@@ -4,12 +4,16 @@ import { TUser } from '@/types/user';
 
 interface ApiResponse<T = any> {
   code: number
-  message: "success"
+  message: string
   count: string
   data: T
 }
 
-interface getUsers {
+export const enum UserQueryKey {
+  GET_USERS = 'getUsers'
+}
+
+interface getUsersResp {
   user_no: number
   user_name: string
   user_employ: string
@@ -17,10 +21,6 @@ interface getUsers {
   user_work_time: string
   lunar_yn: string
 }
-
-export const enum UserQueryKey {
-  GET_USERS = 'getUsers'
-};
 
 export const useGetUsers = () => {
   return useQuery({
@@ -33,7 +33,7 @@ export const useGetUsers = () => {
 
       if (resp.code !== 200) throw new Error('Failed to fetch users');
 
-      const users: TUser[] = resp.data.map((u: getUsers) => ({
+      return resp.data.map((u: getUsersResp) => ({
         userNo: u.user_no,
         userName: u.user_name,
         userEmploy: u.user_employ,
@@ -41,8 +41,6 @@ export const useGetUsers = () => {
         userWorkTime: u.user_work_time,
         lunarYN: u.lunar_yn,
       }));
-
-      return users;
     }
   });
 };

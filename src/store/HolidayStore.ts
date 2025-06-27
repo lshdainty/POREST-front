@@ -1,28 +1,13 @@
 import { create } from 'zustand';
-import { THoliday } from '@/api/holiday';
-
-interface Holiday {
-  holidayName: string
-  holidayDate: string
-  holidayType: string
-}
-
-export const convertHoliday = (apiData: THoliday[]) => {
-  const data = apiData.map((d: THoliday) => ({
-    holidayName: d.holiday_name,
-    holidayDate: d.holiday_date,
-    holidayType: d.holiday_type
-  }));
-  return data;
-}
+import { THoliday } from '@/types/holiday';
 
 export const useHolidayStore = create<{
   baseYear: string
-  holidays: Holiday[]
+  holidays: THoliday[]
   actions: {
     setBaseYear: (baseYear: string) => void
-    setHolidays: (holidays: Holiday[]) => void
-    findHolidayName: (date: string) => Holiday
+    setHolidays: (holidays: THoliday[]) => void
+    findHolidayName: (date: string) => THoliday
   }
 }>((set, get) => ({
   baseYear: '',

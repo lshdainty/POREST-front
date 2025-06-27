@@ -1,19 +1,19 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
-import withDragAndDrop, { EventInteractionArgs } from 'react-big-calendar/lib/addons/dragAndDrop';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import { Formats } from '@/components/calendar/Formats';
 import Toolbar from '@/components/calendar/Toolbar';
 import Events, { convertEventStyle } from '@/components/calendar/Events';
 import { MonthHeader, MonthDateHeader } from '@/components/calendar/Headers';
 import { RegistEventDialog } from '@/components/calendar/RegistEventDialog';
-import { CalendarEvent, useCalendarEventsStore } from '@/store/calendarEventStore';
-import { useHolidayStore, convertHoliday } from '@/store/holidayStore';
-import { useCalendarVisibleStore } from '@/store/calendarVisibleStore';
+import { CalendarEvent, useCalendarEventsStore } from '@/store/CalendarEventStore';
+import { useHolidayStore } from '@/store/holidayStore';
+import { useCalendarVisibleStore } from '@/store/CalendarVisibleStore';
 import { useCalendarSlotStore } from '@/store/calendarSlotStore';
-import { getPeriodCalendar, CalendarQueryKey } from '@/api/calendar';
-import { getHolidayByStartEndDate, HolidayQueryKey } from '@/api/holiday';
+import { useGetEventsByPeriod } from '@/api/calendar';
+import { useGetHolidaysByStartEndDate } from '@/api/holiday';
 import moment from 'moment';
+import dayjs from 'dayjs';
 // @ts-ignore
 import 'moment/dist/locale/ko';
 
@@ -60,19 +60,14 @@ const Content: React.FC = () => {
     }
   }, [resetEvents]);
 
-  const {data: holidayData, isLoading: holidayLoading} = useSuspenseQuery({
-      queryKey: [HolidayQueryKey.GET_HOLIDAY_BY_START_END_DATE, baseYear],
-      queryFn: () => getHolidayByStartEndDate(`${baseYear}0101`, `${baseYear}1231`),
-      select: (data: any) => data.data
+  const {data: holidays, isLoading: holidaysLoading} = useGetHolidaysByStartEndDate({
+    startDate: `${baseYear}0101`,
+    endDate: `${baseYear}1231`
   });
 
-  const {data: calendarData, isLoading: calendarLoading} = useSuspenseQuery({
-      queryKey: [CalendarQueryKey.GET_PERIOD_CALENDAR, range.start, range.end], 
-      queryFn: () => getPeriodCalendar(
-        moment(range.start).format('yyyy-MM-DDTHH:mm:ss'),
-        moment(range.end).format('yyyy-MM-DDTHH:mm:ss')
-      ),
-      select: (data: any) => data.data
+  const {data: calendarData, isLoading: calendarLoading} = useGetEventsByPeriod({
+    startDate: dayjs(range.start).format('YYYY-MM-DDTHH:mm:ss'),
+    endDate: dayjs(range.end).format('YYYY-MM-DDTHH:mm:ss')
   });
 
   const handleSelectSlot = useCallback(({start, end}: { start: Date; end: Date; }) => {
@@ -81,11 +76,10 @@ const Content: React.FC = () => {
   }, [setSlots, setOpen]);
 
   useEffect(() => {
-    if (holidayData && !holidayLoading) {
-      const formattedData = convertHoliday(holidayData);
-      setHolidays(formattedData);
+    if (holidays && !holidaysLoading) {
+      setHolidays(holidays);
     }
-  }, [holidayData]);
+  }, [holidays]);
 
   useEffect(() => {
     if (calendarData && !calendarLoading && range) {

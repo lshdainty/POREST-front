@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { TCalendar } from '@/api/calendar';
-import moment from 'moment';
+import { TCalendar } from '@/types/calendar';
+import dayjs from 'dayjs';
 import { convertColorCode } from '@/hooks/useCalendarType';
 
 export interface CustomEvent {
@@ -44,41 +44,41 @@ export const useCalendarEventsStore = create<{
       let idx = 0;
 
       if (document.getElementById('calendarLabel') === undefined || document.getElementById('calendarLabel') === null) {
-        cMonth = moment().month();
+        cMonth = dayjs().month();
       } else {
-        cMonth = moment(document.getElementById('calendarLabel').textContent, 'yyyy.MM').month();
+        cMonth = dayjs(document.getElementById('calendarLabel').textContent, 'YYYY.MM').month();;
       }
 
       const _events: CalendarEvent[] = calendar.map(c => ({
         id: idx++,
-        title: c.calendar_name,
-        start: new Date(c.start_date),
-        end: new Date(c.end_date),
+        title: c.calendarName,
+        start: new Date(c.startDate),
+        end: new Date(c.endDate),
         rawData: {
-          userNo: c.user_no,
-          userName: c.user_name,
-          calendarName: c.calendar_name,
-          calendarType: c.calendar_type,
-          calendarDesc: c.calendar_desc,
-          domainType: c.domain_type,
-          historyIds: c.history_ids,
-          scheduleId: c.schedule_id,
+          userNo: c.userNo,
+          userName: c.userName,
+          calendarName: c.calendarName,
+          calendarType: c.calendarType,
+          calendarDesc: c.calendarDesc,
+          domainType: c.domainType,
+          historyIds: c.historyIds,
+          scheduleId: c.scheduleId,
           isUserVisible: true,
           isCalendarVisible: true,
           isOffDay: (
-            (cMonth !== new Date(c.end_date).getMonth() && sMonth === new Date(c.end_date).getMonth()) || 
-            (cMonth !== new Date(c.start_date).getMonth() && eMonth === new Date(c.start_date).getMonth())
+            (cMonth !== new Date(c.endDate).getMonth() && sMonth === new Date(c.endDate).getMonth()) || 
+            (cMonth !== new Date(c.startDate).getMonth() && eMonth === new Date(c.startDate).getMonth())
           ) ? true : false,
           isAllDay: (
-            c.calendar_type === 'DAYOFF' ||
-            c.calendar_type === 'EDUCATION' ||
-            c.calendar_type === 'BIRTHDAY' ||
-            c.calendar_type === 'BUSINESSTRIP' ||
-            c.calendar_type === 'DEFENSE' ||
-            c.calendar_type === 'HEALTHCHECK' ||
-            c.calendar_type === 'BIRTHPARTY'
+            c.calendarType === 'DAYOFF' ||
+            c.calendarType === 'EDUCATION' ||
+            c.calendarType === 'BIRTHDAY' ||
+            c.calendarType === 'BUSINESSTRIP' ||
+            c.calendarType === 'DEFENSE' ||
+            c.calendarType === 'HEALTHCHECK' ||
+            c.calendarType === 'BIRTHPARTY'
           ) ? true : false,
-          colorCode: convertColorCode(c.calendar_type)
+          colorCode: convertColorCode(c.calendarType)
         }
       }));
       set({ events: _events });
