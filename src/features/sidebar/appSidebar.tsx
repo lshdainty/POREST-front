@@ -13,9 +13,9 @@ import {
   SidebarFooter,
   SidebarHeader,
 } from "@/components/shadcn/sidebar"
-import { NavLogo } from "@/features/sidebar/nav-logo"
-import { NavUser } from "@/features/sidebar/nav-user"
-import { NavContent } from "@/features/sidebar/nav-content"
+import { NavLogo } from "@/features/sidebar/navLogo"
+import { NavUser } from "@/features/sidebar/navUser"
+import { NavContent } from "@/features/sidebar/navContent"
 
 const user = {
   name: "lsh",

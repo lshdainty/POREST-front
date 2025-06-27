@@ -1,6 +1,6 @@
 import { Separator } from "@/components/shadcn/separator"
 import { SidebarTrigger } from "@/components/shadcn/sidebar"
-import { ModeToggle } from "@/components/ui/mode-toggle"
+import { ModeToggle } from "@/components/ui/modeToggle"
 
 export function LayoutHeader() {
   return (

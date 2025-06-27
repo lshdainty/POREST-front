@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useCalendarType } from '@/hooks/useCalendarType';
-import { useCalendarVisibleStore } from '@/store/CalendarVisibleStore';
-import { useCalendarEventsStore } from '@/store/CalendarEventStore';
+import { useCalendarVisibleStore } from '@/store/calendarVisibleStore';
+import { useCalendarEventsStore } from '@/store/calendarEventStore';
 import { useGetUsers } from '@/hooks/useUserApi';
-import { useTheme } from "@/components/shadcn/theme-provider"
+import { useTheme } from "@/components/shadcn/themeProvider"
 import { Checkbox } from '@/components/shadcn/checkbox';
 import { Label } from '@/components/shadcn/label';
 import { Circle } from '@mui/icons-material';

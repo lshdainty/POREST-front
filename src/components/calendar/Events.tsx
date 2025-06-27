@@ -3,7 +3,7 @@ import { EventProps } from 'react-big-calendar';
 import { convertColorCode } from '@/hooks/useCalendarType';
 import dayjs from 'dayjs';
 import { Popover } from 'antd';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/useMobile';
 import { Circle } from '@mui/icons-material';
 import { Clock4, UserRound, FileText } from 'lucide-react';
 

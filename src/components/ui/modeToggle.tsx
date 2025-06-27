@@ -1,7 +1,7 @@
 "use client";
 
 import { Moon, Sun } from "lucide-react"
-import { useTheme } from "@/components/shadcn/theme-provider"
+import { useTheme } from "@/components/shadcn/themeProvider"
 import { useEffect, useState } from "react"
 
 import { Button } from "@/components/shadcn/button"

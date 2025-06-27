@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import dayjs from 'dayjs';
-import { useCalendarSlotStore } from '@/store/CalendarSlotStore';
+import { useCalendarSlotStore } from '@/store/calendarSlotStore';
 import { getAvailableVacation, postUseVacation, VacationQueryKey } from '@/api/vacation';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { CalendarIcon } from 'lucide-react'

@@ -11,7 +11,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/shadcn/dropdown-menu"
+} from "@/components/shadcn/dropdownMenu"
 import {
   SidebarMenu,
   SidebarMenuButton,

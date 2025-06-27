@@ -1,6 +1,6 @@
 import Logo from '@/assets/img/logo.svg';
 import LogoDark from '@/assets/img/logo_dark.svg';
-import { useTheme } from "@/components/shadcn/theme-provider"
+import { useTheme } from "@/components/shadcn/themeProvider"
 
 import {
   SidebarMenu,

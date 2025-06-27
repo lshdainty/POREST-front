@@ -4,8 +4,8 @@ import { Button } from "@/components/shadcn/button"
 import { Card, CardContent } from "@/components/shadcn/card"
 import { Input } from "@/components/shadcn/input"
 import { Label } from "@/components/shadcn/label"
-import { useTheme } from "@/components/shadcn/theme-provider"
-import loginBG from '@/assets/img/loginbg.jpg';
+import { useTheme } from "@/components/shadcn/themeProvider"
+import loginBG from '@/assets/img/login_bg.jpg';
 import Logo from '@/assets/img/logo.svg';
 import LogoDark from '@/assets/img/logo_dark.svg';
 

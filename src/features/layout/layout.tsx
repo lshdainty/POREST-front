@@ -2,8 +2,8 @@ import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/shadcn/sidebar"
-import { AppSidebar } from "@/features/sidebar/app-sidebar"
-import { LayoutHeader } from "@/features/layout/layout-header"
+import { AppSidebar } from "@/features/sidebar/appSidebar"
+import { LayoutHeader } from "@/features/layout/layoutHeader"
 import { Outlet } from "react-router-dom"
 
 export default function Layout() {
