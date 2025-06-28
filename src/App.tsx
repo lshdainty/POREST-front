@@ -11,7 +11,7 @@ import '@ant-design/v5-patch-for-react-19';
 
 const App: React.FC = () => {
   return (
-    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+    <ThemeProvider defaultTheme='light' storageKey='vite-ui-theme'>
       <ClientProviders>
         <BrowserRouter basename='/web' future={{v7_startTransition: true, v7_relativeSplatPath: true }}>
           <Router />

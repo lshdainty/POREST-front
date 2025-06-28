@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React from "react"
-import { useLocation } from "react-router-dom"
-import { Home } from "lucide-react"
+import React from 'react';
+import { useLocation } from 'react-router-dom';
+import { Home } from 'lucide-react';
 import {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -11,8 +11,8 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/shadcn/breadcrumb"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/shadcn/dropdownMenu"
+} from '@/components/shadcn/breadcrumb';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
 
 interface BreadcrumbSegment {
   title: string
@@ -36,44 +36,44 @@ export function DynamicBreadcrumb({
   const { pathname } = useLocation()
 
   const pathMapping: Record<string, string> = {
-    calendar: "Calendar",
-    work: "Work Management",
-    dues: "Dues & Payroll",
-    rule: "Rules & Policies",
-    schedule: "Schedule",
-    events: "Events",
-    meetings: "Meetings",
-    attendance: "Attendance",
-    "time-tracking": "Time Tracking",
-    projects: "Projects",
-    performance: "Performance",
-    payroll: "Payroll",
-    benefits: "Benefits",
-    expenses: "Expenses",
-    "tax-documents": "Tax Documents",
-    policies: "Policies",
-    procedures: "Procedures",
-    compliance: "Compliance",
-    training: "Training",
+    calendar: 'Calendar',
+    work: 'Work Management',
+    dues: 'Dues & Payroll',
+    rule: 'Rules & Policies',
+    schedule: 'Schedule',
+    events: 'Events',
+    meetings: 'Meetings',
+    attendance: 'Attendance',
+    'time-tracking': 'Time Tracking',
+    projects: 'Projects',
+    performance: 'Performance',
+    payroll: 'Payroll',
+    benefits: 'Benefits',
+    expenses: 'Expenses',
+    'tax-documents': 'Tax Documents',
+    policies: 'Policies',
+    procedures: 'Procedures',
+    compliance: 'Compliance',
+    training: 'Training',
   }
 
   const generateBreadcrumbs = (): BreadcrumbSegment[] => {
     const { pathname } = useLocation();
-    const segments = pathname.split("/").filter(Boolean)
+    const segments = pathname.split('/').filter(Boolean)
     const breadcrumbs: BreadcrumbSegment[] = []
 
     if (showHome) {
       breadcrumbs.push({
-        title: "Home",
-        href: "/dashboard",
-        isActive: pathname === "/dashboard",
+        title: 'Home',
+        href: '/dashboard',
+        isActive: pathname === '/dashboard',
       })
     }
 
-    let currentPath = ""
+    let currentPath = ''
     segments.forEach((segment, index) => {
-      if (segment === "dashboard" && index === 0) {
-        currentPath = "/dashboard"
+      if (segment === 'dashboard' && index === 0) {
+        currentPath = '/dashboard'
         return
       }
 
@@ -117,11 +117,11 @@ export function DynamicBreadcrumb({
                 {separator}
                 <BreadcrumbItem>
                   <DropdownMenu>
-                    <DropdownMenuTrigger className="flex items-center gap-1 hover:text-foreground">
-                      <BreadcrumbEllipsis className="h-4 w-4" />
-                      <span className="sr-only">Show more</span>
+                    <DropdownMenuTrigger className='flex items-center gap-1 hover:text-foreground'>
+                      <BreadcrumbEllipsis className='h-4 w-4' />
+                      <span className='sr-only'>Show more</span>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start">
+                    <DropdownMenuContent align='start'>
                       {collapsedItems.map((item) => (
                         <DropdownMenuItem key={item.href}>
                           <BreadcrumbLink href={item.href}>{item.title}</BreadcrumbLink>
@@ -134,12 +134,12 @@ export function DynamicBreadcrumb({
             )}
 
             {/* 일반 breadcrumb 항목 */}
-            <BreadcrumbItem className={index === 0 && showHome ? "hidden md:block" : ""}>
+            <BreadcrumbItem className={index === 0 && showHome ? 'hidden md:block' : ''}>
               {crumb.isActive ? (
-                <BreadcrumbPage className="font-medium text-foreground">{crumb.title}</BreadcrumbPage>
+                <BreadcrumbPage className='font-medium text-foreground'>{crumb.title}</BreadcrumbPage>
               ) : (
-                <BreadcrumbLink href={crumb.href} className="transition-colors hover:text-foreground">
-                  {index === 0 && showHome ? <Home className="h-4 w-4" /> : crumb.title}
+                <BreadcrumbLink href={crumb.href} className='transition-colors hover:text-foreground'>
+                  {index === 0 && showHome ? <Home className='h-4 w-4' /> : crumb.title}
                 </BreadcrumbLink>
               )}
             </BreadcrumbItem>

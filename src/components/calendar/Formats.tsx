@@ -1,4 +1,4 @@
-import { DateRangeFormatFunction } from 'react-big-calendar'
+import { DateRangeFormatFunction } from 'react-big-calendar';
 import dayjs from 'dayjs';
 
 const customDayRangeHeaderFormat:DateRangeFormatFunction = (range) => {

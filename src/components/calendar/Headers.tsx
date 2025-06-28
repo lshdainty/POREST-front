@@ -2,8 +2,8 @@ import { HeaderProps, DateHeaderProps } from 'react-big-calendar';
 import { useHolidayStore } from '@/store/HolidayStore';
 import dayjs from 'dayjs';
 
-const saturday = "text-[#6767ff]";
-const sunday = "text-[#ff6767]";
+const saturday = 'text-[#6767ff]';
+const sunday = 'text-[#ff6767]';
 
 export const MonthHeader: React.FC<HeaderProps> = ({label, date}) => {
   let textColor:string = '';

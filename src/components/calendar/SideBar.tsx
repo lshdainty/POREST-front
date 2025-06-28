@@ -3,7 +3,7 @@ import { useCalendarType } from '@/hooks/useCalendarType';
 import { useCalendarVisibleStore } from '@/store/CalendarVisibleStore';
 import { useCalendarEventsStore } from '@/store/CalendarEventStore';
 import { useGetUsers } from '@/api/user';
-import { useTheme } from "@/components/shadcn/themeProvider"
+import { useTheme } from '@/components/shadcn/themeProvider';
 import { Checkbox } from '@/components/shadcn/checkbox';
 import { Label } from '@/components/shadcn/label';
 import { Circle } from '@mui/icons-material';
@@ -106,7 +106,7 @@ const SideBar: React.FC = () => {
         />
         <Label htmlFor='viewAll' className='pl-2.5'>View all</Label>
       </div>
-      <Separator className="my-3" />
+      <Separator className='my-3' />
       <div className='sidebar_btn_group'>
         <ul id='user_group' className='sidebar_list'>
           <li
@@ -128,7 +128,7 @@ const SideBar: React.FC = () => {
             ))
           }
         </ul>
-        <Separator className="my-3" />
+        <Separator className='my-3' />
         <ul id='calendar_group' className='sidebar_list'>
           <li
             key={'calendarAllVisible'}

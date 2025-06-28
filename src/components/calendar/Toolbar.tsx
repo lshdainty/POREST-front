@@ -3,20 +3,20 @@ import { ToolbarProps } from 'react-big-calendar';
 import { useHolidayStore } from '@/store/HolidayStore';
 import { useIsMobile } from '@/hooks/useMobile';
 import { Flex } from 'antd';
-import { Settings, ChevronLeft, ChevronRight } from "lucide-react"
-import { Button } from "@/components/shadcn/button"
+import { Settings, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from '@/components/shadcn/button';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/shadcn/popover"
+} from '@/components/shadcn/popover';
 import {
   Tabs,
   TabsList,
   TabsTrigger
-} from "@/components/shadcn/tabs"
-import { Label } from "@/components/shadcn/label"
-import { Switch } from "@/components/shadcn/switch"
+} from '@/components/shadcn/tabs';
+import { Label } from '@/components/shadcn/label';
+import { Switch } from '@/components/shadcn/switch';
 
 const Toolbar: React.FC<ToolbarProps> = (props) => {
   const label = props.label;
@@ -61,13 +61,13 @@ const Toolbar: React.FC<ToolbarProps> = (props) => {
     <div className='flex justify-between items-center mb-2.5'>
       <div className='flex'>
         <Flex gap='small' wrap>
-          <Button variant='outline' size="sm" className="rounded-full" onClick={ () => props.onNavigate('TODAY') }>
+          <Button variant='outline' size='sm' className='rounded-full' onClick={ () => props.onNavigate('TODAY') }>
             Today
           </Button>
-          <Button variant="outline" size="icon" className="size-8 rounded-full" onClick={ () => props.onNavigate('PREV') }>
+          <Button variant='outline' size='icon' className='size-8 rounded-full' onClick={ () => props.onNavigate('PREV') }>
             <ChevronLeft />
           </Button>
-          <Button variant="outline" size="icon" className="size-8 rounded-full" onClick={ () => props.onNavigate('NEXT') }>
+          <Button variant='outline' size='icon' className='size-8 rounded-full' onClick={ () => props.onNavigate('NEXT') }>
             <ChevronRight />
           </Button>
         </Flex>
@@ -75,26 +75,26 @@ const Toolbar: React.FC<ToolbarProps> = (props) => {
           <span id='calendarLabel' className='text-lg mx-2'>{label}</span>
         </div>
       </div>
-      <div className="flex items-center">
+      <div className='flex items-center'>
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="outline" size="icon" className="size-8 mr-2 rounded-full">
+            <Button variant='outline' size='icon' className='size-8 mr-2 rounded-full'>
               <Settings />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-40">
-            <div className="grid gap-3">
+          <PopoverContent className='w-40'>
+            <div className='grid gap-3'>
               <div>
-                <h4 className="leading-none font-medium">Calendar Option</h4>
+                <h4 className='leading-none font-medium'>Calendar Option</h4>
               </div>
-              <div className="grid gap-2">
-                <div className="grid grid-cols-2 gap-4">
-                  <Label htmlFor="calendarSidebarView">Sidebar</Label>
-                  <Switch className="justify-self-end" id="calendarSidebarView" checked={calendarSidebarView} onCheckedChange={calendarSidebarViewOption}/>
+              <div className='grid gap-2'>
+                <div className='grid grid-cols-2 gap-4'>
+                  <Label htmlFor='calendarSidebarView'>Sidebar</Label>
+                  <Switch className='justify-self-end' id='calendarSidebarView' checked={calendarSidebarView} onCheckedChange={calendarSidebarViewOption}/>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <Label htmlFor="HolidayView">Holiday Text</Label>
-                  <Switch className="justify-self-end" id="HolidayView" checked={holidayTextView} onCheckedChange={holidayTextViewOption}/>
+                <div className='grid grid-cols-2 gap-4'>
+                  <Label htmlFor='HolidayView'>Holiday Text</Label>
+                  <Switch className='justify-self-end' id='HolidayView' checked={holidayTextView} onCheckedChange={holidayTextViewOption}/>
                 </div>
               </div>
             </div>

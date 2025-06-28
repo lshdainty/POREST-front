@@ -33,7 +33,7 @@ const useGetHolidaysByStartEndDate = (d: getHolidaysReq) => {
         url: `/holidays/date?start=${d.start_date}&end=${d.end_date}`
       });
 
-      if (resp.code !== 200) throw new Error('Failed to fetch holidays');
+      if (resp.code !== 200) throw new Error(resp.data.data.message);
 
       return resp.data;
     }

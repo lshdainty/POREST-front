@@ -12,6 +12,7 @@ interface ApiResponse<T = any> {
 const enum VacationQueryKey {
   POST_USE_VACATION = 'postUseVacation',
   GET_AVAILABLE_VACATIONS = 'getAvailableVacations',
+  DELETE_VACATION_HISTORY = 'deleteVacationHistory'
 }
 
 interface PostUseVacationReq {
@@ -36,7 +37,7 @@ const usePostUseVacation = () => {
         data: d.vacation_data
       });
 
-      if (resp.code !== 200) throw new Error('Failed to fetch users');
+      if (resp.code !== 200) throw new Error(resp.data.data.message);
 
       return resp.data;
     },
@@ -73,9 +74,33 @@ const useGetAvailableVacations = (d: GetAvailableVacationsReq) => {
         url: `/vacation/available/${d.user_no}?startDate=${d.start_date}`
       });
 
-      if (resp.code !== 200) throw new Error('Failed to fetch users');
+      if (resp.code !== 200) throw new Error(resp.data.data.message);
 
       return resp.data;
+    }
+  });
+}
+
+const useDeleteVacationHistory = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (vacationHistoryId: Number) => {
+      const resp: ApiResponse = await api.request({
+        method: 'delete',
+        url: `/vacation/history/${vacationHistoryId}`,
+      });
+
+      if (resp.code !== 200) throw new Error(resp.data.data.message);
+
+      return resp.data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: [CalendarQueryKey.GET_EVENTS_BY_PERIOD] });
+      console.log(`POST 성공! 생성된 데이터: ${JSON.stringify(data, null, 2)}`);
+    },
+    onError: (error) => {
+      console.log(`POST 실패: ${error.message}`);
     }
   });
 }
@@ -86,5 +111,6 @@ export {
 
   // API Hook
   usePostUseVacation,
-  useGetAvailableVacations
+  useGetAvailableVacations,
+  useDeleteVacationHistory
 }

@@ -30,7 +30,7 @@ const useGetUsers = () => {
         url: `/users`
       });
 
-      if (resp.code !== 200) throw new Error('Failed to fetch users');
+      if (resp.code !== 200) throw new Error(resp.data.data.message);
 
       return resp.data;
     }

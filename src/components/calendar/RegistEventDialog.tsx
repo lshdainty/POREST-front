@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { useCalendarSlotStore } from '@/store/CalendarSlotStore';
 import { useGetAvailableVacations, usePostUseVacation } from '@/api/vacation';
 import { usePostSchedule } from '@/api/schedule';
-import { CalendarIcon } from 'lucide-react'
+import { CalendarIcon } from 'lucide-react';
 import { useCalendarType } from '@/hooks/useCalendarType';
 import {
   Dialog,

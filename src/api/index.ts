@@ -32,7 +32,7 @@ api.interceptors.response.use(
     return resp.data;
   },
   async (err: any) => {
-    console.log("API Error:", err);
+    console.log('API Error : ', err);
 
     if (err.response && err.response.status === 401) {
       if (err.response.config.url !== `/api/relogin`) {

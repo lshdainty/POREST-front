@@ -15,8 +15,8 @@ import { useGetHolidaysByStartEndDate } from '@/api/holiday';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 
-import 'react-big-calendar/lib/css/react-big-calendar.css'
-import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import '@/components/calendar/index.scss';
 
 const Content: React.FC = () => {

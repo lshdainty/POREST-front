@@ -39,7 +39,7 @@ const useGetEventsByPeriod = (d: getEventsByPeriodReq) => {
         url: `/calendar/period?startDate=${d.start_date}&endDate=${d.end_date}`
       });
 
-      if (resp.code !== 200) throw new Error('Failed to fetch event');
+      if (resp.code !== 200) throw new Error(resp.data.data.message);
 
       return resp.data;
     }
