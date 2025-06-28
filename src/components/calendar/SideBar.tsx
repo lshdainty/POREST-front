@@ -29,14 +29,18 @@ const SideBar: React.FC = () => {
   const { setEventVisible } = useCalendarEventsStore(s => s.actions);
   const { theme } = useTheme();
 
-  const editCss = (id: number | string, type: string, colorCode: string) => {
-    let findVisible
-
-    if (type === 'user') {
-      findVisible = userVisibles.find(user => user.id === id);
-    } else {
-      findVisible = calendarVisibles.find(calendar => calendar.id === id);
+  const allVisibleCss = (allVisible: boolean) => {
+    return (allVisible) ? {
+      color: '#495771'
+    } : {
+      color: theme === 'light' ? '#f4f4f4' : '#404040',
+      opacity: theme === 'light' ? 1.0 : 0.5
     }
+  }
+
+  const circleCss = (id: number | string, type: string, colorCode: string) => {
+    let findVisible = (type === 'user') ?
+      userVisibles.find(user => user.id === id) : calendarVisibles.find(calendar => calendar.id === id);
 
     if (!findVisible) return
 
@@ -46,6 +50,43 @@ const SideBar: React.FC = () => {
       color: theme === 'light' ? '#f4f4f4' : '#404040',
       opacity: theme === 'light' ? 1.0 : 0.5
     }
+  }
+
+  const onCheckedChangeViewAll = () => {
+    setAllChecked(prev => !prev);
+    setAllVisible(!allChecked);
+    userVisibles.forEach(visible => {
+      setEventVisible(visible.id as number, !allChecked, 'user');
+    });
+    calendarVisibles.forEach(visible => {
+      setEventVisible(visible.id as string, !allChecked, 'calendar');
+    });
+  }
+
+  const onClickUserAll = () => {
+    setUserAllVisible(!userAllVisible)
+    userVisibles.forEach(visible => {
+      setEventVisible(visible.id as number, !userAllVisible, 'user');
+    });
+  }
+
+  const onClickUser = (user: any) => {
+    setUserVisible(user.user_no);
+    const findVisible = userVisibles.find(visible => visible.id === user.user_no);
+    if (findVisible) setEventVisible(user.user_no, !findVisible.isVisible, 'user');
+  }
+
+  const onClickCalendarAll = () => {
+    setCalendarAllVisible(!calendarAllVisible);
+    calendarVisibles.forEach(visible => {
+      setEventVisible(visible.id as string, !calendarAllVisible, 'calendar');
+    });
+  }
+
+  const onClickCalendar = (calendar: any) => {
+    setCalendarVisible(calendar.id);
+    const findVisible = calendarVisibles.find(visible => visible.id === calendar.id);
+    if (findVisible) setEventVisible(calendar.id as string, !findVisible.isVisible, 'calendar');
   }
 
   useEffect(() => {
@@ -61,17 +102,8 @@ const SideBar: React.FC = () => {
         <Checkbox
           id='viewAll'
           checked={allChecked}
-          onCheckedChange={() => {
-            setAllChecked(prev => !prev);
-            setAllVisible(!allChecked);
-            userVisibles.forEach(visible => {
-              setEventVisible(visible.id as number, !allChecked, 'user');
-            });
-            calendarVisibles.forEach(visible => {
-              setEventVisible(visible.id as string, !allChecked, 'calendar');
-            });
-          }}
-        / >
+          onCheckedChange={() => onCheckedChangeViewAll()}
+        />
         <Label htmlFor='viewAll' className='pl-2.5'>View all</Label>
       </div>
       <Separator className="my-3" />
@@ -79,37 +111,18 @@ const SideBar: React.FC = () => {
         <ul id='user_group' className='sidebar_list'>
           <li
             key={'userAllVisible'}
-            onClick={() => {
-              setUserAllVisible(!userAllVisible)
-              userVisibles.forEach(visible => {
-                setEventVisible(visible.id as number, !userAllVisible, 'user');
-              });
-            }}
+            onClick={() => onClickUserAll()}
           >
-            <Circle sx={
-                (userAllVisible) ? {
-                  color: '#495771'
-                } : {
-                  color: theme === 'light' ? '#f4f4f4' : '#404040',
-                  opacity: theme === 'light' ? 1.0 : 0.5
-                }
-              }
-            />
+            <Circle sx={allVisibleCss(userAllVisible)}/>
             <div className='sidebar_list_name'>User all</div>
           </li>
           {
             users && users.map((u) => (
               <li
                 key={u.user_no}
-                onClick={() => {
-                  setUserVisible(u.user_no);
-                  const findVisible = userVisibles.find(visible => visible.id === u.user_no);
-                  if (findVisible) {
-                    setEventVisible(u.user_no, !findVisible.isVisible, 'user');
-                  }
-                }}
+                onClick={() => onClickUser(u)}
               >
-                <Circle sx={ editCss(u.user_no, 'user', '#0080fc') } />
+                <Circle sx={ circleCss(u.user_no, 'user', '#0080fc') } />
                 <div className='sidebar_list_name'>{u.user_name}</div>
               </li>
             ))
@@ -119,45 +132,26 @@ const SideBar: React.FC = () => {
         <ul id='calendar_group' className='sidebar_list'>
           <li
             key={'calendarAllVisible'}
-            onClick={() => {
-              setCalendarAllVisible(!calendarAllVisible);
-              calendarVisibles.forEach(visible => {
-                setEventVisible(visible.id as string, !calendarAllVisible, 'calendar');
-              });
-            }}
+            onClick={() => onClickCalendarAll()}
           >
-            <Circle sx={
-                (calendarAllVisible) ? {
-                  color: '#495771'
-                } : {
-                  color: theme === 'light' ? '#f4f4f4' : '#404040',
-                  opacity: theme === 'light' ? 1.0 : 0.5
-                }
-              }
-            />
+            <Circle sx={allVisibleCss(calendarAllVisible)}/>
             <div className='sidebar_list_name'>Calendar all</div>
           </li>
           {
-            calendarType.map((calendar) => (
+            calendarType.map((c) => (
               <li
-                key={calendar.id}
-                onClick={() => {
-                  setCalendarVisible(calendar.id);
-                  const findVisible = calendarVisibles.find(visible => visible.id === calendar.id);
-                  if (findVisible) {
-                    setEventVisible(calendar.id as string, !findVisible.isVisible, 'calendar');
-                  }
-                }}
+                key={c.id}
+                onClick={() => onClickCalendar(c)}
               >
-                <Circle sx={ editCss(calendar.id, 'calendar', calendar.colorCode) } />
-                <div className='sidebar_list_name'>{calendar.name}</div>
+                <Circle sx={ circleCss(c.id, 'calendar', c.colorCode) } />
+                <div className='sidebar_list_name'>{c.name}</div>
               </li>
             ))
           }
         </ul>
       </div>
     </div>
-  );
+  )
 }
 
 export default SideBar;
