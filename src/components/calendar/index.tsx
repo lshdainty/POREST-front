@@ -7,7 +7,7 @@ import Events, { convertEventStyle } from '@/components/calendar/Events';
 import { MonthHeader, MonthDateHeader } from '@/components/calendar/Headers';
 import { RegistEventDialog } from '@/components/calendar/RegistEventDialog';
 import { CalendarEvent, useCalendarEventsStore } from '@/store/CalendarEventStore';
-import { useHolidayStore } from '@/store/holidayStore';
+import { useHolidayStore } from '@/store/HolidayStore';
 import { useCalendarVisibleStore } from '@/store/CalendarVisibleStore';
 import { useCalendarSlotStore } from '@/store/CalendarSlotStore';
 import { useGetEventsByPeriod } from '@/api/calendar';

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ToolbarProps } from 'react-big-calendar';
-import { useHolidayStore } from '@/store/holidayStore';
+import { useHolidayStore } from '@/store/HolidayStore';
 import { useIsMobile } from '@/hooks/useMobile';
 import { Flex } from 'antd';
 import { Settings, ChevronLeft, ChevronRight } from "lucide-react"

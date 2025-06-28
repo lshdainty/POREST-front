@@ -1,5 +1,5 @@
 import { HeaderProps, DateHeaderProps } from 'react-big-calendar';
-import { useHolidayStore } from '@/store/holidayStore';
+import { useHolidayStore } from '@/store/HolidayStore';
 import moment from 'moment';
 
 const saturday = "text-[#6767ff]";
