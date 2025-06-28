@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { TCalendar } from '@/types/calendar';
 import dayjs from 'dayjs';
 import { convertColorCode } from '@/hooks/useCalendarType';
 
@@ -31,54 +30,77 @@ export interface CalendarEvent {
 export const useCalendarEventsStore = create<{
   events: CalendarEvent[];
   actions: {
-    resetEvents: (calendar: TCalendar[], start: Date, end: Date) => void;
+    resetEvents: (calendarEvent: {
+      user_no: number;
+      user_name: string;
+      calendar_name: string;
+      calendar_type: string;
+      calendar_desc: string;
+      start_date: Date;
+      end_date: Date;
+      domain_type: string;
+      history_ids: number[];
+      schedule_id: number;
+    }[], calendarRange: {start: Date, end: Date}) => void;
     setEventVisible: (id: number | string, isVisible: boolean, type: string) => void;
   }
 }>((set, get) => ({
   events: [],
   actions: {
-    resetEvents: (calendar: TCalendar[], start: Date, end: Date) => {
-      const sMonth = start.getMonth();
-      const eMonth = end.getMonth();
+    resetEvents: (calendarEvent: {
+      user_no: number;
+      user_name: string;
+      calendar_name: string;
+      calendar_type: string;
+      calendar_desc: string;
+      start_date: Date;
+      end_date: Date;
+      domain_type: string;
+      history_ids: number[];
+      schedule_id: number;
+    }[], calendarRange: {start: Date, end: Date}) => {
+      const sMonth = calendarRange.start.getMonth();
+      const eMonth = calendarRange.end.getMonth();
       let cMonth = -1;
       let idx = 0;
 
-      if (document.getElementById('calendarLabel') === undefined || document.getElementById('calendarLabel') === null) {
+      const label = document.getElementById('calendarLabel');
+      if (label === undefined ||label === null) {
         cMonth = dayjs().month();
       } else {
-        cMonth = dayjs(document.getElementById('calendarLabel').textContent, 'YYYY.MM').month();;
+        cMonth = dayjs(label.textContent, 'YYYY.MM').month();
       }
 
-      const _events: CalendarEvent[] = calendar.map(c => ({
+      const _events: CalendarEvent[] = calendarEvent.map(c => ({
         id: idx++,
-        title: c.calendarName,
-        start: new Date(c.startDate),
-        end: new Date(c.endDate),
+        title: c.calendar_name,
+        start: new Date(c.start_date),
+        end: new Date(c.end_date),
         rawData: {
-          userNo: c.userNo,
-          userName: c.userName,
-          calendarName: c.calendarName,
-          calendarType: c.calendarType,
-          calendarDesc: c.calendarDesc,
-          domainType: c.domainType,
-          historyIds: c.historyIds,
-          scheduleId: c.scheduleId,
+          userNo: c.user_no,
+          userName: c.user_name,
+          calendarName: c.calendar_name,
+          calendarType: c.calendar_type,
+          calendarDesc: c.calendar_desc,
+          domainType: c.domain_type,
+          historyIds: c.history_ids,
+          scheduleId: c.schedule_id,
           isUserVisible: true,
           isCalendarVisible: true,
           isOffDay: (
-            (cMonth !== new Date(c.endDate).getMonth() && sMonth === new Date(c.endDate).getMonth()) || 
-            (cMonth !== new Date(c.startDate).getMonth() && eMonth === new Date(c.startDate).getMonth())
+            (cMonth !== new Date(c.end_date).getMonth() && sMonth === new Date(c.end_date).getMonth()) || 
+            (cMonth !== new Date(c.start_date).getMonth() && eMonth === new Date(c.start_date).getMonth())
           ) ? true : false,
           isAllDay: (
-            c.calendarType === 'DAYOFF' ||
-            c.calendarType === 'EDUCATION' ||
-            c.calendarType === 'BIRTHDAY' ||
-            c.calendarType === 'BUSINESSTRIP' ||
-            c.calendarType === 'DEFENSE' ||
-            c.calendarType === 'HEALTHCHECK' ||
-            c.calendarType === 'BIRTHPARTY'
+            c.calendar_type === 'DAYOFF' ||
+            c.calendar_type === 'EDUCATION' ||
+            c.calendar_type === 'BIRTHDAY' ||
+            c.calendar_type === 'BUSINESSTRIP' ||
+            c.calendar_type === 'DEFENSE' ||
+            c.calendar_type === 'HEALTHCHECK' ||
+            c.calendar_type === 'BIRTHPARTY'
           ) ? true : false,
-          colorCode: convertColorCode(c.calendarType)
+          colorCode: convertColorCode(c.calendar_type)
         }
       }));
       set({ events: _events });

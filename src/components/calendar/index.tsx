@@ -83,7 +83,7 @@ const Content: React.FC = () => {
 
   useEffect(() => {
     if (calendarData && !calendarLoading && range) {
-      resetEvents(calendarData, range.start, range.end);
+      resetEvents(calendarData, {start:range.start, end:range.end});
       calendarVisibles.forEach(calendar => {
         setEventVisible(calendar.id, calendar.isVisible, 'calendar');
       });
