@@ -55,6 +55,9 @@ export const RegistEventDialog: React.FC = () => {
     start_date: dayjs(start).format('YYYY-MM-DDTHH:mm:ss')
   });
 
+  const { mutate: postUseVacation } = usePostUseVacation();
+  // const queryClient = useQueryClient();
+
   const onSubmit = () => {
     const calendar = calendarTypes.find(c => c.id === selectCalendarType);
     let data = Object();
@@ -118,9 +121,8 @@ export const RegistEventDialog: React.FC = () => {
       data['vacation_time_type'] = calendar?.id;
       data['vacation_desc'] = desc;
 
-      console.log(data);
-
-      usePostUseVacation({
+      setOpen(false);
+      postUseVacation({
         vacation_id: Number(selectVacationId),
         vacation_data: data
       });

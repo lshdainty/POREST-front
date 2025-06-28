@@ -1,5 +1,6 @@
 import { api } from '@/api/index'
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { CalendarQueryKey } from '@/api/calendar';
 
 interface ApiResponse<T = any> {
   code: number
@@ -24,7 +25,9 @@ interface PostUseVacationReq {
   }
 }
 
-const usePostUseVacation = (d: PostUseVacationReq) => {
+const usePostUseVacation = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (d: PostUseVacationReq) => {
       const resp: ApiResponse = await api.request({
@@ -38,8 +41,7 @@ const usePostUseVacation = (d: PostUseVacationReq) => {
       return resp.data;
     },
     onSuccess: (data) => {
-      // 사용자 목록 쿼리 무효화
-      // queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: [CalendarQueryKey.GET_EVENTS_BY_PERIOD] });
       console.log(`POST 성공! 생성된 데이터: ${JSON.stringify(data, null, 2)}`);
     },
     onError: (error) => {
