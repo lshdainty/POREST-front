@@ -94,7 +94,7 @@ const SideBar: React.FC = () => {
       resetUserVisible(users.map((user) => user.user_no));
       resetCalendarVisible(calendarType.map((calendar) => calendar.id));
     }
-  }, []);
+  }, [users]);
 
   return (
     <div className='calendar_sidebar'>

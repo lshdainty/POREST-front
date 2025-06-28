@@ -1,6 +1,6 @@
 import { HeaderProps, DateHeaderProps } from 'react-big-calendar';
 import { useHolidayStore } from '@/store/HolidayStore';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 const saturday = "text-[#6767ff]";
 const sunday = "text-[#ff6767]";
@@ -15,7 +15,7 @@ export const MonthHeader: React.FC<HeaderProps> = ({label, date}) => {
 
 export const MonthDateHeader: React.FC<DateHeaderProps> = ({label, date, isOffRange}) => {
   const {findHolidayName} = useHolidayStore(s => s.actions);
-  const holiday = findHolidayName(moment(date).format('yyyyMMDD'));
+  const holiday = findHolidayName(dayjs(date).format('YYYYMMDD'));
 
   let textColor:string = '';
   if (date.getDay() === 0) textColor = sunday;

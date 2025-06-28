@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
+import { Calendar, dayjsLocalizer, Views } from 'react-big-calendar';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import { Formats } from '@/components/calendar/Formats';
 import Toolbar from '@/components/calendar/Toolbar';
@@ -12,10 +12,8 @@ import { useCalendarVisibleStore } from '@/store/CalendarVisibleStore';
 import { useCalendarSlotStore } from '@/store/CalendarSlotStore';
 import { useGetEventsByPeriod } from '@/api/calendar';
 import { useGetHolidaysByStartEndDate } from '@/api/holiday';
-import moment from 'moment';
 import dayjs from 'dayjs';
-// @ts-ignore
-import 'moment/dist/locale/ko';
+import 'dayjs/locale/ko';
 
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
@@ -24,10 +22,10 @@ import '@/components/calendar/index.scss';
 const Content: React.FC = () => {
   const DragAndDropCalendar = withDragAndDrop(Calendar);
   // local화
-  moment.locale('ko');
-  const localizer = momentLocalizer(moment);
+  dayjs.locale('ko');
+  const localizer = dayjsLocalizer(dayjs);
 
-  // schedule 관리
+  // event 관리
   const { events } = useCalendarEventsStore();
   const { resetEvents, setEventVisible } = useCalendarEventsStore(s => s.actions);
   const { userVisibles, calendarVisibles } = useCalendarVisibleStore();
@@ -45,8 +43,8 @@ const Content: React.FC = () => {
 
   // month 달력 범위 관리
   const [range, setRange] = useState<{start: Date, end: Date}>({
-    start: moment(new Date()).startOf('month').startOf('week').toDate(),
-    end: moment(new Date()).endOf('month').endOf('week').toDate()
+    start: dayjs(new Date()).startOf('month').startOf('week').toDate(),
+    end: dayjs(new Date()).endOf('month').endOf('week').toDate()
   });
 
   // range 변경 부분
@@ -71,7 +69,7 @@ const Content: React.FC = () => {
   });
 
   const handleSelectSlot = useCallback(({start, end}: { start: Date; end: Date; }) => {
-    setSlots(start, moment(end).subtract(1, 'seconds').toDate());
+    setSlots(start, dayjs(end).subtract(1, 'second').toDate());
     setOpen(true);
   }, [setSlots, setOpen]);
 

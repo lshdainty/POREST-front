@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import dayjs from 'dayjs';
 import { useCalendarSlotStore } from '@/store/CalendarSlotStore';
 import { useGetAvailableVacations, usePostUseVacation } from '@/api/vacation';
+import { usePostSchedule } from '@/api/schedule';
 import { CalendarIcon } from 'lucide-react'
 import { useCalendarType } from '@/hooks/useCalendarType';
 import {
@@ -56,24 +57,17 @@ export const RegistEventDialog: React.FC = () => {
   });
 
   const { mutate: postUseVacation } = usePostUseVacation();
-  // const queryClient = useQueryClient();
+  const { mutate: postSchedule } = usePostSchedule();
 
   const onSubmit = () => {
     const calendar = calendarTypes.find(c => c.id === selectCalendarType);
+    const format = 'YYYY-MM-DDTHH:mm:ss';
     let data = Object();
     data['user_no'] = 1;
 
     if (calendar?.isDate) {
-      data['start_date'] = dayjs(startDate)
-      .set('hour', 0)
-      .set('minute', 0)
-      .set('second', 0)
-      .format('YYYY-MM-DDTHH:mm:ss');
-      data['end_date'] = dayjs(endDate)
-      .set('hour', 23)
-      .set('minute',59)
-      .set('second', 59)
-      .format('YYYY-MM-DDTHH:mm:ss');
+      data['start_date'] = dayjs(startDate).set('hour', 0).set('minute', 0).set('second', 0).format(format);
+      data['end_date'] = dayjs(endDate).set('hour', 23).set('minute',59).set('second', 59).format(format);
     } else {
       let plusHour = 0;
       switch(calendar?.id) {
@@ -105,16 +99,8 @@ export const RegistEventDialog: React.FC = () => {
           break;
       }
 
-      data['start_date'] = dayjs(startDate)
-      .set('hour', Number(startHour))
-      .set('minute', Number(startMinute))
-      .set('second', 0)
-      .format('YYYY-MM-DDTHH:mm:ss');
-      data['end_date'] = dayjs(endDate)
-      .set('hour', Number(startHour) + plusHour)
-      .set('minute', Number(startMinute))
-      .set('second', 0)
-      .format('YYYY-MM-DDTHH:mm:ss');
+      data['start_date'] = dayjs(startDate).set('hour', Number(startHour)).set('minute', Number(startMinute)).set('second', 0).format(format);
+      data['end_date'] = dayjs(endDate).set('hour', Number(startHour) + plusHour).set('minute', Number(startMinute)).set('second', 0).format(format);
     }
 
     if (calendar?.type === 'vacation') {
@@ -129,6 +115,9 @@ export const RegistEventDialog: React.FC = () => {
     } else {
       data['schedule_type'] = calendar?.id;
       data['schedule_desc'] = desc;
+
+      setOpen(false);
+      postSchedule(data);
     }
   }
 
@@ -331,8 +320,8 @@ export const RegistEventDialog: React.FC = () => {
                     <SelectValue placeholder='분' />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem key={0} value={'0'}>{`0 분`}</SelectItem>
-                    <SelectItem key={30} value={'30'}>{`30 분`}</SelectItem>
+                    <SelectItem key={0} value={'0'}>{'0 분'}</SelectItem>
+                    <SelectItem key={30} value={'30'}>{'30 분'}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
