@@ -24,7 +24,7 @@ export interface CalendarEvent {
   title: string;
   start: Date;
   end: Date;
-  rawData: CustomEvent;
+  resource: CustomEvent;
 }
 
 export const useCalendarEventsStore = create<{
@@ -76,7 +76,7 @@ export const useCalendarEventsStore = create<{
         title: c.calendar_name,
         start: new Date(c.start_date),
         end: new Date(c.end_date),
-        rawData: {
+        resource: {
           userNo: c.user_no,
           userName: c.user_name,
           calendarName: c.calendar_name,
@@ -109,14 +109,14 @@ export const useCalendarEventsStore = create<{
       set((state) => (
         (type === 'user') ? {
           events: state.events.map(event => 
-            event.rawData.userNo === id 
-              ? { ...event, rawData: { ...event.rawData, isUserVisible: visible } } 
+            event.resource.userNo === id 
+              ? { ...event, resource: { ...event.resource, isUserVisible: visible } } 
               : event
           )
         } : {
           events: state.events.map(event => 
-            event.rawData.calendarType === id 
-              ? { ...event, rawData: { ...event.rawData, isCalendarVisible: visible } } 
+            event.resource.calendarType === id 
+              ? { ...event, resource: { ...event.resource, isCalendarVisible: visible } } 
               : event
           )
         }));

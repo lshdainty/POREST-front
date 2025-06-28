@@ -103,7 +103,7 @@ const Content: React.FC = () => {
         resizable
         selectable
         // schedule data
-        events={events.filter((ev: CalendarEvent) => ev.rawData.isUserVisible && ev.rawData.isCalendarVisible)}
+        events={events.filter((ev: CalendarEvent) => ev.resource.isUserVisible && ev.resource.isCalendarVisible)}
         // calendar view option
         view={view}
         onView={onView}

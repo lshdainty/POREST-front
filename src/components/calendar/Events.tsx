@@ -1,42 +1,44 @@
 import { useEffect } from 'react';
 import { EventProps } from 'react-big-calendar';
 import { convertColorCode } from '@/hooks/useCalendarType';
+import { CalendarEvent, CustomEvent } from '@/store/CalendarEventStore';
 import dayjs from 'dayjs';
 import { Popover } from 'antd';
 import { useIsMobile } from '@/hooks/useMobile';
 import { Circle } from '@mui/icons-material';
 import { Clock4, UserRound, FileText } from 'lucide-react';
 
-export const convertEventStyle = (event) => {
+export const convertEventStyle = (event: CalendarEvent | any) => {
   return {
     style: {
-      backgroundColor: convertColorCode(event.rawData.calendarType),
-      opacity: event.rawData.isOffDay ? 0.5 : 1
+      backgroundColor: convertColorCode(event.resource.calendarType),
+      opacity: event.resource.isOffDay ? 0.5 : 1
     }
   };
 }
 
 const EventPopup: React.FC<EventProps> = (props) => {
-  const event = props.event;
-  const start = (event.rawData.isAllDay === true) ? dayjs(event.start).format('YYYY-MM-DD') : dayjs(event.start).format('YYYY-MM-DD HH:mm');
-  const end = (event.rawData.isAllDay === true) ? dayjs(event.end).format('YYYY-MM-DD') : dayjs(event.end).format('HH:mm');
+  const event = props.event as CalendarEvent;
+  const resource = props.event.resource as CustomEvent;
+  const start = (resource.isAllDay === true) ? dayjs(event.start).format('YYYY-MM-DD') : dayjs(event.start).format('YYYY-MM-DD HH:mm');
+  const end = (resource.isAllDay === true) ? dayjs(event.end).format('YYYY-MM-DD') : dayjs(event.end).format('HH:mm');
 
   return (
     <>
       <div className='p-4'>
-        <div className='text-sm font-bold leading-relaxed break-all mb-2.5'>{`${event.rawData.userName} ${event.rawData.calendarName}`}</div>
+        <div className='text-sm font-bold leading-relaxed break-all mb-2.5'>{`${resource.userName} ${resource.calendarName}`}</div>
         <div className='flex items-center text-xs leading-[1.7]'><Clock4 className='w-3 h-3 mr-1' />{`${start} - ${end}`}</div>
-        <div className='flex items-center text-xs leading-[1.7]'><UserRound className='w-3 h-3 mr-1' />{event.rawData.userName}</div>
-        <div className='flex items-center text-xs leading-[1.7]'><Circle sx={{fontSize: '12px', lineHeight: '1.7', marginRight: '4px', color:event.rawData.colorCode}} />{event.rawData.calendarName}</div>
-        <div className='flex items-center text-xs leading-[1.7]'><FileText className='w-3 h-3 mr-1' />{event.rawData.calendarDesc}</div>
+        <div className='flex items-center text-xs leading-[1.7]'><UserRound className='w-3 h-3 mr-1' />{resource.userName}</div>
+        <div className='flex items-center text-xs leading-[1.7]'><Circle sx={{fontSize: '12px', lineHeight: '1.7', marginRight: '4px', color:resource.colorCode}} />{resource.calendarName}</div>
+        <div className='flex items-center text-xs leading-[1.7]'><FileText className='w-3 h-3 mr-1' />{resource.calendarDesc}</div>
       </div>
-      <div className='absolute rounded-t-[4px] w-full h-1 border-0 top-0' style={{backgroundColor:event.rawData.colorCode}}></div>
+      <div className='absolute rounded-t-[4px] w-full h-1 border-0 top-0' style={{backgroundColor:resource.colorCode}}></div>
     </>
   );
 }
 
 const Events: React.FC<EventProps> = (props) => {
-  const event = props.event;
+  const event = props.event as CalendarEvent;
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -73,7 +75,7 @@ const Events: React.FC<EventProps> = (props) => {
       }}
     >
       <div className={isMobile ? "text-sm pl-1" : "text-base pl-1"}>
-        {`${event.rawData.userName} ${event.rawData.calendarName}`}
+        {`${event.resource.userName} ${event.resource.calendarName}`}
       </div>
     </Popover>
   );
