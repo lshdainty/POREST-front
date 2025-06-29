@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useCalendarType } from '@/hooks/useCalendarType';
 import { useCalendarVisibleStore } from '@/store/CalendarVisibleStore';
 import { useCalendarEventsStore } from '@/store/CalendarEventStore';
@@ -13,7 +13,6 @@ import '@/components/calendar/sideBar.scss';
 
 const SideBar: React.FC = () => {
   const calendarType = useCalendarType();
-  const [allChecked, setAllChecked] = useState(true);
   const {data: users, isLoading: usersLoading} = useGetUsers();
 
   const {
@@ -25,7 +24,13 @@ const SideBar: React.FC = () => {
     setUserAllVisible,
     setCalendarAllVisible
   } = useCalendarVisibleStore(s => s.actions);
-  const { userVisibles, calendarVisibles, userAllVisible, calendarAllVisible } = useCalendarVisibleStore();
+  const {
+    userVisibles,
+    calendarVisibles,
+    userAllVisible,
+    calendarAllVisible,
+    allVisible
+  } = useCalendarVisibleStore();
   const { setEventVisible } = useCalendarEventsStore(s => s.actions);
   const { theme } = useTheme();
 
@@ -53,18 +58,17 @@ const SideBar: React.FC = () => {
   }
 
   const onCheckedChangeViewAll = () => {
-    setAllChecked(prev => !prev);
-    setAllVisible(!allChecked);
+    setAllVisible();
     userVisibles.forEach(visible => {
-      setEventVisible(visible.id as number, !allChecked, 'user');
+      setEventVisible(visible.id as number, !allVisible, 'user');
     });
     calendarVisibles.forEach(visible => {
-      setEventVisible(visible.id as string, !allChecked, 'calendar');
+      setEventVisible(visible.id as string, !allVisible, 'calendar');
     });
   }
 
   const onClickUserAll = () => {
-    setUserAllVisible(!userAllVisible)
+    setUserAllVisible();
     userVisibles.forEach(visible => {
       setEventVisible(visible.id as number, !userAllVisible, 'user');
     });
@@ -77,7 +81,7 @@ const SideBar: React.FC = () => {
   }
 
   const onClickCalendarAll = () => {
-    setCalendarAllVisible(!calendarAllVisible);
+    setCalendarAllVisible();
     calendarVisibles.forEach(visible => {
       setEventVisible(visible.id as string, !calendarAllVisible, 'calendar');
     });
@@ -101,7 +105,7 @@ const SideBar: React.FC = () => {
       <div className='sidebar_all'>
         <Checkbox
           id='viewAll'
-          checked={allChecked}
+          checked={allVisible}
           onCheckedChange={() => onCheckedChangeViewAll()}
         />
         <Label htmlFor='viewAll' className='pl-2.5'>View all</Label>
