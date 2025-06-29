@@ -5,8 +5,9 @@ const config: Config = {
 	content: [
 		"./src/index.css",
 		"./src/**/*.{js,jsx,ts,tsx}",
-		"*.{js,ts,jsx,tsx,mdx}"
+		"*.{js,ts,jsx,tsx,mdx}",
 	],
+	important: '[data-table-library_table]',
 	theme: {
 		extend: {
 			colors: {
