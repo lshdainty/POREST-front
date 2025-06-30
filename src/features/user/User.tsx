@@ -12,6 +12,9 @@ import { Button } from '@/components/shadcn/button';
 import { Badge } from "@/components/shadcn/badge"
 import { useTheme } from '@/components/shadcn/themeProvider';
 import { UserRoundCog, UserRound } from 'lucide-react';
+import insighton from '@/assets/img/insighton.svg';
+import dtol from '@/assets/img/dtol.svg';
+import skax from '@/assets/img/skax.svg';
 
 export default function User() {
   const {data: users, isLoading: usersLoading} = useGetUsers();
@@ -52,8 +55,11 @@ export default function User() {
                   <HeaderCell className='!p-2'>이름</HeaderCell>
                   <HeaderCell className='!p-2'>생년월일</HeaderCell>
                   <HeaderCell className='!p-2'>유연근무제</HeaderCell>
-                  <HeaderCell className='!p-2'>소속</HeaderCell>
-                  <HeaderCell className='!p-2'>음력</HeaderCell>
+                  <HeaderCell className='!p-2'>권한</HeaderCell>
+                  <HeaderCell className='!p-2'>음력여부</HeaderCell>
+                  <HeaderCell className='!p-2'>로고테스트</HeaderCell>
+                  <HeaderCell className='!p-2'>로고테스트1</HeaderCell>
+                  <HeaderCell className='!p-2'>로고테스트2</HeaderCell>
                 </HeaderRow>
               </Header>
               <Body>
@@ -66,7 +72,7 @@ export default function User() {
                     key={row.user_no}
                   >
                     <Cell className='!p-2 !border-b'>{row.user_name}</Cell>
-                    <Cell className='!p-2 !border-b'>{row.user_birth}</Cell>
+                    <Cell className='!p-2 !border-b'>{`${row.user_birth.substr(0, 4)}년 ${row.user_birth.substr(4, 2)}월 ${row.user_birth.substr(6, 2)}일`}</Cell>
                     <Cell className='!p-2 !border-b'>
                       <Badge className={`
                         ${row.user_work_time === '8 ~ 5' ? 'bg-rose-500 dark:bg-rose-400' : row.user_work_time === '9 ~ 6' ? 'bg-sky-500 dark:bg-sky-400' : 'bg-emerald-500 dark:bg-emerald-400'}
@@ -80,6 +86,15 @@ export default function User() {
                       </div>
                     </Cell>
                     <Cell className='!p-2 !border-b'>{row.lunar_yn}</Cell>
+                    <Cell className='!p-2 !border-b'>
+                      <img src={skax} alt="아이콘" width="50" height="50" />
+                    </Cell>
+                    <Cell className='!p-2 !border-b'>
+                      <img src={dtol} alt="아이콘" width="50" height="50" />
+                    </Cell>
+                    <Cell className='!p-2 !border-b'>
+                      <img src={insighton} alt="아이콘" width="50" height="50" />
+                    </Cell>
                   </Row>
                 ))}
               </Body>
