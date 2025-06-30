@@ -12,9 +12,10 @@ import { Button } from '@/components/shadcn/button';
 import { Badge } from "@/components/shadcn/badge"
 import { useTheme } from '@/components/shadcn/themeProvider';
 import { UserRoundCog, UserRound } from 'lucide-react';
-import insighton from '@/assets/img/insighton.svg';
-import dtol from '@/assets/img/dtol.svg';
 import skax from '@/assets/img/skax.svg';
+import dtol from '@/assets/img/dtol.svg';
+import insighton from '@/assets/img/insighton.svg';
+import bigxdata from '@/assets/img/bigxdata.svg';
 
 export default function User() {
   const {data: users, isLoading: usersLoading} = useGetUsers();
@@ -60,6 +61,7 @@ export default function User() {
                   <HeaderCell className='!p-2'>로고테스트</HeaderCell>
                   <HeaderCell className='!p-2'>로고테스트1</HeaderCell>
                   <HeaderCell className='!p-2'>로고테스트2</HeaderCell>
+                  <HeaderCell className='!p-2'>로고테스트3</HeaderCell>
                 </HeaderRow>
               </Header>
               <Body>
@@ -94,6 +96,9 @@ export default function User() {
                     </Cell>
                     <Cell className='!p-2 !border-b'>
                       <img src={insighton} alt="아이콘" width="50" height="50" />
+                    </Cell>
+                    <Cell className='!p-2 !border-b'>
+                      <img src={bigxdata} alt="아이콘" width="70" height="70" />
                     </Cell>
                   </Row>
                 ))}
