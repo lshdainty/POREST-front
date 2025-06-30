@@ -6,12 +6,12 @@ import {
   Body,
   Row,
   HeaderCell,
-  Cell,
+  Cell
 } from '@table-library/react-table-library/table';
 import { Button } from '@/components/shadcn/button';
-// import { useTheme } from '@table-library/react-table-library/theme';
-// import { getTheme } from '@table-library/react-table-library/baseline';
+import { Badge } from "@/components/shadcn/badge"
 import { useTheme } from '@/components/shadcn/themeProvider';
+import { UserRoundCog, UserRound } from 'lucide-react';
 
 export default function User() {
   const {data: users, isLoading: usersLoading} = useGetUsers();
@@ -67,8 +67,18 @@ export default function User() {
                   >
                     <Cell className='!p-2 !border-b'>{row.user_name}</Cell>
                     <Cell className='!p-2 !border-b'>{row.user_birth}</Cell>
-                    <Cell className='!p-2 !border-b'>{row.user_work_time}</Cell>
-                    <Cell className='!p-2 !border-b'>{row.user_employ}</Cell>
+                    <Cell className='!p-2 !border-b'>
+                      <Badge className={`
+                        ${row.user_work_time === '8 ~ 5' ? 'bg-rose-500 dark:bg-rose-400' : row.user_work_time === '9 ~ 6' ? 'bg-sky-500 dark:bg-sky-400' : 'bg-emerald-500 dark:bg-emerald-400'}
+                      `}>{row.user_work_time}</Badge>
+                    </Cell>
+                    <Cell className='!p-2 !border-b'>
+                      <div className={`flex flex-row items-center text-sm gap-1
+                        ${row.user_employ === 'ADMIN' ? 'text-rose-500 dark:text-rose-400' : 'text-sky-500 dark:text-sky-400'}
+                      `}>
+                        {row.user_employ === 'ADMIN' ? <UserRoundCog size={14}/> : <UserRound size={14}/>}{row.user_employ}
+                      </div>
+                    </Cell>
                     <Cell className='!p-2 !border-b'>{row.lunar_yn}</Cell>
                   </Row>
                 ))}
