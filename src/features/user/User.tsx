@@ -10,13 +10,12 @@ import {
 } from '@table-library/react-table-library/table';
 import { Button } from '@/components/shadcn/button';
 import { Badge } from "@/components/shadcn/badge"
-import { useTheme } from '@/components/shadcn/themeProvider';
+import { Avatar, AvatarFallback } from '@/components/shadcn/avatar';
 import { UserRoundCog, UserRound } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function User() {
   const {data: users, isLoading: usersLoading} = useGetUsers();
-  const { theme } = useTheme();
 
   if (usersLoading) {
     return (
@@ -37,7 +36,7 @@ export default function User() {
   return (
     <div className='w-full h-full flex flex-col justify-start gap-4 py-4'>
       <div className='flex justify-end w-full px-4 lg:px-6'>
-        <Button className='text-sm h-8' variant='secondary'>Save</Button>
+        <Button className='text-sm h-8' variant='outline'>Save</Button>
       </div>
       <div className='w-full flex px-4 lg:px-6'>
         <Table
@@ -48,16 +47,14 @@ export default function User() {
           {(tableList: any) => (
             <>
               <Header>
-                <HeaderRow
-                  className={cn(theme === 'light' ? '!bg-muted !text-foreground' : 'dark:!bg-muted dark:!text-foreground')}
-                >
-                  <HeaderCell className='!p-2'>이름</HeaderCell>
-                  <HeaderCell className='!p-2'>생년월일</HeaderCell>
-                  <HeaderCell className='!p-2'>email</HeaderCell>
-                  <HeaderCell className='!p-2'>소속</HeaderCell>
-                  <HeaderCell className='!p-2'>음력여부</HeaderCell>
-                  <HeaderCell className='!p-2'>유연근무제</HeaderCell>
-                  <HeaderCell className='!p-2'>권한</HeaderCell>
+                <HeaderRow className='!bg-muted !text-foreground [&_th]:!p-2 [&_th]:!text-sm [&_th]:!h-10 [&_th]:!font-medium [&_div]:!pl-2'>
+                  <HeaderCell>이름</HeaderCell>
+                  <HeaderCell>생년월일</HeaderCell>
+                  <HeaderCell>email</HeaderCell>
+                  <HeaderCell>소속</HeaderCell>
+                  <HeaderCell>음력여부</HeaderCell>
+                  <HeaderCell>유연근무제</HeaderCell>
+                  <HeaderCell>권한</HeaderCell>
                 </HeaderRow>
               </Header>
               <Body>
@@ -65,13 +62,21 @@ export default function User() {
                   <Row
                     item={row}
                     className={cn(
-                      '[&_td]:!p-2',
-                      theme === 'light' ? '!bg-background !text-foreground' : 'dark:!bg-background dark:!text-foreground',
-                      i !== users?.length-1 ? '[&>td]:!border-b' : '[&>td]:!border-b-0'
+                      'hover:!bg-muted/50 !bg-background !text-foreground [&_td]:!p-2 [&_td]:!text-sm [&_td>div]:!py-1 [&_td>div]:!pl-2',
+                      i !== users?.length-1 ? '[&_td]:!border-b' : '[&_td]:!border-b-0'
                     )}
                     key={row.user_no}
                   >
-                    <Cell>{row.user_name}</Cell>
+                    <Cell>
+                      <div className='flex flex-row items-center'>
+                        <Avatar className='h-8 w-8 mr-1.5'>
+                          <AvatarFallback>
+                            <UserRound className='w-5 h-5' />
+                          </AvatarFallback>
+                        </Avatar>
+                        {row.user_name}
+                      </div>
+                    </Cell>
                     <Cell>{`${row.user_birth.substr(0, 4)}년 ${row.user_birth.substr(4, 2)}월 ${row.user_birth.substr(6, 2)}일`}</Cell>
                     <Cell>{row.user_email}</Cell>
                     <Cell>{row.user_employ}</Cell>
