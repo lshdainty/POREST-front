@@ -8,14 +8,28 @@ import {
   HeaderCell,
   Cell
 } from '@table-library/react-table-library/table';
+import { useTheme } from "@table-library/react-table-library/theme";
 import { Button } from '@/components/shadcn/button';
 import { Badge } from "@/components/shadcn/badge"
 import { Avatar, AvatarFallback } from '@/components/shadcn/avatar';
-import { UserRoundCog, UserRound } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator
+} from '@/components/shadcn/dropdownMenu';
+import { UserRoundCog, UserRound, EllipsisVertical } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function User() {
   const {data: users, isLoading: usersLoading} = useGetUsers();
+
+  const theme = useTheme([{
+      Table: `
+        --data-table-library_grid-template-columns: 15% 20% 15% 15% repeat(3, minmax(0, 1fr)) 4% !important;
+      `,
+  },]);
 
   if (usersLoading) {
     return (
@@ -40,6 +54,7 @@ export default function User() {
       </div>
       <div className='w-full flex px-4 lg:px-6'>
         <Table
+          theme={theme}
           className='w-full !h-auto border overflow-hidden rounded-lg'
           data={{nodes: users}}
           layout={{ fixedHeader: true }}
@@ -49,12 +64,13 @@ export default function User() {
               <Header>
                 <HeaderRow className='!bg-muted !text-foreground [&_th]:!p-2 [&_th]:!text-sm [&_th]:!h-10 [&_th]:!font-medium [&_div]:!pl-2'>
                   <HeaderCell>이름</HeaderCell>
-                  <HeaderCell>생년월일</HeaderCell>
                   <HeaderCell>email</HeaderCell>
+                  <HeaderCell>생년월일</HeaderCell>
                   <HeaderCell>소속</HeaderCell>
                   <HeaderCell>음력여부</HeaderCell>
                   <HeaderCell>유연근무제</HeaderCell>
                   <HeaderCell>권한</HeaderCell>
+                  <HeaderCell></HeaderCell>
                 </HeaderRow>
               </Header>
               <Body>
@@ -77,8 +93,8 @@ export default function User() {
                         {row.user_name}
                       </div>
                     </Cell>
-                    <Cell>{`${row.user_birth.substr(0, 4)}년 ${row.user_birth.substr(4, 2)}월 ${row.user_birth.substr(6, 2)}일`}</Cell>
                     <Cell>{row.user_email}</Cell>
+                    <Cell>{`${row.user_birth.substr(0, 4)}년 ${row.user_birth.substr(4, 2)}월 ${row.user_birth.substr(6, 2)}일`}</Cell>
                     <Cell>{row.user_employ}</Cell>
                     <Cell>{row.lunar_yn}</Cell>
                     <Cell>
@@ -92,6 +108,26 @@ export default function User() {
                       `}>
                         {row.user_role === 'ADMIN' ? <UserRoundCog size={14}/> : <UserRound size={14}/>}{row.user_role}
                       </div>
+                    </Cell>
+                    <Cell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
+                            size="icon"
+                          >
+                            <EllipsisVertical />
+                            <span className="sr-only">Open menu</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-32">
+                          <DropdownMenuItem>Edit</DropdownMenuItem>
+                          <DropdownMenuItem>Make a copy</DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="text-destructive focus:text-destructive hover:!bg-destructive/20">Delete</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </Cell>
                   </Row>
                 ))}
