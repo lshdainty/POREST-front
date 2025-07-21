@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useGetUsers } from '@/api/user';
+import { useGetUsers, usePostUser, usePutUser, useDeleteUser } from '@/api/user';
 import {
   Table,
   Header,
@@ -50,6 +50,9 @@ interface ModifiedData {
 
 export default function User() {
   const {data: users, isLoading: usersLoading} = useGetUsers();
+  const { mutate: postUser } = usePostUser();
+  const { mutate: putUser } = usePutUser();
+  const { mutate: deleteUser } = useDeleteUser();
   const [tableData, setTableData] = useState<UserData[] | undefined>([]);
   const [modifiedData, setModifiedData] = useState<ModifiedData>({
     created: [],
@@ -137,6 +140,20 @@ export default function User() {
 
   const handleEdit = (user_id: string) => {
     setEditingRow(user_id);
+  };
+
+  const handleSave = () => {
+    modifiedData.created.forEach(user => {
+      postUser({...user, user_pwd: ''});
+    });
+
+    modifiedData.updated.forEach(user => {
+      putUser({...user});
+    });
+
+    modifiedData.deleted.forEach(user_id => {
+      deleteUser(user_id);
+    });
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, user_id: string, field: keyof UserData) => {
@@ -229,7 +246,7 @@ export default function User() {
     <div className='w-full h-full flex flex-col justify-start gap-4 py-4'>
       <div className='flex justify-end w-full px-4 lg:px-6 gap-2'>
         <Button className='text-sm h-8' variant='outline' onClick={handleAdd}>Add</Button>
-        <Button className='text-sm h-8' variant='outline' onClick={() => console.log(modifiedData)}>Save</Button>
+        <Button className='text-sm h-8' variant='outline' onClick={handleSave}>Save</Button>
       </div>
       <div className='w-full flex px-4 lg:px-6'>
         <Table
