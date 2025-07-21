@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { Home } from 'lucide-react';
 import {
   Breadcrumb,
@@ -36,25 +36,12 @@ export function DynamicBreadcrumb({
   const { pathname } = useLocation()
 
   const pathMapping: Record<string, string> = {
+    overview: 'Overview',
     calendar: 'Calendar',
-    work: 'Work Management',
-    dues: 'Dues & Payroll',
-    rule: 'Rules & Policies',
-    schedule: 'Schedule',
-    events: 'Events',
-    meetings: 'Meetings',
-    attendance: 'Attendance',
-    'time-tracking': 'Time Tracking',
-    projects: 'Projects',
-    performance: 'Performance',
-    payroll: 'Payroll',
-    benefits: 'Benefits',
-    expenses: 'Expenses',
-    'tax-documents': 'Tax Documents',
-    policies: 'Policies',
-    procedures: 'Procedures',
-    compliance: 'Compliance',
-    training: 'Training',
+    work: 'Work',
+    culture: 'Culture',
+    rule: 'Rule',
+    user: 'User',
   }
 
   const generateBreadcrumbs = (): BreadcrumbSegment[] => {
@@ -65,15 +52,15 @@ export function DynamicBreadcrumb({
     if (showHome) {
       breadcrumbs.push({
         title: 'Home',
-        href: '/dashboard',
-        isActive: pathname === '/dashboard',
+        href: '/overview',
+        isActive: pathname === '/overview',
       })
     }
 
     let currentPath = ''
     segments.forEach((segment, index) => {
-      if (segment === 'dashboard' && index === 0) {
-        currentPath = '/dashboard'
+      if (segment === 'overview' && index === 0) {
+        currentPath = '/overview'
         return
       }
 
@@ -124,7 +111,9 @@ export function DynamicBreadcrumb({
                     <DropdownMenuContent align='start'>
                       {collapsedItems.map((item) => (
                         <DropdownMenuItem key={item.href}>
-                          <BreadcrumbLink href={item.href}>{item.title}</BreadcrumbLink>
+                          <BreadcrumbLink asChild>
+                            <Link to={item.href}>{item.title}</Link>
+                          </BreadcrumbLink>
                         </DropdownMenuItem>
                       ))}
                     </DropdownMenuContent>
@@ -138,8 +127,10 @@ export function DynamicBreadcrumb({
               {crumb.isActive ? (
                 <BreadcrumbPage className='font-medium text-foreground'>{crumb.title}</BreadcrumbPage>
               ) : (
-                <BreadcrumbLink href={crumb.href} className='transition-colors hover:text-foreground'>
-                  {index === 0 && showHome ? <Home className='h-4 w-4' /> : crumb.title}
+                <BreadcrumbLink asChild className='transition-colors hover:text-foreground'>
+                  <Link to={crumb.href}>
+                    {index === 0 && showHome ? <Home className='h-4 w-4' /> : crumb.title}
+                  </Link>
                 </BreadcrumbLink>
               )}
             </BreadcrumbItem>

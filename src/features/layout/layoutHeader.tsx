@@ -1,6 +1,7 @@
 import { Separator } from '@/components/shadcn/separator';
 import { SidebarTrigger } from '@/components/shadcn/sidebar';
 import { ModeToggle } from '@/components/ui/modeToggle';
+import { DynamicBreadcrumb } from '@/components/ui/dynamicBreadcrumb';
 
 export function LayoutHeader() {
   return (
@@ -11,7 +12,7 @@ export function LayoutHeader() {
           orientation='vertical'
           className='mx-2 data-[orientation=vertical]:h-4'
         />
-        <h1 className='text-base font-medium'>Documents</h1>
+        <DynamicBreadcrumb />
         <div className='ml-auto flex items-center gap-2'>
           <ModeToggle />
         </div>
