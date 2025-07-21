@@ -42,8 +42,10 @@ interface UserData {
   user_role: 'ADMIN' | 'USER';
 }
 
+type EditableUserData = UserData & { isNew?: boolean; tempId?: string };
+
 interface ModifiedData {
-  created: UserData[];
+  created: EditableUserData[];
   updated: UserData[];
   deleted: string[];
 }
@@ -53,7 +55,7 @@ export default function User() {
   const { mutate: postUser } = usePostUser();
   const { mutate: putUser } = usePutUser();
   const { mutate: deleteUser } = useDeleteUser();
-  const [tableData, setTableData] = useState<UserData[] | undefined>([]);
+  const [tableData, setTableData] = useState<EditableUserData[] | undefined>([]);
   const [modifiedData, setModifiedData] = useState<ModifiedData>({
     created: [],
     updated: [],
@@ -83,44 +85,52 @@ export default function User() {
   }, [users]);
 
   const theme = useTheme([{
-      Table: `
-        --data-table-library_grid-template-columns: 15% 20% 15% 15% repeat(3, minmax(0, 1fr)) 4% !important;
-      `,
-  },]);
+    Table: `--data-table-library_grid-template-columns: 11% 11% 18% 14% 11% repeat(3, minmax(0, 1fr)) 4% !important;`,
+  }]);
 
-  const handleDelete = (user_id: string) => {
+  const handleDelete = (id: string) => {
     if (!tableData) return;
+    const rowToDelete = tableData.find(row => (row.isNew ? row.tempId : row.user_id) === id);
+    if (!rowToDelete) return;
 
-    if (user_id.startsWith('new_')) {
+    if (rowToDelete.isNew) {
       setModifiedData({
         ...modifiedData,
-        created: modifiedData.created.filter((user) => user.user_id !== user_id),
+        created: modifiedData.created.filter((user) => user.tempId !== id),
       });
     } else {
       setModifiedData({
         ...modifiedData,
-        updated: modifiedData.updated.filter((user) => user.user_id !== user_id),
-        deleted: [...modifiedData.deleted, user_id],
+        updated: modifiedData.updated.filter((user) => user.user_id !== id),
+        deleted: [...modifiedData.deleted, id],
       });
     }
 
-    setTableData(tableData.filter((user) => user.user_id !== user_id));
+    setTableData(tableData.filter((user) => (user.isNew ? user.tempId : user.user_id) !== id));
   };
 
-  const handleCopy = (row: UserData) => {
+  const handleCopy = (row: EditableUserData) => {
     if (!tableData) return;
-    const newRow = { ...row, user_id: `new_${Date.now()}` };
+    const tempId = `new_${Date.now()}`;
+    const newRow: EditableUserData = {
+      ...row,
+      user_id: '',
+      isNew: true,
+      tempId: tempId,
+    };
     setTableData([...tableData, newRow]);
     setModifiedData({
       ...modifiedData,
       created: [...modifiedData.created, newRow],
     });
+    setEditingRow(tempId);
   };
 
   const handleAdd = () => {
     if (!tableData) return;
-    const newRow: UserData = {
-      user_id: `new_${Date.now()}`,
+    const tempId = `new_${Date.now()}`;
+    const newRow: EditableUserData = {
+      user_id: '',
       user_name: '',
       user_email: '',
       user_birth: '',
@@ -128,6 +138,8 @@ export default function User() {
       lunar_yn: 'N',
       user_work_time: workTimeOptions[1].value,
       user_role: 'USER',
+      isNew: true,
+      tempId: tempId,
     };
 
     setTableData([...tableData, newRow]);
@@ -135,16 +147,17 @@ export default function User() {
       ...modifiedData,
       created: [...modifiedData.created, newRow],
     });
-    setEditingRow(newRow.user_id);
+    setEditingRow(tempId);
   };
 
-  const handleEdit = (user_id: string) => {
-    setEditingRow(user_id);
+  const handleEdit = (id: string) => {
+    setEditingRow(id);
   };
 
   const handleSave = () => {
     modifiedData.created.forEach(user => {
-      postUser({...user, user_pwd: ''});
+      const { isNew, tempId, ...userData } = user;
+      postUser({...userData, user_pwd: ''});
     });
 
     modifiedData.updated.forEach(user => {
@@ -154,29 +167,31 @@ export default function User() {
     modifiedData.deleted.forEach(user_id => {
       deleteUser(user_id);
     });
+
+    setModifiedData({ created: [], updated: [], deleted: [] });
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, user_id: string, field: keyof UserData) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, id: string, field: keyof UserData) => {
     if (!tableData) return;
     const newData = tableData.map((row) => {
-      if (row.user_id === user_id) {
+      if ((row.isNew ? row.tempId : row.user_id) === id) {
         return { ...row, [field]: e.target.value };
       }
       return row;
     });
     setTableData(newData);
 
-    const updatedUser = newData.find(user => user.user_id === user_id);
+    const updatedUser = newData.find(user => (user.isNew ? user.tempId : user.user_id) === id);
     if (!updatedUser) return;
 
-    if (user_id.startsWith('new_')) {
+    if (updatedUser.isNew) {
       setModifiedData({
         ...modifiedData,
         created: modifiedData.created.map((user) =>
-          user.user_id === user_id ? updatedUser : user
+          user.tempId === id ? updatedUser : user
         ),
       });
-    } else if (!modifiedData.updated.find((user) => user.user_id === user_id)) {
+    } else if (!modifiedData.updated.find((user) => user.user_id === id)) {
       setModifiedData({
         ...modifiedData,
         updated: [...modifiedData.updated, updatedUser],
@@ -185,33 +200,33 @@ export default function User() {
       setModifiedData({
         ...modifiedData,
         updated: modifiedData.updated.map((user) =>
-          user.user_id === user_id ? updatedUser : user
+          user.user_id === id ? updatedUser : user
         ),
       });
     }
   };
 
-  const handleSelectChange = (value: string, user_id: string, field: keyof UserData) => {
+  const handleSelectChange = (value: string, id: string, field: keyof UserData) => {
     if (!tableData) return;
     const newData = tableData.map((row) => {
-      if (row.user_id === user_id) {
+      if ((row.isNew ? row.tempId : row.user_id) === id) {
         return { ...row, [field]: value };
       }
       return row;
     });
     setTableData(newData);
 
-    const updatedUser = newData.find(user => user.user_id === user_id);
+    const updatedUser = newData.find(user => (user.isNew ? user.tempId : user.user_id) === id);
     if (!updatedUser) return;
 
-    if (user_id.startsWith('new_')) {
+    if (updatedUser.isNew) {
       setModifiedData({
         ...modifiedData,
         created: modifiedData.created.map((user) =>
-          user.user_id === user_id ? updatedUser : user
+          user.tempId === id ? updatedUser : user
         ),
       });
-    } else if (!modifiedData.updated.find((user) => user.user_id === user_id)) {
+    } else if (!modifiedData.updated.find((user) => user.user_id === id)) {
       setModifiedData({
         ...modifiedData,
         updated: [...modifiedData.updated, updatedUser],
@@ -220,7 +235,7 @@ export default function User() {
       setModifiedData({
         ...modifiedData,
         updated: modifiedData.updated.map((user) =>
-          user.user_id === user_id ? updatedUser : user
+          user.user_id === id ? updatedUser : user
         ),
       });
     }
@@ -255,12 +270,13 @@ export default function User() {
           data={{nodes: tableData}}
           layout={{ fixedHeader: true }}
         >
-          {(tableList: UserData[]) => (
+          {(tableList: EditableUserData[]) => (
             <>
               <Header>
                 <HeaderRow className='!bg-muted !text-foreground [&_th]:!p-2 [&_th]:!text-sm [&_th]:!h-10 [&_th]:!font-medium [&_div]:!pl-2'>
                   <HeaderCell>이름</HeaderCell>
-                  <HeaderCell>email</HeaderCell>
+                  <HeaderCell>ID</HeaderCell>
+                  <HeaderCell>Email</HeaderCell>
                   <HeaderCell>생년월일</HeaderCell>
                   <HeaderCell>소속</HeaderCell>
                   <HeaderCell>음력여부</HeaderCell>
@@ -270,8 +286,9 @@ export default function User() {
                 </HeaderRow>
               </Header>
               <Body>
-                {tableList.map((row: UserData, i: number) => {
-                  const isEditing = editingRow === row.user_id;
+                {tableList.map((row: EditableUserData, i: number) => {
+                  const id = row.isNew ? row.tempId! : row.user_id;
+                  const isEditing = editingRow === id;
                   return (
                     <Row
                       item={row}
@@ -279,13 +296,13 @@ export default function User() {
                         'hover:!bg-muted/50 !bg-background !text-foreground [&_td]:!p-2 [&_td]:!text-sm [&_td>div]:!py-1 [&_td>div]:!pl-2',
                         i !== tableData?.length-1 ? '[&_td]:!border-b' : '[&_td]:!border-b-0'
                       )}
-                      key={row.user_id}
+                      key={id}
                     >
                       <Cell>
                         {isEditing ? (
                           <Input
                             value={row.user_name}
-                            onChange={(e) => handleInputChange(e, row.user_id, 'user_name')}
+                            onChange={(e) => handleInputChange(e, id, 'user_name')}
                           />
                         ) : (
                           <div className='flex flex-row items-center'>
@@ -301,8 +318,20 @@ export default function User() {
                       <Cell>
                         {isEditing ? (
                           <Input
+                            value={row.user_id}
+                            onChange={(e) => handleInputChange(e, id, 'user_id')}
+                            disabled={!row.isNew}
+                            placeholder="Enter new ID"
+                          />
+                        ) : (
+                          row.user_id
+                        )}
+                      </Cell>
+                      <Cell>
+                        {isEditing ? (
+                          <Input
                             value={row.user_email}
-                            onChange={(e) => handleInputChange(e, row.user_id, 'user_email')}
+                            onChange={(e) => handleInputChange(e, id, 'user_email')}
                           />
                         ) : (
                           row.user_email
@@ -312,17 +341,17 @@ export default function User() {
                         {isEditing ? (
                           <Input
                             value={row.user_birth}
-                            onChange={(e) => handleInputChange(e, row.user_id, 'user_birth')}
+                            onChange={(e) => handleInputChange(e, id, 'user_birth')}
                           />
                         ) : (
-                          `${row.user_birth.substr(0, 4)}년 ${row.user_birth.substr(4, 2)}월 ${row.user_birth.substr(6, 2)}일`
+                          row.user_birth && `${row.user_birth.substr(0, 4)}년 ${row.user_birth.substr(4, 2)}월 ${row.user_birth.substr(6, 2)}일`
                         )}
                       </Cell>
                       <Cell>
                         {isEditing ? (
                           <Select
                             value={row.user_employ}
-                            onValueChange={(value) => handleSelectChange(value, row.user_id, 'user_employ')}
+                            onValueChange={(value) => handleSelectChange(value, id, 'user_employ')}
                           >
                             <SelectTrigger>
                               <SelectValue placeholder="소속 선택" />
@@ -341,7 +370,7 @@ export default function User() {
                         {isEditing ? (
                           <Select
                             value={row.lunar_yn}
-                            onValueChange={(value) => handleSelectChange(value, row.user_id, 'lunar_yn')}
+                            onValueChange={(value) => handleSelectChange(value, id, 'lunar_yn')}
                           >
                             <SelectTrigger>
                               <SelectValue placeholder="음력 여부" />
@@ -360,7 +389,7 @@ export default function User() {
                         {isEditing ? (
                           <Select
                             value={row.user_work_time}
-                            onValueChange={(value) => handleSelectChange(value, row.user_id, 'user_work_time')}
+                            onValueChange={(value) => handleSelectChange(value, id, 'user_work_time')}
                           >
                             <SelectTrigger>
                               <SelectValue placeholder="유연근무제" />
@@ -387,7 +416,7 @@ export default function User() {
                         {isEditing ? (
                           <Select
                             value={row.user_role}
-                            onValueChange={(value) => handleSelectChange(value, row.user_id, 'user_role')}
+                            onValueChange={(value) => handleSelectChange(value, id, 'user_role')}
                           >
                             <SelectTrigger>
                               <SelectValue placeholder="권한" />
@@ -428,7 +457,7 @@ export default function User() {
                             {isEditing ? (
                               <DropdownMenuItem onClick={() => setEditingRow(null)}>Save</DropdownMenuItem>
                             ) : (
-                              <DropdownMenuItem onClick={() => handleEdit(row.user_id)}>Edit</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleEdit(id)}>Edit</DropdownMenuItem>
                             )}
                             <DropdownMenuItem
                               onClick={() => handleCopy(row)}
@@ -438,7 +467,7 @@ export default function User() {
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
                               className="text-destructive focus:text-destructive hover:!bg-destructive/20"
-                              onClick={() => handleDelete(row.user_id)}
+                              onClick={() => handleDelete(id)}
                             >
                               Delete
                             </DropdownMenuItem>
