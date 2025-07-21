@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { convertColorCode } from '@/hooks/useCalendarType';
 
 export interface CustomEvent {
-  userNo: number;
+  userId: string;
   userName: string;
   calendarName: string;
   calendarType: string;
@@ -31,7 +31,7 @@ export const useCalendarEventsStore = create<{
   events: CalendarEvent[];
   actions: {
     resetEvents: (calendarEvent: {
-      user_no: number;
+      user_id: string;
       user_name: string;
       calendar_name: string;
       calendar_type: string;
@@ -48,7 +48,7 @@ export const useCalendarEventsStore = create<{
   events: [],
   actions: {
     resetEvents: (calendarEvent: {
-      user_no: number;
+      user_id: string;
       user_name: string;
       calendar_name: string;
       calendar_type: string;
@@ -77,7 +77,7 @@ export const useCalendarEventsStore = create<{
         start: new Date(c.start_date),
         end: new Date(c.end_date),
         resource: {
-          userNo: c.user_no,
+          userId: c.user_id,
           userName: c.user_name,
           calendarName: c.calendar_name,
           calendarType: c.calendar_type,
@@ -109,7 +109,7 @@ export const useCalendarEventsStore = create<{
       set((state) => (
         (type === 'user') ? {
           events: state.events.map(event => 
-            event.resource.userNo === id 
+            event.resource.userId === id 
               ? { ...event, resource: { ...event.resource, isUserVisible: visible } } 
               : event
           )

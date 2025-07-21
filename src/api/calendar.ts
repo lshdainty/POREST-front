@@ -18,7 +18,7 @@ interface getEventsByPeriodReq {
 }
 
 interface getEventsByPeriodResp {
-  user_no: number
+  user_id: string
   user_name: string
   calendar_name: string
   calendar_type: string

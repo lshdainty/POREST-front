@@ -18,7 +18,7 @@ const enum VacationQueryKey {
 interface PostUseVacationReq {
   vacation_id: number
   vacation_data: {
-    user_no: number
+    user_id: string
     start_date: string
     end_date: string
     vacation_time_type: string
@@ -52,7 +52,7 @@ const usePostUseVacation = () => {
 }
 
 interface GetAvailableVacationsReq {
-  user_no: number
+  user_id: string
   start_date: string
 }
 
@@ -71,7 +71,7 @@ const useGetAvailableVacations = (d: GetAvailableVacationsReq) => {
     queryFn: async (): Promise<GetAvailableVacationsResp[]> => {
       const resp: ApiResponse = await api.request({
         method: 'get',
-        url: `/vacation/available/${d.user_no}?startDate=${d.start_date}`
+        url: `/vacation/available/${d.user_id}?startDate=${d.start_date}`
       });
 
       if (resp.code !== 200) throw new Error(resp.data.data.message);

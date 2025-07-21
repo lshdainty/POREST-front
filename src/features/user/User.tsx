@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useGetUsers } from '@/api/user';
 import {
   Table,
@@ -12,6 +13,7 @@ import { useTheme } from "@table-library/react-table-library/theme";
 import { Button } from '@/components/shadcn/button';
 import { Badge } from "@/components/shadcn/badge"
 import { Avatar, AvatarFallback } from '@/components/shadcn/avatar';
+import { Input } from '@/components/shadcn/input';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -19,17 +21,193 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator
 } from '@/components/shadcn/dropdownMenu';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/shadcn/select";
 import { UserRoundCog, UserRound, EllipsisVertical } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+interface UserData {
+  user_id: string;
+  user_name: string;
+  user_email: string;
+  user_birth: string;
+  user_employ: string;
+  lunar_yn: string;
+  user_work_time: string;
+  user_role: 'ADMIN' | 'USER';
+}
+
+interface ModifiedData {
+  created: UserData[];
+  updated: UserData[];
+  deleted: string[];
+}
+
 export default function User() {
   const {data: users, isLoading: usersLoading} = useGetUsers();
+  const [tableData, setTableData] = useState<UserData[] | undefined>([]);
+  const [modifiedData, setModifiedData] = useState<ModifiedData>({
+    created: [],
+    updated: [],
+    deleted: [],
+  });
+  const [editingRow, setEditingRow] = useState<string | null>(null);
+
+  const employOptions = ['SK AX', 'DTOL', '인사이트온', '씨앤토트플러스', 'BigxData'];
+  const lunarOptions = ['Y', 'N'];
+  const workTimeOptions = [
+    { value: '8 ~ 5', className: 'text-rose-500 dark:text-rose-400' },
+    { value: '9 ~ 6', className: 'text-sky-500 dark:text-sky-400' },
+    { value: '10 ~ 7', className: 'text-emerald-500 dark:text-emerald-400' }
+  ];
+  const roleOptions = [
+    { value: 'ADMIN', className: 'text-rose-500 dark:text-rose-400' },
+    { value: 'USER', className: 'text-sky-500 dark:text-sky-400' }
+  ];
+
+  useEffect(() => {
+    if (users) {
+      const formattedUsers = users.map((user: any) => ({
+        ...user,
+      }));
+      setTableData(formattedUsers);
+    }
+  }, [users]);
 
   const theme = useTheme([{
       Table: `
         --data-table-library_grid-template-columns: 15% 20% 15% 15% repeat(3, minmax(0, 1fr)) 4% !important;
       `,
   },]);
+
+  const handleDelete = (user_id: string) => {
+    if (!tableData) return;
+
+    if (user_id.startsWith('new_')) {
+      setModifiedData({
+        ...modifiedData,
+        created: modifiedData.created.filter((user) => user.user_id !== user_id),
+      });
+    } else {
+      setModifiedData({
+        ...modifiedData,
+        updated: modifiedData.updated.filter((user) => user.user_id !== user_id),
+        deleted: [...modifiedData.deleted, user_id],
+      });
+    }
+
+    setTableData(tableData.filter((user) => user.user_id !== user_id));
+  };
+
+  const handleCopy = (row: UserData) => {
+    if (!tableData) return;
+    const newRow = { ...row, user_id: `new_${Date.now()}` };
+    setTableData([...tableData, newRow]);
+    setModifiedData({
+      ...modifiedData,
+      created: [...modifiedData.created, newRow],
+    });
+  };
+
+  const handleAdd = () => {
+    if (!tableData) return;
+    const newRow: UserData = {
+      user_id: `new_${Date.now()}`,
+      user_name: '',
+      user_email: '',
+      user_birth: '',
+      user_employ: employOptions[0],
+      lunar_yn: 'N',
+      user_work_time: workTimeOptions[1].value,
+      user_role: 'USER',
+    };
+
+    setTableData([...tableData, newRow]);
+    setModifiedData({
+      ...modifiedData,
+      created: [...modifiedData.created, newRow],
+    });
+    setEditingRow(newRow.user_id);
+  };
+
+  const handleEdit = (user_id: string) => {
+    setEditingRow(user_id);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, user_id: string, field: keyof UserData) => {
+    if (!tableData) return;
+    const newData = tableData.map((row) => {
+      if (row.user_id === user_id) {
+        return { ...row, [field]: e.target.value };
+      }
+      return row;
+    });
+    setTableData(newData);
+
+    const updatedUser = newData.find(user => user.user_id === user_id);
+    if (!updatedUser) return;
+
+    if (user_id.startsWith('new_')) {
+      setModifiedData({
+        ...modifiedData,
+        created: modifiedData.created.map((user) =>
+          user.user_id === user_id ? updatedUser : user
+        ),
+      });
+    } else if (!modifiedData.updated.find((user) => user.user_id === user_id)) {
+      setModifiedData({
+        ...modifiedData,
+        updated: [...modifiedData.updated, updatedUser],
+      });
+    } else {
+      setModifiedData({
+        ...modifiedData,
+        updated: modifiedData.updated.map((user) =>
+          user.user_id === user_id ? updatedUser : user
+        ),
+      });
+    }
+  };
+
+  const handleSelectChange = (value: string, user_id: string, field: keyof UserData) => {
+    if (!tableData) return;
+    const newData = tableData.map((row) => {
+      if (row.user_id === user_id) {
+        return { ...row, [field]: value };
+      }
+      return row;
+    });
+    setTableData(newData);
+
+    const updatedUser = newData.find(user => user.user_id === user_id);
+    if (!updatedUser) return;
+
+    if (user_id.startsWith('new_')) {
+      setModifiedData({
+        ...modifiedData,
+        created: modifiedData.created.map((user) =>
+          user.user_id === user_id ? updatedUser : user
+        ),
+      });
+    } else if (!modifiedData.updated.find((user) => user.user_id === user_id)) {
+      setModifiedData({
+        ...modifiedData,
+        updated: [...modifiedData.updated, updatedUser],
+      });
+    } else {
+      setModifiedData({
+        ...modifiedData,
+        updated: modifiedData.updated.map((user) =>
+          user.user_id === user_id ? updatedUser : user
+        ),
+      });
+    }
+  };
 
   if (usersLoading) {
     return (
@@ -39,7 +217,7 @@ export default function User() {
     );
   }
 
-  if (!users) {
+  if (!tableData) {
     return (
       <div className='flex w-full h-full p-2.5'>
         <span>no data</span>
@@ -49,17 +227,18 @@ export default function User() {
 
   return (
     <div className='w-full h-full flex flex-col justify-start gap-4 py-4'>
-      <div className='flex justify-end w-full px-4 lg:px-6'>
-        <Button className='text-sm h-8' variant='outline'>Save</Button>
+      <div className='flex justify-end w-full px-4 lg:px-6 gap-2'>
+        <Button className='text-sm h-8' variant='outline' onClick={handleAdd}>Add</Button>
+        <Button className='text-sm h-8' variant='outline' onClick={() => console.log(modifiedData)}>Save</Button>
       </div>
       <div className='w-full flex px-4 lg:px-6'>
         <Table
           theme={theme}
           className='w-full !h-auto border overflow-hidden rounded-lg'
-          data={{nodes: users}}
+          data={{nodes: tableData}}
           layout={{ fixedHeader: true }}
         >
-          {(tableList: any) => (
+          {(tableList: UserData[]) => (
             <>
               <Header>
                 <HeaderRow className='!bg-muted !text-foreground [&_th]:!p-2 [&_th]:!text-sm [&_th]:!h-10 [&_th]:!font-medium [&_div]:!pl-2'>
@@ -74,63 +253,184 @@ export default function User() {
                 </HeaderRow>
               </Header>
               <Body>
-                {tableList.map((row: any, i: number) => (
-                  <Row
-                    item={row}
-                    className={cn(
-                      'hover:!bg-muted/50 !bg-background !text-foreground [&_td]:!p-2 [&_td]:!text-sm [&_td>div]:!py-1 [&_td>div]:!pl-2',
-                      i !== users?.length-1 ? '[&_td]:!border-b' : '[&_td]:!border-b-0'
-                    )}
-                    key={row.user_no}
-                  >
-                    <Cell>
-                      <div className='flex flex-row items-center'>
-                        <Avatar className='h-8 w-8 mr-1.5'>
-                          <AvatarFallback>
-                            <UserRound className='w-5 h-5' />
-                          </AvatarFallback>
-                        </Avatar>
-                        {row.user_name}
-                      </div>
-                    </Cell>
-                    <Cell>{row.user_email}</Cell>
-                    <Cell>{`${row.user_birth.substr(0, 4)}년 ${row.user_birth.substr(4, 2)}월 ${row.user_birth.substr(6, 2)}일`}</Cell>
-                    <Cell>{row.user_employ}</Cell>
-                    <Cell>{row.lunar_yn}</Cell>
-                    <Cell>
-                      <Badge className={`
-                        ${row.user_work_time === '8 ~ 5' ? 'bg-rose-500 dark:bg-rose-400' : row.user_work_time === '9 ~ 6' ? 'bg-sky-500 dark:bg-sky-400' : 'bg-emerald-500 dark:bg-emerald-400'}
-                      `}>{row.user_work_time}</Badge>
-                    </Cell>
-                    <Cell>
-                      <div className={`flex flex-row items-center text-sm gap-1
-                        ${row.user_role === 'ADMIN' ? 'text-rose-500 dark:text-rose-400' : 'text-sky-500 dark:text-sky-400'}
-                      `}>
-                        {row.user_role === 'ADMIN' ? <UserRoundCog size={14}/> : <UserRound size={14}/>}{row.user_role}
-                      </div>
-                    </Cell>
-                    <Cell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-                            size="icon"
+                {tableList.map((row: UserData, i: number) => {
+                  const isEditing = editingRow === row.user_id;
+                  return (
+                    <Row
+                      item={row}
+                      className={cn(
+                        'hover:!bg-muted/50 !bg-background !text-foreground [&_td]:!p-2 [&_td]:!text-sm [&_td>div]:!py-1 [&_td>div]:!pl-2',
+                        i !== tableData?.length-1 ? '[&_td]:!border-b' : '[&_td]:!border-b-0'
+                      )}
+                      key={row.user_id}
+                    >
+                      <Cell>
+                        {isEditing ? (
+                          <Input
+                            value={row.user_name}
+                            onChange={(e) => handleInputChange(e, row.user_id, 'user_name')}
+                          />
+                        ) : (
+                          <div className='flex flex-row items-center'>
+                            <Avatar className='h-8 w-8 mr-1.5'>
+                              <AvatarFallback>
+                                <UserRound className='w-5 h-5' />
+                              </AvatarFallback>
+                            </Avatar>
+                            {row.user_name}
+                          </div>
+                        )}
+                      </Cell>
+                      <Cell>
+                        {isEditing ? (
+                          <Input
+                            value={row.user_email}
+                            onChange={(e) => handleInputChange(e, row.user_id, 'user_email')}
+                          />
+                        ) : (
+                          row.user_email
+                        )}
+                      </Cell>
+                      <Cell>
+                        {isEditing ? (
+                          <Input
+                            value={row.user_birth}
+                            onChange={(e) => handleInputChange(e, row.user_id, 'user_birth')}
+                          />
+                        ) : (
+                          `${row.user_birth.substr(0, 4)}년 ${row.user_birth.substr(4, 2)}월 ${row.user_birth.substr(6, 2)}일`
+                        )}
+                      </Cell>
+                      <Cell>
+                        {isEditing ? (
+                          <Select
+                            value={row.user_employ}
+                            onValueChange={(value) => handleSelectChange(value, row.user_id, 'user_employ')}
                           >
-                            <EllipsisVertical />
-                            <span className="sr-only">Open menu</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-32">
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
-                          <DropdownMenuItem>Make a copy</DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive focus:text-destructive hover:!bg-destructive/20">Delete</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </Cell>
-                  </Row>
-                ))}
+                            <SelectTrigger>
+                              <SelectValue placeholder="소속 선택" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {employOptions.map(option => (
+                                <SelectItem key={option} value={option}>{option}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          row.user_employ
+                        )}
+                      </Cell>
+                      <Cell>
+                        {isEditing ? (
+                          <Select
+                            value={row.lunar_yn}
+                            onValueChange={(value) => handleSelectChange(value, row.user_id, 'lunar_yn')}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="음력 여부" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {lunarOptions.map(option => (
+                                <SelectItem key={option} value={option}>{option}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          row.lunar_yn
+                        )}
+                      </Cell>
+                      <Cell>
+                        {isEditing ? (
+                          <Select
+                            value={row.user_work_time}
+                            onValueChange={(value) => handleSelectChange(value, row.user_id, 'user_work_time')}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="유연근무제" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {workTimeOptions.map(option => (
+                                <SelectItem key={option.value} value={option.value} className={option.className}>
+                                  {option.value}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <Badge className={cn(
+                            {
+                              'bg-rose-500 dark:bg-rose-400': row.user_work_time === '8 ~ 5',
+                              'bg-sky-500 dark:bg-sky-400': row.user_work_time === '9 ~ 6',
+                              'bg-emerald-500 dark:bg-emerald-400': row.user_work_time === '10 ~ 7'
+                            }
+                          )}>{row.user_work_time}</Badge>
+                        )}
+                      </Cell>
+                      <Cell>
+                        {isEditing ? (
+                          <Select
+                            value={row.user_role}
+                            onValueChange={(value) => handleSelectChange(value, row.user_id, 'user_role')}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="권한" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {roleOptions.map(option => (
+                                <SelectItem key={option.value} value={option.value} className={option.className}>
+                                  {option.value}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <div className={cn(
+                            'flex flex-row items-center text-sm gap-1',
+                            {
+                              'text-rose-500 dark:text-rose-400': row.user_role === 'ADMIN',
+                              'text-sky-500 dark:text-sky-400': row.user_role === 'USER'
+                            }
+                          )}>
+                            {row.user_role === 'ADMIN' ? <UserRoundCog size={14}/> : <UserRound size={14}/>}{row.user_role}
+                          </div>
+                        )}
+                      </Cell>
+                      <Cell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
+                              size="icon"
+                            >
+                              <EllipsisVertical />
+                              <span className="sr-only">Open menu</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-32">
+                            {isEditing ? (
+                              <DropdownMenuItem onClick={() => setEditingRow(null)}>Save</DropdownMenuItem>
+                            ) : (
+                              <DropdownMenuItem onClick={() => handleEdit(row.user_id)}>Edit</DropdownMenuItem>
+                            )}
+                            <DropdownMenuItem
+                              onClick={() => handleCopy(row)}
+                            >
+                              Copy
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              className="text-destructive focus:text-destructive hover:!bg-destructive/20"
+                              onClick={() => handleDelete(row.user_id)}
+                            >
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </Cell>
+                    </Row>
+                  )
+                })}
               </Body>
             </>
           )}

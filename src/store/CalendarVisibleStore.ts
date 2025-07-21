@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 interface Visible {
-  id: number | string;
+  id: string;
   isVisible: boolean;
 }
 
@@ -12,9 +12,9 @@ export const useCalendarVisibleStore = create<{
   userVisibles: Visible[]
   calendarVisibles: Visible[]
   actions: {
-    resetUserVisible: (userNos: number[]) => void
+    resetUserVisible: (userIds: string[]) => void
     resetCalendarVisible: (calendarIds: string[]) => void
-    setUserVisible: (userNo: number) => void
+    setUserVisible: (userId: string) => void
     setCalendarVisible: (calendarId: string) => void
     setUserAllVisible: () => void
     setCalendarAllVisible: () => void
@@ -27,9 +27,9 @@ export const useCalendarVisibleStore = create<{
   userVisibles: [],
   calendarVisibles: [],
   actions: {
-    resetUserVisible: (userNos) => {
-      const _userVisibles = userNos.map(userNo => ({
-        id: userNo,
+    resetUserVisible: (userIds) => {
+      const _userVisibles = userIds.map(userId => ({
+        id: userId,
         isVisible: true,
       }));
       set({ userAllVisible: true, userVisibles: _userVisibles });
@@ -41,10 +41,10 @@ export const useCalendarVisibleStore = create<{
       }));
       set({ calendarAllVisible: true, calendarVisibles: _calendarVisibles });
     },
-    setUserVisible: (userNo) => {
+    setUserVisible: (userId) => {
       set((state) => {
         const visible = state.userVisibles.map(u =>
-          u.id === userNo
+          u.id === userId
             ? { ...u, isVisible: !u.isVisible }
             : u
         );

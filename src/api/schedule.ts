@@ -15,7 +15,7 @@ const enum ScheduleQueryKey {
 }
 
 interface PostScheduleReq {
-  user_no: number
+  user_id: string
   start_date: string
   end_date: string
   schedule_type: string

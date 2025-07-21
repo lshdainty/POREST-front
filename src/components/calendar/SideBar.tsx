@@ -43,7 +43,7 @@ const SideBar: React.FC = () => {
     }
   }
 
-  const circleCss = (id: number | string, type: string, colorCode: string) => {
+  const circleCss = (id: string, type: string, colorCode: string) => {
     let findVisible = (type === 'user') ?
       userVisibles.find(user => user.id === id) : calendarVisibles.find(calendar => calendar.id === id);
 
@@ -60,7 +60,7 @@ const SideBar: React.FC = () => {
   const onCheckedChangeViewAll = () => {
     setAllVisible();
     userVisibles.forEach(visible => {
-      setEventVisible(visible.id as number, !allVisible, 'user');
+      setEventVisible(visible.id as string, !allVisible, 'user');
     });
     calendarVisibles.forEach(visible => {
       setEventVisible(visible.id as string, !allVisible, 'calendar');
@@ -70,14 +70,14 @@ const SideBar: React.FC = () => {
   const onClickUserAll = () => {
     setUserAllVisible();
     userVisibles.forEach(visible => {
-      setEventVisible(visible.id as number, !userAllVisible, 'user');
+      setEventVisible(visible.id as string, !userAllVisible, 'user');
     });
   }
 
   const onClickUser = (user: any) => {
-    setUserVisible(user.user_no);
-    const findVisible = userVisibles.find(visible => visible.id === user.user_no);
-    if (findVisible) setEventVisible(user.user_no, !findVisible.isVisible, 'user');
+    setUserVisible(user.user_id);
+    const findVisible = userVisibles.find(visible => visible.id === user.user_id);
+    if (findVisible) setEventVisible(user.user_id, !findVisible.isVisible, 'user');
   }
 
   const onClickCalendarAll = () => {
@@ -95,7 +95,7 @@ const SideBar: React.FC = () => {
 
   useEffect(() => {
     if (users && !usersLoading) {
-      resetUserVisible(users.map((user) => user.user_no));
+      resetUserVisible(users.map((user) => user.user_id));
       resetCalendarVisible(calendarType.map((calendar) => calendar.id));
     }
   }, [users]);
@@ -123,10 +123,10 @@ const SideBar: React.FC = () => {
           {
             users && users.map((u) => (
               <li
-                key={u.user_no}
+                key={u.user_id}
                 onClick={() => onClickUser(u)}
               >
-                <Circle sx={ circleCss(u.user_no, 'user', '#0080fc') } />
+                <Circle sx={ circleCss(u.user_id, 'user', '#0080fc') } />
                 <div className='sidebar_list_name'>{u.user_name}</div>
               </li>
             ))

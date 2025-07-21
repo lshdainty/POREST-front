@@ -52,7 +52,7 @@ export const RegistEventDialog: React.FC = () => {
   const [startMinute, setStartMinute] = React.useState('0');
 
   const {data: vacations} = useGetAvailableVacations({
-    user_no: 1,
+    user_id: "user1",
     start_date: dayjs(start).format('YYYY-MM-DDTHH:mm:ss')
   });
 
@@ -63,7 +63,7 @@ export const RegistEventDialog: React.FC = () => {
     const calendar = calendarTypes.find(c => c.id === selectCalendarType);
     const format = 'YYYY-MM-DDTHH:mm:ss';
     let data = Object();
-    data['user_no'] = 1;
+    data['user_id'] = "user1";
 
     if (calendar?.isDate) {
       data['start_date'] = dayjs(startDate).set('hour', 0).set('minute', 0).set('second', 0).format(format);
