@@ -1,10 +1,8 @@
 import {
   Home,
-  Calendar,
   Briefcase,
-  BookOpen,
   Cake,
-  UserPen,
+  ShieldUser,
 } from 'lucide-react';
 
 import {
@@ -25,28 +23,20 @@ const user = {
 
 const navDatas = [
   {
-    title: 'Dashboard',
+    title: 'Home',
     url: '/',
     icon: Home,
-    // isActive: true,
     items: [
-      { title: 'Overview', url: '/overview' },
-    ],
-  },
-  {
-    title: 'Calendar',
-    url: '/calendar',
-    icon: Calendar,
-    items: [
-      { title: 'Overview', url: '/calendar/overview' },
+      { title: 'Dashboard', url: '/dashboard' },
+      { title: 'Calendar', url: '/calendar' }
     ],
   },
   {
     title: 'Work',
-    url: 'work',
+    url: '/work',
     icon: Briefcase,
     items: [
-      { title: 'Overview', url: '/work/overview' },
+      { title: 'Daily Report', url: '/work/daily_report' },
     ],
   },
   {
@@ -54,23 +44,18 @@ const navDatas = [
     url: '/culture',
     icon: Cake,
     items: [
-      { title: 'Overview', url: '/culture/overview' },
+      { title: 'Dues', url: '/culture/dues' },
+      { title: 'Rule', url: '/culture/rule' },
     ],
   },
   {
-    title: 'Rule',
-    url: '/rule',
-    icon: BookOpen,
+    title: 'Admin',
+    url: '/admin',
+    icon: ShieldUser,
     items: [
-      { title: 'Overview', url: '/rule/overview' },
-    ],
-  },
-  {
-    title: 'User',
-    url: '/user',
-    icon: UserPen,
-    items: [
-      { title: 'Overview', url: '/user/overview' },
+      { title: 'User', url: '/admin/user' },
+      { title: 'Vacation', url: '/admin/vacation' },
+      { title: 'Calendar', url: '/admin/calendar' },
     ],
   },
 ]

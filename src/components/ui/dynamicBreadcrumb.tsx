@@ -36,46 +36,59 @@ export function DynamicBreadcrumb({
   const { pathname } = useLocation()
 
   const pathMapping: Record<string, string> = {
-    overview: 'Overview',
+    dashboard: 'Dashboard',
     calendar: 'Calendar',
     work: 'Work',
     culture: 'Culture',
     rule: 'Rule',
+    admin: 'Admin',
     user: 'User',
-  }
+    vacation: 'Vacation',
+    overview: 'Overview',
+  };
+
+  const parentPathToDefaultChild: Record<string, string> = {
+    '/work': '/work/daily_report',
+    '/culture': '/culture/dues',
+    '/admin': '/admin/user',
+  };
 
   const generateBreadcrumbs = (): BreadcrumbSegment[] => {
-    const { pathname } = useLocation();
-    const segments = pathname.split('/').filter(Boolean)
-    const breadcrumbs: BreadcrumbSegment[] = []
+    const segments = pathname.split('/').filter(Boolean);
+    const breadcrumbs: BreadcrumbSegment[] = [];
 
     if (showHome) {
       breadcrumbs.push({
         title: 'Home',
-        href: '/overview',
-        isActive: pathname === '/overview',
-      })
+        href: '/dashboard',
+        isActive: pathname === '/dashboard',
+      });
     }
 
-    let currentPath = ''
-    segments.forEach((segment, index) => {
-      if (segment === 'overview' && index === 0) {
-        currentPath = '/overview'
-        return
+    const pathSegments = segments.filter(s => s !== 'dashboard');
+    if (pathSegments.length === 0) {
+      return breadcrumbs;
+    }
+
+    pathSegments.forEach((segment, index) => {
+      const currentPath = `/${pathSegments.slice(0, index + 1).join('/')}`;
+      const title = pathMapping[segment] || segment.charAt(0).toUpperCase() + segment.slice(1);
+      const isActive = index === pathSegments.length - 1;
+
+      let href = currentPath;
+      if (!isActive && parentPathToDefaultChild[href]) {
+        href = parentPathToDefaultChild[href];
       }
-
-      currentPath += `/${segment}`
-      const title = pathMapping[segment] || segment.charAt(0).toUpperCase() + segment.slice(1)
-
+      
       breadcrumbs.push({
         title,
-        href: currentPath,
-        isActive: index === segments.length - 1,
-      })
-    })
+        href,
+        isActive,
+      });
+    });
 
-    return breadcrumbs
-  }
+    return breadcrumbs;
+  };
 
   const breadcrumbs = generateBreadcrumbs()
 
@@ -97,7 +110,7 @@ export function DynamicBreadcrumb({
     <Breadcrumb className={className}>
       <BreadcrumbList>
         {displayBreadcrumbs.map((crumb, index) => (
-          <React.Fragment key={crumb.href}>
+          <React.Fragment key={`${crumb.title}-${index}`}>
             {/* 첫 번째 항목 후에 collapsed items가 있다면 드롭다운 표시 */}
             {index === 1 && shouldCollapse && collapsedItems.length > 0 && (
               <>
@@ -109,8 +122,8 @@ export function DynamicBreadcrumb({
                       <span className='sr-only'>Show more</span>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align='start'>
-                      {collapsedItems.map((item) => (
-                        <DropdownMenuItem key={item.href}>
+                      {collapsedItems.map((item, itemIndex) => (
+                        <DropdownMenuItem key={`${item.href}-${itemIndex}`}>
                           <BreadcrumbLink asChild>
                             <Link to={item.href}>{item.title}</Link>
                           </BreadcrumbLink>

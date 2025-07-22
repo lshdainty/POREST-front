@@ -18,7 +18,7 @@ export default function Login({
   const onFinish = (values: any) => {
     // 로그인 로직 추가
     localStorage.setItem('key', '');
-    navigate('/overview');
+    navigate('/dashboard');
   }
 
   return (

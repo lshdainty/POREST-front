@@ -27,14 +27,16 @@ const Router = () => {
 
   return (
     <Routes>
-      <Route path='/login' element={!home ? <Login/> : <Navigate replace to ='/overview' />} />
+      <Route path='/login' element={!home ? <Login/> : <Navigate replace to ='/dashboard' />} />
       <Route element={<Layout/>}>
-        <Route path='/overview' element={<Dashboard/>} />
-        <Route path='/calendar/overview' element={<Calendar/>} />
-        <Route path='/work/overview' element={<Work/>} />
-        <Route path='/culture/overview' element={<Culture/>} />
-        <Route path='/rule/overview' element={<Rule/>} />
-        <Route path='/user/overview' element={<User/>} />
+        <Route path='/dashboard' element={<Dashboard/>} />
+        <Route path='/calendar' element={<Calendar/>} />
+        <Route path='/work/daily_report' element={<Work/>} />
+        <Route path='/culture/dues' element={<Culture/>} />
+        <Route path='/culture/rule' element={<Rule/>} />
+        <Route path='/admin/user' element={<User/>} />
+        <Route path='/admin/vacation' element={<User/>} />
+        <Route path='/admin/calendar' element={<User/>} />
       </Route>
       <Route path='/*' element={<NotFound/>} />
     </Routes>
