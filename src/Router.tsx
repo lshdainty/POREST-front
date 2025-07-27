@@ -31,7 +31,7 @@ const Router = () => {
       <Route element={<Layout/>}>
         <Route path='/dashboard' element={<Dashboard/>} />
         <Route path='/calendar' element={<Calendar/>} />
-        <Route path='/work/daily_report' element={<Work/>} />
+        <Route path='/work/report' element={<Work/>} />
         <Route path='/culture/dues' element={<Culture/>} />
         <Route path='/culture/rule' element={<Rule/>} />
         <Route path='/admin/user' element={<User/>} />

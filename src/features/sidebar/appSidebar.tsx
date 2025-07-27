@@ -36,7 +36,7 @@ const navDatas = [
     url: '/work',
     icon: Briefcase,
     items: [
-      { title: 'Daily Report', url: '/work/daily_report' },
+      { title: 'Report', url: '/work/report' },
     ],
   },
   {
