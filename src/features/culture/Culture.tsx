@@ -8,27 +8,18 @@ import {
   Cell
 } from '@table-library/react-table-library/table';
 import { useTheme } from "@table-library/react-table-library/theme";
-import { useGetYearOperationDues } from '@/api/dues';
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/shadcn/card"
+  useGetYearOperationDues,
+  useGetMonthBirthDues
+} from '@/api/dues';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/shadcn/card"
 import { Button } from '@/components/shadcn/button';
 import { Badge } from "@/components/shadcn/badge"
 import { cn } from '@/lib/utils';
-import { DollarSign, Users, CreditCard, Activity } from 'lucide-react';
+import { DollarSign, Users, BanknoteArrowDown, BanknoteArrowUp } from 'lucide-react';
 import dayjs from 'dayjs';
 
 // Mock Data
-const summaryData = [
-  { title: '전체 운영비', value: '₩12,345,000', icon: DollarSign },
-  { title: '운영비 입금', value: '+ ₩1,230,000', icon: CreditCard },
-  { title: '운영비 출금', value: '- ₩875,000', icon: Activity },
-  { title: '07월 생일비', value: '₩300,000', icon: Users },
-];
-
 const birthdayPayments = [
   { name: '이정훈', payments: [50000, 50000, 50000, 50000, 50000, 50000, 0, 0, 0, 0, 0, 0] },
   { name: '홍길동', payments: [50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000] },
@@ -47,71 +38,56 @@ const transactions = [
 
 export default function Culture() {
   const { data: dues, isLoading: duesLoading} = useGetYearOperationDues({year: dayjs().format('YYYY')});
+  const { data: birthDues, isLoading: birthDuesLoading} = useGetMonthBirthDues({year: dayjs().format('YYYY'), month: dayjs().format('MM')});
 
   const tableTheme = useTheme([{
     Table: `--data-table-library_grid-template-columns: 20% 50% 20% 10% !important;`,
   }]);
 
-  if(duesLoading) {
+  if(duesLoading || birthDuesLoading) {
     return <div>loading</div>
-  } 
-
-  console.log(dues);
+  }
 
   return (
     <div className="w-full h-full flex flex-col gap-6 p-4 lg:p-6">
-      {/* Top Summary Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {/* {summaryData.map((item, index) => (
-          <Card key={index}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{item.title}</CardTitle>
-              <item.icon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className={cn("text-2xl font-bold", item.title === '운영비 입금' && 'text-red-500', item.title === '운영비 출금' && 'text-blue-500')}>{item.value}</div>
-            </CardContent>
-          </Card>
-        ))} */}
         <Card key="total">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">전체 운영비</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className={cn("text-2xl font-bold")}>{"1234"}</div>
+            <div className={cn("text-2xl font-bold")}>₩{(dues?.total_dues ?? 0).toLocaleString('ko-KR')}</div>
           </CardContent>
         </Card>
-        <Card key="1">
+        <Card key="deposit">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">운영비 입금</CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
+            <BanknoteArrowUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className={cn("text-2xl font-bold text-red-500")}>{"12345"}</div>
+            <div className={cn("text-2xl font-bold text-blue-500")}>₩{(dues?.total_deposit ?? 0).toLocaleString('ko-KR')}</div>
           </CardContent>
         </Card>
-        <Card key="2">
+        <Card key="withdrawal">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">운영비 출금</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
+            <BanknoteArrowDown className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className={cn("text-2xl font-bold text-blue-500")}>{"12345"}</div>
+            <div className={cn("text-2xl font-bold text-red-500")}>₩{Math.abs(dues?.total_withdrawal ?? 0).toLocaleString('ko-KR')}</div>
           </CardContent>
         </Card>
-        <Card key="3">
+        <Card key="birth">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">07월 생일비</CardTitle>
+            <CardTitle className="text-sm font-medium">{dayjs().format('MM')}월 생일비</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className={cn("text-2xl font-bold")}>{"12345"}</div>
+            <div className={cn("text-2xl font-bold")}>₩{(birthDues?.birth_month_dues ?? 0).toLocaleString('ko-KR')}</div>
           </CardContent>
         </Card>
       </div>
-
-      {/* Birthday Payments Grid */}
       <div>
         <Card>
           <CardHeader>
@@ -185,7 +161,7 @@ export default function Culture() {
                         <Cell>{item.date}</Cell>
                         <Cell>{item.description}</Cell>
                         <Cell className={cn(item.type === '입금' ? 'text-blue-500' : 'text-red-500')}>
-                          {item.amount.toLocaleString('ko-KR')}원
+                          {Math.abs(item.amount).toLocaleString('ko-KR')}원
                         </Cell>
                         <Cell>
                           <Badge variant={item.type === '입금' ? 'default' : 'destructive'}>
