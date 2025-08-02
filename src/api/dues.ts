@@ -9,9 +9,41 @@ interface ApiResponse<T = any> {
 }
 
 const enum DuesQueryKey {
+  GET_YEAR_DUES = 'getYearDues',
   GET_YEAR_OPERATION_DUES = 'getYearOperationDues',
   GET_MONTH_BIRTH_DUES = 'getMonthBirthDues',
   GET_USERS_MONTH_BIRTH_DUES = 'getUsersMonthBirthDues'
+}
+
+interface getYearDuesReq {
+  year: string
+}
+
+interface getYearDuesResp {
+  dues_seq: number
+  dues_user_name: string
+  dues_amount: string
+  dues_type: string
+  dues_calc: string
+  dues_date: string
+  dues_detail: string
+  total_dues: string
+}
+
+const useGetYearDues = (reqData: getYearDuesReq) => {
+  return useQuery({
+    queryKey: [DuesQueryKey.GET_YEAR_DUES, reqData],
+    queryFn: async (): Promise<getYearDuesResp[]> => {
+      const resp: ApiResponse = await api.request({
+        method: 'get',
+        url: `/dues?year=${reqData.year}`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.data.data.message);
+
+      return resp.data;
+    }
+  });
 }
 
 interface getYearOperationDuesReq {
@@ -95,6 +127,7 @@ export {
   DuesQueryKey,
 
   // API Hook
+  useGetYearDues,
   useGetYearOperationDues,
   useGetMonthBirthDues,
   useGetUsersMonthBirthDues
