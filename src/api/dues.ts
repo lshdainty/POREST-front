@@ -1,5 +1,5 @@
 import { api } from '@/api/index'
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface ApiResponse<T = any> {
   code: number
@@ -12,7 +12,9 @@ const enum DuesQueryKey {
   GET_YEAR_DUES = 'getYearDues',
   GET_YEAR_OPERATION_DUES = 'getYearOperationDues',
   GET_MONTH_BIRTH_DUES = 'getMonthBirthDues',
-  GET_USERS_MONTH_BIRTH_DUES = 'getUsersMonthBirthDues'
+  GET_USERS_MONTH_BIRTH_DUES = 'getUsersMonthBirthDues',
+  POST_DUES = 'postDues',
+  DELETE_DUES = 'deleteDues'
 }
 
 interface getYearDuesReq {
@@ -22,12 +24,12 @@ interface getYearDuesReq {
 interface getYearDuesResp {
   dues_seq: number
   dues_user_name: string
-  dues_amount: string
+  dues_amount: number
   dues_type: string
   dues_calc: string
   dues_date: string
   dues_detail: string
-  total_dues: string
+  total_dues: number
 }
 
 const useGetYearDues = (reqData: getYearDuesReq) => {
@@ -122,6 +124,64 @@ const useGetUsersMonthBirthDues = (reqData: useGetUsersMonthBirthDuesReq) => {
   });
 }
 
+interface PostDuesReq {
+  dues_amount: number
+  dues_type: string
+  dues_calc: string
+  dues_date: string
+  dues_detail: string
+  dues_user_name: string
+}
+
+const usePostDues = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (d: PostDuesReq) => {
+      const resp: ApiResponse = await api.request({
+        method: 'post',
+        url: `/dues`,
+        data: d
+      });
+
+      if (resp.code !== 200) throw new Error(resp.data.data.message);
+
+      return resp.data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: [DuesQueryKey.GET_YEAR_DUES] });
+      console.log(`POST 성공! 생성된 데이터: ${JSON.stringify(data, null, 2)}`);
+    },
+    onError: (error) => {
+      console.log(`POST 실패: ${error.message}`);
+    }
+  });
+}
+
+const useDeleteDues = () => {
+  const queryClient = useQueryClient();
+  
+    return useMutation({
+      mutationFn: async (dues_seq: number) => {
+        const resp: ApiResponse = await api.request({
+          method: 'delete',
+          url: `/user/${dues_seq}`
+        });
+  
+        if (resp.code !== 200) throw new Error(resp.data.data.message);
+  
+        return resp.data;
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [DuesQueryKey.GET_YEAR_DUES] });
+        console.log(`DELETE 성공!`);
+      },
+      onError: (error) => {
+        console.log(`DELETE 실패: ${error.message}`);
+      }
+    }); 
+} 
+
 export {
   // QueryKey
   DuesQueryKey,
@@ -130,5 +190,7 @@ export {
   useGetYearDues,
   useGetYearOperationDues,
   useGetMonthBirthDues,
-  useGetUsersMonthBirthDues
+  useGetUsersMonthBirthDues,
+  usePostDues,
+  useDeleteDues
 }
