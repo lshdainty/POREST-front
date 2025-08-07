@@ -353,21 +353,21 @@ export default function DuesTable() {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-32">
                               {isEditing ? (
-                                <DropdownMenuItem onClick={() => setEditingRow(null)}>저장</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => setEditingRow(null)}>Save</DropdownMenuItem>
                               ) : (
-                                <DropdownMenuItem onClick={() => handleEdit(id)}>수정</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleEdit(id)}>Edit</DropdownMenuItem>
                               )}
                               <DropdownMenuItem
                                 onClick={() => handleCopy(row)}
                               >
-                                복사
+                                Copy
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem
                                 className="text-destructive focus:text-destructive hover:!bg-destructive/20"
                                 onClick={() => handleDelete(id)}
                               >
-                                삭제
+                                Delete
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
