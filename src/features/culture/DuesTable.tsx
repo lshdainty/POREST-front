@@ -13,6 +13,7 @@ import { useGetYearDues, usePostDues, usePutDues, useDeleteDues } from '@/api/du
 import { Button } from '@/components/shadcn/button';
 import { Badge } from "@/components/shadcn/badge";
 import { Input } from '@/components/shadcn/input';
+import { InputDatePicker } from '@/components/shadcn/inputDatePicker';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -119,7 +120,7 @@ export default function DuesTable() {
     const tempId = `new_${Date.now()}`;
     const newRow: EditableDuesData = {
       dues_seq: 0,
-      dues_date: dayjs().format('YYYY-MM-DD'),
+      dues_date: dayjs().format('YYYYMMDD'),
       dues_user_name: '',
       dues_type: 'OPERATION',
       dues_detail: '',
@@ -229,6 +230,42 @@ export default function DuesTable() {
     }
   };
 
+  const handleDateChange = (value: string | undefined, id: string) => {
+    if (!tableData || !value) return;
+    const formattedDate = dayjs(value).format('YYYYMMDD');
+    const newData = tableData.map((row) => {
+      if ((row.isNew ? row.tempId : row.dues_seq.toString()) === id) {
+        return { ...row, dues_date: formattedDate };
+      }
+      return row;
+    });
+    setTableData(newData);
+
+    const updatedDues = newData.find(dues => (dues.isNew ? dues.tempId : dues.dues_seq.toString()) === id);
+    if (!updatedDues) return;
+
+    if (updatedDues.isNew) {
+      setModifiedData({
+        ...modifiedData,
+        created: modifiedData.created.map((dues) =>
+          dues.tempId === id ? updatedDues : dues
+        ),
+      });
+    } else if (!modifiedData.updated.find((dues) => dues.dues_seq.toString() === id)) {
+      setModifiedData({
+        ...modifiedData,
+        updated: [...modifiedData.updated, updatedDues],
+      });
+    } else {
+      setModifiedData({
+        ...modifiedData,
+        updated: modifiedData.updated.map((dues) =>
+          dues.dues_seq.toString() === id ? updatedDues : dues
+        ),
+      });
+    }
+  };
+
   if(yearDuesLoading) {
     return <div>loading</div>
   }
@@ -278,9 +315,9 @@ export default function DuesTable() {
                       >
                         <Cell>
                           {isEditing ? (
-                            <Input
+                            <InputDatePicker
                               value={dayjs(row.dues_date).format('YYYY-MM-DD')}
-                              onChange={(e) => handleInputChange(e, id, 'dues_date')}
+                              onValueChange={(value) => handleDateChange(value, id)}
                             />
                           ) : (
                             dayjs(row.dues_date).format('YYYY-MM-DD')
