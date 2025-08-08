@@ -14,6 +14,7 @@ const enum DuesQueryKey {
   GET_MONTH_BIRTH_DUES = 'getMonthBirthDues',
   GET_USERS_MONTH_BIRTH_DUES = 'getUsersMonthBirthDues',
   POST_DUES = 'postDues',
+  PUT_DUES = 'putDues',
   DELETE_DUES = 'deleteDues'
 }
 
@@ -25,8 +26,8 @@ interface getYearDuesResp {
   dues_seq: number
   dues_user_name: string
   dues_amount: number
-  dues_type: string
-  dues_calc: string
+  dues_type: 'OPERATION' | 'BIRTH' | 'FINE'
+  dues_calc: 'PLUS' | 'MINUS'
   dues_date: string
   dues_detail: string
   total_dues: number
@@ -126,8 +127,8 @@ const useGetUsersMonthBirthDues = (reqData: useGetUsersMonthBirthDuesReq) => {
 
 interface PostDuesReq {
   dues_amount: number
-  dues_type: string
-  dues_calc: string
+  dues_type: 'OPERATION' | 'BIRTH' | 'FINE'
+  dues_calc: 'PLUS' | 'MINUS'
   dues_date: string
   dues_detail: string
   dues_user_name: string
@@ -158,6 +159,41 @@ const usePostDues = () => {
   });
 }
 
+interface PutDuesReq {
+  dues_seq: number
+  dues_amount: number
+  dues_type: 'OPERATION' | 'BIRTH' | 'FINE'
+  dues_calc: 'PLUS' | 'MINUS'
+  dues_date: string
+  dues_detail: string
+  dues_user_name: string
+}
+
+const usePutDues = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (d: PutDuesReq) => {
+      const resp: ApiResponse = await api.request({
+        method: 'put',
+        url: `/dues/${d.dues_seq}`,
+        data: d
+      });
+
+      if (resp.code !== 200) throw new Error(resp.data.data.message);
+
+      return resp.data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: [DuesQueryKey.GET_YEAR_DUES] });
+      console.log(`PUT 성공!`);
+    },
+    onError: (error) => {
+      console.log(`PUT 실패: ${error.message}`);
+    }
+  });
+}
+
 const useDeleteDues = () => {
   const queryClient = useQueryClient();
   
@@ -165,7 +201,7 @@ const useDeleteDues = () => {
       mutationFn: async (dues_seq: number) => {
         const resp: ApiResponse = await api.request({
           method: 'delete',
-          url: `/user/${dues_seq}`
+          url: `/dues/${dues_seq}`
         });
   
         if (resp.code !== 200) throw new Error(resp.data.data.message);
@@ -192,5 +228,6 @@ export {
   useGetMonthBirthDues,
   useGetUsersMonthBirthDues,
   usePostDues,
+  usePutDues,
   useDeleteDues
 }

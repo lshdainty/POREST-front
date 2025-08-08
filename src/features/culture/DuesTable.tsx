@@ -9,8 +9,7 @@ import {
   Cell
 } from '@table-library/react-table-library/table';
 import { useTheme } from "@table-library/react-table-library/theme";
-// import { useGetYearDues, usePostDues, usePutDues, useDeleteDues } from '@/api/dues';
-import { useGetYearDues, usePostDues, useDeleteDues } from '@/api/dues';
+import { useGetYearDues, usePostDues, usePutDues, useDeleteDues } from '@/api/dues';
 import { Button } from '@/components/shadcn/button';
 import { Badge } from "@/components/shadcn/badge";
 import { Input } from '@/components/shadcn/input';
@@ -54,7 +53,7 @@ interface ModifiedData {
 export default function DuesTable() {
   const { data: yearDues, isLoading: yearDuesLoading } = useGetYearDues({year: dayjs().format('YYYY')});
   const { mutate: postDues } = usePostDues();
-  // const { mutate: putDues } = usePutDues();
+  const { mutate: putDues } = usePutDues();
   const { mutate: deleteDues } = useDeleteDues();
   const [tableData, setTableData] = useState<EditableDuesData[]>([]);
   const [modifiedData, setModifiedData] = useState<ModifiedData>({
@@ -150,7 +149,7 @@ export default function DuesTable() {
     });
 
     modifiedData.updated.forEach(dues => {
-      // putDues(dues);
+      putDues(dues);
     });
 
     modifiedData.deleted.forEach(dues_seq => {
