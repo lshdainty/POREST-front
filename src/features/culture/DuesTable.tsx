@@ -28,7 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/shadcn/select";
-import { EllipsisVertical } from 'lucide-react';
+import { EllipsisVertical, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import dayjs from 'dayjs';
 
@@ -63,6 +63,8 @@ export default function DuesTable() {
     deleted: [],
   });
   const [editingRow, setEditingRow] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
 
   useEffect(() => {
     if (yearDues) {
@@ -73,8 +75,15 @@ export default function DuesTable() {
     }
   }, [yearDues]);
 
+  useEffect(() => {
+    const totalPages = Math.ceil(tableData.length / rowsPerPage);
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    }
+  }, [tableData, currentPage, rowsPerPage]);
+
   const tableTheme = useTheme([{
-    Table: `--data-table-library_grid-template-columns: 15% 15% 26% 15% 10% 15% 4% !important;`,
+    Table: `--data-table-library_grid-template-columns: minmax(150px, 1fr) minmax(120px, 1fr) minmax(250px, 2fr) minmax(120px, 1fr) minmax(100px, 1fr) minmax(120px, 1fr) 50px !important;`,
   }]);
 
   const handleDelete = (id: string) => {
@@ -107,12 +116,14 @@ export default function DuesTable() {
       isNew: true,
       tempId: tempId,
     };
-    setTableData([...tableData, newRow]);
+    const newTableData = [...tableData, newRow];
+    setTableData(newTableData);
     setModifiedData({
       ...modifiedData,
       created: [...modifiedData.created, newRow],
     });
     setEditingRow(tempId);
+    setCurrentPage(Math.ceil(newTableData.length / rowsPerPage));
   };
 
   const handleAdd = () => {
@@ -131,12 +142,14 @@ export default function DuesTable() {
       tempId: tempId,
     };
 
-    setTableData([...tableData, newRow]);
+    const newTableData = [...tableData, newRow];
+    setTableData(newTableData);
     setModifiedData({
       ...modifiedData,
       created: [...modifiedData.created, newRow],
     });
     setEditingRow(tempId);
+    setCurrentPage(Math.ceil(newTableData.length / rowsPerPage));
   };
 
   const handleEdit = (id: string) => {
@@ -270,6 +283,12 @@ export default function DuesTable() {
     return <div>loading</div>
   }
 
+  const totalPages = tableData.length > 0 ? Math.ceil(tableData.length / rowsPerPage) : 1;
+  const paginatedData = tableData.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );
+
   return (
     <div className="flex flex-col gap-4">
       <div className='flex justify-between items-center'>
@@ -279,12 +298,12 @@ export default function DuesTable() {
           <Button className='text-sm h-8' variant='outline' onClick={handleSave}>저장</Button>
         </div>
       </div>
-      <div className='w-full flex-grow'>
-        <div className='w-full flex'>
+      <div className='w-full flex-grow overflow-auto'>
+        <div className='rounded-lg border overflow-hidden'>
           <Table
             theme={tableTheme}
-            className='w-full !h-auto border overflow-hidden rounded-lg'
-            data={{ nodes: tableData }}
+            className='w-full !h-auto'
+            data={{ nodes: paginatedData }}
             layout={{ fixedHeader: true }}
           >
             {(tableList: EditableDuesData[]) => (
@@ -415,6 +434,56 @@ export default function DuesTable() {
               </>
             )}
           </Table>
+        </div>
+        <div className="flex items-center justify-between p-4">
+          <div className="text-sm text-muted-foreground">
+            {tableData.length} row(s)
+          </div>
+          <div className="flex items-center space-x-6 lg:space-x-8">
+            <div className="flex items-center space-x-2">
+              <p className="text-sm font-medium">
+                Page {currentPage} of {totalPages}
+              </p>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                className="h-8 w-8 p-0"
+                onClick={() => setCurrentPage(1)}
+                disabled={currentPage <= 1}
+              >
+                <span className="sr-only">Go to first page</span>
+                <ChevronsLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                className="h-8 w-8 p-0"
+                onClick={() => setCurrentPage(currentPage - 1)}
+                disabled={currentPage <= 1}
+              >
+                <span className="sr-only">Go to previous page</span>
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                className="h-8 w-8 p-0"
+                onClick={() => setCurrentPage(currentPage + 1)}
+                disabled={currentPage >= totalPages}
+              >
+                <span className="sr-only">Go to next page</span>
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                className="h-8 w-8 p-0"
+                onClick={() => setCurrentPage(totalPages)}
+                disabled={currentPage >= totalPages}
+              >
+                <span className="sr-only">Go to last page</span>
+                <ChevronsRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
