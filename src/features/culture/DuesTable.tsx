@@ -83,7 +83,7 @@ export default function DuesTable() {
   }, [tableData, currentPage, rowsPerPage]);
 
   const tableTheme = useTheme([{
-    Table: `--data-table-library_grid-template-columns: minmax(150px, 1fr) minmax(120px, 1fr) minmax(250px, 2fr) minmax(120px, 1fr) minmax(100px, 1fr) minmax(120px, 1fr) 50px !important;`,
+    Table: `--data-table-library_grid-template-columns: minmax(150px, 15%) minmax(120px, 15%) minmax(250px, 26%) minmax(120px, 15%) minmax(100px, 10%) minmax(120px, 15%) minmax(50px, 4%) !important;`,
   }]);
 
   const handleDelete = (id: string) => {
