@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ToolbarProps } from 'react-big-calendar';
+import { ToolbarProps, View } from 'react-big-calendar';
 import { useHolidayStore } from '@/store/HolidayStore';
 import { useIsMobile } from '@/hooks/useMobile';
 import { Flex } from 'antd';
@@ -15,6 +15,13 @@ import {
   TabsList,
   TabsTrigger
 } from '@/components/shadcn/tabs';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/shadcn/select';
 import { Label } from '@/components/shadcn/label';
 import { Switch } from '@/components/shadcn/switch';
 
@@ -100,25 +107,40 @@ const Toolbar: React.FC<ToolbarProps> = (props) => {
             </div>
           </PopoverContent>
         </Popover>
-        <Tabs
-          defaultValue='month'
-          value={calendarView}
-          onValueChange={ (v) => setCalendarView(v) }
-        >
-          <TabsList>
-            {
-              props.views && props.views.map((view) => (
-                <TabsTrigger
-                  key={view}
-                  value={view}
-                  onClick={ () => props.onView(view) }
-                >
-                  {view}
-                </TabsTrigger>
-              ))
-            }
-          </TabsList>
-        </Tabs>
+        {isMobile ? (
+          <Select
+            defaultValue='month'
+            value={calendarView}
+            onValueChange={(v: View) => {
+              setCalendarView(v);
+              props.onView(v);
+            }}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select View" />
+            </SelectTrigger>
+            <SelectContent>
+              {props.views && props.views.map((view: View) => (
+                <SelectItem key={view} value={view}>{view}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : (
+          <Tabs
+            defaultValue='month'
+            value={calendarView}
+            onValueChange={(v: View) => {
+              setCalendarView(v);
+              props.onView(v);
+            }}
+          >
+            <TabsList>
+              {props.views && props.views.map((view: View) => (
+                <TabsTrigger key={view} value={view}>{view}</TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
+        )}
       </div>
     </div>
   );

@@ -87,7 +87,7 @@ export default function User() {
   }, [users]);
 
   const theme = useTheme([{
-    Table: `--data-table-library_grid-template-columns: 11% 11% 18% 14% 11% repeat(3, minmax(0, 1fr)) 4% !important;`,
+    Table: `--data-table-library_grid-template-columns: minmax(120px, 11%) minmax(100px, 11%) minmax(200px, 18%) minmax(150px, 14%) minmax(120px, 11%) minmax(90px, 10%) minmax(100px, 11%) minmax(100px, 11%) minmax(60px, 4%) !important;`,
   }]);
 
   const handleDelete = (id: string) => {

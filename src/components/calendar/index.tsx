@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Calendar, dayjsLocalizer, Views } from 'react-big-calendar';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
-import { Formats } from '@/components/calendar/Formats';
+import { Formats, MobileFormats } from '@/components/calendar/Formats';
 import Toolbar from '@/components/calendar/Toolbar';
 import Events, { convertEventStyle } from '@/components/calendar/Events';
 import { MonthHeader, MonthDateHeader } from '@/components/calendar/Headers';
@@ -12,6 +12,7 @@ import { useCalendarVisibleStore } from '@/store/CalendarVisibleStore';
 import { useCalendarSlotStore } from '@/store/CalendarSlotStore';
 import { useGetEventsByPeriod } from '@/api/calendar';
 import { useGetHolidaysByStartEndDate } from '@/api/holiday';
+import { useIsMobile } from '@/hooks/useMobile';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 
@@ -21,6 +22,8 @@ import '@/components/calendar/index.scss';
 
 const Content: React.FC = () => {
   const DragAndDropCalendar = withDragAndDrop(Calendar);
+  const isMobile = useIsMobile();
+
   // local화
   dayjs.locale('ko');
   const localizer = dayjsLocalizer(dayjs);
@@ -97,7 +100,7 @@ const Content: React.FC = () => {
         // 날짜 local화
         localizer={localizer}
         // 시간 날짜 포맷
-        formats={Formats}
+        formats={isMobile ? MobileFormats : Formats}
         resizable
         selectable
         // schedule data
