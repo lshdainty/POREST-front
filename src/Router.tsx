@@ -10,6 +10,7 @@ import Work from '@/features/work/Work';
 import Dues from '@/features/dues/Dues';
 import Rule from '@/features/rule/Rule';
 import User from '@/features/user/User';
+import Vacation from '@/features/vacation/Vacation';
 
 import NotFound from '@/components/notFound/NotFound';
 
@@ -35,7 +36,7 @@ const Router = () => {
         <Route path='/culture/dues' element={<Dues/>} />
         <Route path='/culture/rule' element={<Rule/>} />
         <Route path='/admin/user' element={<User/>} />
-        <Route path='/admin/vacation' element={<User/>} />
+        <Route path='/admin/vacation' element={<Vacation/>} />
         <Route path='/admin/calendar' element={<User/>} />
       </Route>
       <Route path='/*' element={<NotFound/>} />
