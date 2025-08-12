@@ -1,13 +1,14 @@
-
-import { useState } from "react";
-import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis, Pie, PieChart, Cell } from "recharts";
+import { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, Pie, PieChart, Cell, Label } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/shadcn/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/shadcn/avatar";
 import { Table, Header, HeaderRow, Body, Row, HeaderCell, Cell as TableCell } from '@table-library/react-table-library/table';
 import { useTheme } from "@table-library/react-table-library/theme";
 import { Button } from "@/components/shadcn/button";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/shadcn/dropdownMenu";
-import { EllipsisVertical } from 'lucide-react';
+import { EllipsisVertical, ArrowUpIcon, ArrowDownIcon } from 'lucide-react';
+import { Badge } from "@/components/shadcn/badge";
 
 const user = {
   name: "홍길동",
@@ -20,14 +21,22 @@ const vacationStats = [
   {
     title: "잔여 휴가",
     value: "5일",
+    change: -1,
+    changeType: "decrease",
+    description: "지난 달 대비 1일 감소"
   },
   {
     title: "사용 휴가",
     value: "10일",
+    change: 2,
+    changeType: "increase",
+    description: "지난 달 대비 2일 증가"
   },
   {
     title: "사용 예정 휴가",
     value: "2일",
+    change: 0,
+    changeType: ""
   },
 ];
 
@@ -40,13 +49,17 @@ const vacationTrends = [
   { name: '6월', value: 0 },
   { name: '7월', value: 1 },
   { name: '8월', value: 2 },
+  { name: '9월', value: 1 },
+  { name: '10월', value: 2 },
+  { name: '11월', value: 0 },
+  { name: '12월', value: 4 },
 ];
 
 const vacationTypes = [
-  { name: '연차', value: 10 },
-  { name: '반차', value: 5 },
-  { name: '병가', value: 2 },
-  { name: '기타', value: 1 },
+  { name: '연차', value: 10, fill: 'var(--color-vacation-annual)' },
+  { name: '반차', value: 5, fill: 'var(--color-vacation-half)' },
+  { name: '병가', value: 2, fill: 'var(--color-vacation-sick)' },
+  { name: '기타', value: 1, fill: 'var(--color-vacation-other)' },
 ];
 
 const initialVacationHistory = [
@@ -76,14 +89,16 @@ const initialVacationHistory = [
     }
 ];
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-
 export default function Vacation() {
   const [vacationHistory, setVacationHistory] = useState(initialVacationHistory);
 
   const theme = useTheme([{
     Table: `--data-table-library_grid-template-columns: minmax(150px, 1fr) minmax(150px, 1fr) minmax(250px, 1fr) minmax(60px, auto) !important;`,
   }]);
+
+  const totalVacationDays = useMemo(() => {
+    return vacationTypes.reduce((total, item) => total + item.value, 0)
+  }, []);
 
   const handleAdd = () => {
     const newId = (Math.max(...vacationHistory.map(item => parseInt(item.id))) + 1).toString();
@@ -107,6 +122,14 @@ export default function Vacation() {
 
   return (
     <div className="p-4 sm:p-6 md:p-8">
+      <style>{`
+        :root {
+          --color-vacation-annual: #0088FE;
+          --color-vacation-half: #00C49F;
+          --color-vacation-sick: #FFBB28;
+          --color-vacation-other: #FF8042;
+        }
+      `}</style>
       <h1 className="text-3xl font-bold mb-6">휴가 관리</h1>
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-1 flex flex-col gap-6">
@@ -129,11 +152,26 @@ export default function Vacation() {
           <div className="grid gap-6 md:grid-cols-3">
             {vacationStats.map((stat, index) => (
               <Card key={index}>
-                <CardHeader>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
                   <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
+                  {stat.changeType && (
+                    <Badge variant="outline" className={`text-xs ${stat.changeType === 'increase' ? 'text-green-500' : 'text-red-500'}`}>
+                      {stat.changeType === 'increase' ? (
+                        <ArrowUpIcon className="h-3 w-3 mr-1" />
+                      ) : (
+                        <ArrowDownIcon className="h-3 w-3 mr-1" />
+                      )}
+                      {Math.abs(stat.change)}일
+                    </Badge>
+                  )}
                 </CardHeader>
-                <CardContent>
-                  <p className="text-2xl font-bold">{stat.value}</p>
+                <CardContent className="py-0">
+                  <div className="text-2xl font-bold">{stat.value}</div>
+                  {stat.description && (
+                    <p className={`text-xs ${stat.changeType === 'increase' ? 'text-green-500' : stat.changeType === 'decrease' ? 'text-red-500' : 'text-gray-500'}`}>
+                      {stat.description}
+                    </p>
+                  )}
                 </CardContent>
               </Card>
             ))}
@@ -145,12 +183,40 @@ export default function Vacation() {
             <CardContent>
               <ResponsiveContainer width="100%" height={350}>
                 <BarChart data={vacationTrends}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="value" fill="#8884d8" name="휴가 사용일수" />
+                  <CartesianGrid vertical={false} />
+                  <XAxis
+                    dataKey="name"
+                    stroke="#888888"
+                    fontSize={12}
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                  <YAxis
+                    stroke="#888888"
+                    fontSize={12}
+                    tickLine={false}
+                    axisLine={false}
+                    tickFormatter={(value) => `${value}일`}
+                  />
+                  <Tooltip
+                    cursor={false}
+                    content={({ active, payload, label }) => {
+                      if (active && payload && payload.length) {
+                        return (
+                          <div className="min-w-[8rem] rounded-lg border bg-background p-2 shadow-sm">
+                            <div className="grid grid-cols-2 gap-2">
+                              <div className="flex flex-col">
+                                <span className="text-[0.70rem] uppercase text-muted-foreground">{label}</span>
+                                <span className="font-bold text-muted-foreground">{payload[0].value}일</span>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      }
+                      return null
+                    }}
+                  />
+                  <Bar dataKey="value" fill="#8884d8" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
@@ -163,25 +229,69 @@ export default function Vacation() {
             <CardHeader>
                 <CardTitle>휴가 유형 분포</CardTitle>
             </CardHeader>
-            <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
+            <CardContent className="flex items-center justify-center">
+                <ResponsiveContainer width="100%" height={350}>
                     <PieChart>
+                        <Tooltip
+                          cursor={false}
+                          content={({ active, payload }) => {
+                            if (active && payload && payload.length) {
+                              const data = payload[0].payload;
+                              return (
+                                <div className="min-w-[8rem] rounded-lg border bg-background p-2 shadow-sm">
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <div className="flex flex-col">
+                                      <span className="text-[0.70rem] uppercase text-muted-foreground">{data.name}</span>
+                                      <span className="font-bold text-muted-foreground">{data.value}일</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              )
+                            }
+                            return null
+                          }}
+                        />
                         <Pie
                             data={vacationTypes}
                             cx="50%"
                             cy="50%"
-                            labelLine={false}
-                            outerRadius={80}
-                            fill="#8884d8"
                             dataKey="value"
-                            label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                            innerRadius={60}
+                            nameKey="name"
                         >
-                            {vacationTypes.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                            ))}
+                          {vacationTypes.map((entry) => (
+                            <Cell key={entry.name} fill={entry.fill} />
+                          ))}
+                          <Label
+                            content={({ viewBox }) => {
+                              if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                                return (
+                                  <text
+                                    x={viewBox.cx}
+                                    y={viewBox.cy}
+                                    textAnchor="middle"
+                                    dominantBaseline="middle"
+                                  >
+                                    <tspan
+                                      x={viewBox.cx}
+                                      y={viewBox.cy}
+                                      className="fill-foreground text-3xl font-bold"
+                                    >
+                                      {totalVacationDays.toLocaleString()}
+                                    </tspan>
+                                    <tspan
+                                      x={viewBox.cx}
+                                      y={(viewBox.cy || 0) + 24}
+                                      className="fill-muted-foreground"
+                                    >
+                                      총 휴가
+                                    </tspan>
+                                  </text>
+                                )
+                              }
+                            }}
+                          />
                         </Pie>
-                        <Tooltip />
-                        <Legend />
                     </PieChart>
                 </ResponsiveContainer>
             </CardContent>
