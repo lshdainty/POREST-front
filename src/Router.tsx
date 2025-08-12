@@ -7,7 +7,7 @@ import Layout from '@/features/layout/layout';
 import Dashboard from '@/features/dashboard/Dashboard';
 import Calendar from '@/features/calendar/Calendar';
 import Work from '@/features/work/Work';
-import Culture from '@/features/culture/Culture';
+import Dues from '@/features/dues/Dues';
 import Rule from '@/features/rule/Rule';
 import User from '@/features/user/User';
 
@@ -32,7 +32,7 @@ const Router = () => {
         <Route path='/dashboard' element={<Dashboard/>} />
         <Route path='/calendar' element={<Calendar/>} />
         <Route path='/work/report' element={<Work/>} />
-        <Route path='/culture/dues' element={<Culture/>} />
+        <Route path='/culture/dues' element={<Dues/>} />
         <Route path='/culture/rule' element={<Rule/>} />
         <Route path='/admin/user' element={<User/>} />
         <Route path='/admin/vacation' element={<User/>} />
