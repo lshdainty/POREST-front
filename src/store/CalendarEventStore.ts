@@ -41,7 +41,7 @@ export const useCalendarEventsStore = create<{
       domain_type: string;
       history_ids: number[];
       schedule_id: number;
-    }[], calendarRange: {start: Date, end: Date}) => void;
+    }[], calendarRange: {start: Date, end: Date}, view: 'month' | 'week' | 'day') => void;
     setEventVisible: (id: number | string, isVisible: boolean, type: string) => void;
   }
 }>((set, get) => ({
@@ -58,17 +58,29 @@ export const useCalendarEventsStore = create<{
       domain_type: string;
       history_ids: number[];
       schedule_id: number;
-    }[], calendarRange: {start: Date, end: Date}) => {
-      const sMonth = calendarRange.start.getMonth();
-      const eMonth = calendarRange.end.getMonth();
-      let cMonth = -1;
+    }[], calendarRange: {start: Date, end: Date}, view: 'month' | 'week' | 'day') => {
       let idx = 0;
 
-      const label = document.getElementById('calendarLabel');
-      if (label === undefined ||label === null) {
-        cMonth = dayjs().month();
-      } else {
-        cMonth = dayjs(label.textContent, 'YYYY.MM').month();
+      const isOffDay = (start: Date, end: Date) => {
+        if (view === 'month') {
+          const sMonth = calendarRange.start.getMonth();
+          const eMonth = calendarRange.end.getMonth();
+          let cMonth = -1;
+
+          const label = document.getElementById('calendarLabel');
+          if (label === undefined ||label === null) {
+            cMonth = dayjs().month();
+          } else {
+            cMonth = dayjs(label.textContent, 'YYYY.MM').month();
+          }
+
+          return (
+            (cMonth !== new Date(start).getMonth() && sMonth === new Date(end).getMonth()) || 
+            (cMonth !== new Date(start).getMonth() && eMonth === new Date(start).getMonth())
+          ) ? true : false;
+        } else {
+          return false;
+        }
       }
 
       const _events: CalendarEvent[] = calendarEvent.map(c => ({
@@ -87,10 +99,7 @@ export const useCalendarEventsStore = create<{
           scheduleId: c.schedule_id,
           isUserVisible: true,
           isCalendarVisible: true,
-          isOffDay: (
-            (cMonth !== new Date(c.end_date).getMonth() && sMonth === new Date(c.end_date).getMonth()) || 
-            (cMonth !== new Date(c.start_date).getMonth() && eMonth === new Date(c.start_date).getMonth())
-          ) ? true : false,
+          isOffDay: isOffDay(c.start_date, c.end_date),
           isAllDay: (
             c.calendar_type === 'DAYOFF' ||
             c.calendar_type === 'EDUCATION' ||

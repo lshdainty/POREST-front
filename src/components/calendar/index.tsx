@@ -84,7 +84,7 @@ const Content: React.FC = () => {
 
   useEffect(() => {
     if (calendarData && !calendarLoading && range) {
-      resetEvents(calendarData, {start:range.start, end:range.end});
+      resetEvents(calendarData, {start:range.start, end:range.end}, view);
       calendarVisibles.forEach(calendar => {
         setEventVisible(calendar.id, calendar.isVisible, 'calendar');
       });
@@ -109,6 +109,7 @@ const Content: React.FC = () => {
         view={view}
         onView={onView}
         views={[Views.MONTH, Views.WEEK, Views.DAY]}
+        dayLayoutAlgorithm={'no-overlap'}
         // cell에 모든 이벤트 보이도록함
         showAllEvents={true}
         components={{
