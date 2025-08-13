@@ -168,9 +168,9 @@ export default function Vacation() {
         }
       `}</style>
       <h1 className="text-3xl font-bold mb-6">휴가 관리</h1>
-      <div className="grid gap-6 lg:grid-cols-4">
-        <div className="lg:col-span-1 flex flex-col gap-6">
-          <Card className="h-full">
+      <div className="flex flex-col lg:flex-row gap-6">
+        <div className="flex flex-col gap-6">
+          <Card className="h-full min-w-[350px]">
             <CardHeader className="flex flex-row items-center justify-between pb-4">
               <CardTitle>사용자 정보</CardTitle>
               <Select onValueChange={setSelectedUserId} defaultValue={selectedUser.id}>
@@ -237,7 +237,7 @@ export default function Vacation() {
           </Card>
         </div>
 
-        <div className="lg:col-span-3 flex flex-col gap-6">
+        <div className="flex flex-col gap-6 flex-1">
           <div className="grid gap-6 md:grid-cols-3">
             {vacationStats.map((stat, index) => (
               <Card key={index}>
