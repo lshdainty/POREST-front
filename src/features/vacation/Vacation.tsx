@@ -313,8 +313,8 @@ export default function Vacation() {
         </div>
       </div>
 
-      <div className="grid gap-6 mt-6 lg:grid-cols-5">
-        <Card className="lg:col-span-2 flex flex-col">
+      <div className="flex flex-col xl:flex-row gap-6 mt-6">
+        <Card className="xl:w-2/5 flex flex-col">
           <CardHeader className="items-center pb-0">
             <CardTitle>휴가 유형</CardTitle>
             <CardDescription>올해 부여받은 휴가 유형</CardDescription>
@@ -399,7 +399,7 @@ export default function Vacation() {
             </div>
           </CardFooter>
         </Card>
-        <Card className="lg:col-span-3">
+        <Card className="xl:w-3/5">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>휴가 내역</CardTitle>
             <Button onClick={handleAdd} size="sm">추가</Button>
