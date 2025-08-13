@@ -6,15 +6,50 @@ import { Table, Header, HeaderRow, Body, Row, HeaderCell, Cell as TableCell } fr
 import { useTheme } from "@table-library/react-table-library/theme";
 import { Button } from "@/components/shadcn/button";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/shadcn/dropdownMenu";
-import { EllipsisVertical, ArrowUpIcon, ArrowDownIcon } from 'lucide-react';
+import { EllipsisVertical, ArrowUpIcon, ArrowDownIcon, User as UserIcon, Mail, Cake, Briefcase, Clock, Shield, UserRound, UserRoundCog } from 'lucide-react';
 import { Badge } from "@/components/shadcn/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/shadcn/select";
+import { Separator } from "@/components/shadcn/separator";
+import { cn } from "@/lib/utils";
 
-const user = {
-  name: "홍길동",
-  team: "개발팀",
-  position: "팀장",
-  avatar: "https://github.com/shadcn.png",
-};
+const users = [
+  {
+    id: "1",
+    name: "홍길동",
+    username: "gildong.hong",
+    email: "gildong.hong@example.com",
+    dob: "1990-01-15",
+    team: "개발팀",
+    position: "팀장",
+    workTime: "09:00 - 18:00",
+    role: "Admin",
+    avatar: "https://github.com/shadcn.png",
+  },
+  {
+    id: "2",
+    name: "이순신",
+    username: "sunsin.lee",
+    email: "sunsin.lee@example.com",
+    dob: "1985-05-20",
+    team: "디자인팀",
+    position: "팀원",
+    workTime: "10:00 - 19:00",
+    role: "User",
+    avatar: "https://randomuser.me/api/portraits/men/75.jpg",
+  },
+  {
+    id: "3",
+    name: "유관순",
+    username: "gwansun.yu",
+    email: "gwansun.yu@example.com",
+    dob: "1992-11-30",
+    team: "마케팅팀",
+    position: "대리",
+    workTime: "08:30 - 17:30",
+    role: "User",
+    avatar: "https://randomuser.me/api/portraits/women/75.jpg",
+  },
+];
 
 const vacationStats = [
   {
@@ -90,6 +125,9 @@ const initialVacationHistory = [
 
 export default function Vacation() {
   const [vacationHistory, setVacationHistory] = useState(initialVacationHistory);
+  const [selectedUserId, setSelectedUserId] = useState(users[0].id);
+
+  const selectedUser = useMemo(() => users.find(u => u.id === selectedUserId)!, [selectedUserId]);
 
   const theme = useTheme([{
     Table: `--data-table-library_grid-template-columns: minmax(150px, 1fr) minmax(150px, 1fr) minmax(250px, 1fr) minmax(60px, auto) !important;`,
@@ -130,24 +168,76 @@ export default function Vacation() {
         }
       `}</style>
       <h1 className="text-3xl font-bold mb-6">휴가 관리</h1>
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-6 lg:grid-cols-4">
         <div className="lg:col-span-1 flex flex-col gap-6">
-          <Card className="flex-grow">
-            <CardHeader>
+          <Card className="h-full">
+            <CardHeader className="flex flex-row items-center justify-between pb-4">
               <CardTitle>사용자 정보</CardTitle>
+              <Select onValueChange={setSelectedUserId} defaultValue={selectedUser.id}>
+                <SelectTrigger className="w-[150px]">
+                  <SelectValue placeholder="사용자 선택" />
+                </SelectTrigger>
+                <SelectContent>
+                  {users.map(user => (
+                    <SelectItem key={user.id} value={user.id}>{user.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </CardHeader>
-            <CardContent className="flex flex-col items-center text-center">
+            <CardContent className="flex flex-col items-center text-center p-6">
               <Avatar className="w-24 h-24 mb-4">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                <AvatarImage src={selectedUser.avatar} alt={selectedUser.name} />
+                <AvatarFallback>{selectedUser.name.charAt(0)}</AvatarFallback>
               </Avatar>
-              <p className="text-xl font-semibold">{user.name}</p>
-              <p className="text-sm text-gray-500">{user.team} / {user.position}</p>
+              <p className="text-2xl font-bold">{selectedUser.name}</p>
+              <p className="text-sm text-muted-foreground">{selectedUser.team} / {selectedUser.position}</p>
+              <Separator className="my-6" />
+              <div className="w-full text-left space-y-5 text-sm">
+                <div className="flex items-center">
+                  <UserIcon className="mr-3 h-4 w-4 text-muted-foreground" />
+                  <span className="font-semibold w-24">아이디</span>
+                  <span>{selectedUser.username}</span>
+                </div>
+                <div className="flex items-center">
+                  <Mail className="mr-3 h-4 w-4 text-muted-foreground" />
+                  <span className="font-semibold w-24">이메일</span>
+                  <span>{selectedUser.email}</span>
+                </div>
+                <div className="flex items-center">
+                  <Cake className="mr-3 h-4 w-4 text-muted-foreground" />
+                  <span className="font-semibold w-24">생년월일</span>
+                  <span>{selectedUser.dob}</span>
+                </div>
+                <div className="flex items-center">
+                  <Briefcase className="mr-3 h-4 w-4 text-muted-foreground" />
+                  <span className="font-semibold w-24">소속</span>
+                  <span>{selectedUser.team}</span>
+                </div>
+                <div className="flex items-center">
+                  <Clock className="mr-3 h-4 w-4 text-muted-foreground" />
+                  <span className="font-semibold w-24">유연근무시간</span>
+                  <span>{selectedUser.workTime}</span>
+                </div>
+                <div className="flex items-center">
+                  <Shield className="mr-3 h-4 w-4 text-muted-foreground" />
+                  <span className="font-semibold w-24">권한</span>
+                  <div className={cn(
+                    'flex flex-row items-center text-sm font-semibold gap-1',
+                    {
+                      'text-rose-500 dark:text-rose-400': selectedUser.role === 'Admin',
+                      'text-sky-500 dark:text-sky-400': selectedUser.role === 'User'
+                    }
+                  )}>
+                    {selectedUser.role === 'Admin' ? <UserRoundCog size={16}/> : <UserRound size={16}/>}
+                    {selectedUser.role}
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
 
-        <div className="lg:col-span-2 flex flex-col gap-6">
+        <div className="lg:col-span-3 flex flex-col gap-6">
           <div className="grid gap-6 md:grid-cols-3">
             {vacationStats.map((stat, index) => (
               <Card key={index}>
