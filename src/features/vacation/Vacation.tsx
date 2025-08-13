@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
-import { useState, useMemo } from "react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, Pie, PieChart, Cell, Label } from "recharts";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/shadcn/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/shadcn/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/shadcn/avatar";
 import { Table, Header, HeaderRow, Body, Row, HeaderCell, Cell as TableCell } from '@table-library/react-table-library/table';
 import { useTheme } from "@table-library/react-table-library/theme";
@@ -225,76 +224,90 @@ export default function Vacation() {
       </div>
 
       <div className="grid gap-6 mt-6 lg:grid-cols-5">
-        <Card className="lg:col-span-2">
-            <CardHeader>
-                <CardTitle>휴가 유형 분포</CardTitle>
-            </CardHeader>
-            <CardContent className="flex items-center justify-center">
-                <ResponsiveContainer width="100%" height={350}>
-                    <PieChart>
-                        <Tooltip
-                          cursor={false}
-                          content={({ active, payload }) => {
-                            if (active && payload && payload.length) {
-                              const data = payload[0].payload;
-                              return (
-                                <div className="min-w-[8rem] rounded-lg border bg-background p-2 shadow-sm">
-                                  <div className="grid grid-cols-2 gap-2">
-                                    <div className="flex flex-col">
-                                      <span className="text-[0.70rem] uppercase text-muted-foreground">{data.name}</span>
-                                      <span className="font-bold text-muted-foreground">{data.value}일</span>
-                                    </div>
-                                  </div>
-                                </div>
-                              )
-                            }
-                            return null
-                          }}
-                        />
-                        <Pie
-                            data={vacationTypes}
-                            cx="50%"
-                            cy="50%"
-                            dataKey="value"
-                            innerRadius={60}
-                            nameKey="name"
-                        >
-                          {vacationTypes.map((entry) => (
-                            <Cell key={entry.name} fill={entry.fill} />
-                          ))}
-                          <Label
-                            content={({ viewBox }) => {
-                              if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                                return (
-                                  <text
-                                    x={viewBox.cx}
-                                    y={viewBox.cy}
-                                    textAnchor="middle"
-                                    dominantBaseline="middle"
-                                  >
-                                    <tspan
-                                      x={viewBox.cx}
-                                      y={viewBox.cy}
-                                      className="fill-foreground text-3xl font-bold"
-                                    >
-                                      {totalVacationDays.toLocaleString()}
-                                    </tspan>
-                                    <tspan
-                                      x={viewBox.cx}
-                                      y={(viewBox.cy || 0) + 24}
-                                      className="fill-muted-foreground"
-                                    >
-                                      총 휴가
-                                    </tspan>
-                                  </text>
-                                )
-                              }
-                            }}
-                          />
-                        </Pie>
-                    </PieChart>
-                </ResponsiveContainer>
-            </CardContent>
+        <Card className="lg:col-span-2 flex flex-col">
+          <CardHeader className="items-center pb-0">
+            <CardTitle>휴가 유형</CardTitle>
+            <CardDescription>올해 부여받은 휴가 유형</CardDescription>
+          </CardHeader>
+          <CardContent className="flex-1 pb-0">
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Tooltip
+                  cursor={false}
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      const data = payload[0].payload;
+                      return (
+                        <div className="min-w-[8rem] rounded-lg border bg-background p-2 shadow-sm">
+                          <div className="flex items-center gap-2">
+                            <div className="h-3 w-3 rounded-full" style={{ backgroundColor: data.fill }}></div>
+                            <span className="text-[0.85rem] text-muted-foreground">{data.name}</span>
+                            <span className="ml-auto font-bold">{data.value}일</span>
+                          </div>
+                        </div>
+                      )
+                    }
+                    return null
+                  }}
+                />
+                <Pie
+                  data={vacationTypes}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={80}
+                  outerRadius={120}
+                  strokeWidth={2}
+                >
+                  {vacationTypes.map((entry) => (
+                    <Cell key={`cell-${entry.name}`} fill={entry.fill} />
+                  ))}
+                  <Label
+                    content={({ viewBox }) => {
+                      if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                        return (
+                          <text
+                            x={viewBox.cx}
+                            y={viewBox.cy}
+                            textAnchor="middle"
+                            dominantBaseline="middle"
+                            className="text-center"
+                          >
+                            <tspan
+                              x={viewBox.cx}
+                              y={viewBox.cy}
+                              className="fill-foreground text-3xl font-bold"
+                            >
+                              {totalVacationDays.toLocaleString()}
+                            </tspan>
+                            <tspan
+                              x={viewBox.cx}
+                              y={(viewBox.cy || 0) + 20}
+                              className="fill-muted-foreground text-sm"
+                            >
+                              총 휴가
+                            </tspan>
+                          </text>
+                        )
+                      }
+                      return null;
+                    }}
+                  />
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+          <CardFooter className="flex-col gap-2 text-sm pt-4">
+            <div className="flex w-full items-center justify-center gap-4 text-muted-foreground">
+              {vacationTypes.map((item) => (
+                <div key={item.name} className="flex items-center gap-1.5">
+                  <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: item.fill }} />
+                  <span>{item.name}</span>
+                </div>
+              ))}
+            </div>
+          </CardFooter>
         </Card>
         <Card className="lg:col-span-3">
           <CardHeader className="flex flex-row items-center justify-between">
