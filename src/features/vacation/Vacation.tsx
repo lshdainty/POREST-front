@@ -238,9 +238,9 @@ export default function Vacation() {
         </div>
 
         <div className="flex flex-col gap-6 flex-1">
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="flex flex-wrap gap-6">
             {vacationStats.map((stat, index) => (
-              <Card key={index}>
+              <Card key={index} className="flex-1 min-w-80">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
                   <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
                   {stat.changeType && (
