@@ -28,6 +28,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/shadcn/select";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/shadcn/card"
 import { EllipsisVertical, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import dayjs from 'dayjs';
@@ -290,202 +296,204 @@ export default function DuesTable() {
   );
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className='flex justify-between items-center'>
-        <h2 className="text-2xl font-bold">입출금 내역</h2>
-        <div>
-          <Button className='text-sm h-8 mr-2' variant='outline' onClick={handleAdd}>내역 추가</Button>
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <CardTitle>입출금 내역</CardTitle>
+        <div className="flex gap-2">
+          <Button className='text-sm h-8' onClick={handleAdd}>추가</Button>
           <Button className='text-sm h-8' variant='outline' onClick={handleSave}>저장</Button>
         </div>
-      </div>
-      <div className='w-full flex-grow overflow-auto'>
-        <div className='rounded-lg border overflow-hidden'>
-          <Table
-            theme={tableTheme}
-            className='w-full !h-auto'
-            data={{ nodes: paginatedData }}
-            layout={{ fixedHeader: true }}
-          >
-            {(tableList: EditableDuesData[]) => (
-              <>
-                <Header> 
-                  <HeaderRow className='!bg-muted !text-foreground [&_th]:!p-2 [&_th]:!text-sm [&_th]:!h-10 [&_th]:!font-medium [&_div]:!pl-2'>
-                    <HeaderCell>날짜</HeaderCell>
-                    <HeaderCell>이름</HeaderCell>
-                    <HeaderCell>내용</HeaderCell>
-                    <HeaderCell>금액</HeaderCell>
-                    <HeaderCell>유형</HeaderCell>
-                    <HeaderCell>총액</HeaderCell>
-                    <HeaderCell></HeaderCell>
-                  </HeaderRow>
-                </Header>
-                <Body>
-                  {tableList.map((row, i) => {
-                    const id = row.isNew ? row.tempId! : row.dues_seq.toString();
-                    const isEditing = editingRow === id;
-                    return (
-                      <Row
-                        key={id}
-                        item={row}
-                        className={cn(
-                          'hover:!bg-muted/50 !bg-background !text-foreground [&_td]:!p-2 [&_td]:!text-sm [&_td>div]:!py-1 [&_td>div]:!pl-2',
-                          i !== tableList.length - 1 ? '[&_td]:!border-b' : '[&_td]:!border-b-0'
-                        )}
-                      >
-                        <Cell>
-                          {isEditing ? (
-                            <InputDatePicker
-                              value={dayjs(row.dues_date).format('YYYY-MM-DD')}
-                              onValueChange={(value) => handleDateChange(value, id)}
-                            />
-                          ) : (
-                            dayjs(row.dues_date).format('YYYY-MM-DD')
+      </CardHeader>
+      <CardContent>
+        <div className='w-full flex-grow overflow-auto'>
+          <div className='rounded-lg border overflow-hidden'>
+            <Table
+              theme={tableTheme}
+              className='w-full !h-auto'
+              data={{ nodes: paginatedData }}
+              layout={{ fixedHeader: true }}
+            >
+              {(tableList: EditableDuesData[]) => (
+                <>
+                  <Header> 
+                    <HeaderRow className='!bg-muted !text-foreground [&_th]:!p-2 [&_th]:!text-sm [&_th]:!h-10 [&_th]:!font-medium [&_div]:!pl-2'>
+                      <HeaderCell>날짜</HeaderCell>
+                      <HeaderCell>이름</HeaderCell>
+                      <HeaderCell>내용</HeaderCell>
+                      <HeaderCell>금액</HeaderCell>
+                      <HeaderCell>유형</HeaderCell>
+                      <HeaderCell>총액</HeaderCell>
+                      <HeaderCell></HeaderCell>
+                    </HeaderRow>
+                  </Header>
+                  <Body>
+                    {tableList.map((row, i) => {
+                      const id = row.isNew ? row.tempId! : row.dues_seq.toString();
+                      const isEditing = editingRow === id;
+                      return (
+                        <Row
+                          key={id}
+                          item={row}
+                          className={cn(
+                            'hover:!bg-muted/50 !bg-background !text-foreground [&_td]:!p-2 [&_td]:!text-sm [&_td>div]:!py-1 [&_td>div]:!pl-2',
+                            i !== tableList.length - 1 ? '[&_td]:!border-b' : '[&_td]:!border-b-0'
                           )}
-                        </Cell>
-                        <Cell>
-                          {isEditing ? (
-                            <Input
-                              value={row.dues_user_name}
-                              onChange={(e) => handleInputChange(e, id, 'dues_user_name')}
-                            />
-                          ) : (
-                            row.dues_user_name
-                          )}
-                        </Cell>
-                        <Cell>
-                          {isEditing ? (
-                            <Input
-                              value={row.dues_detail}
-                              onChange={(e) => handleInputChange(e, id, 'dues_detail')}
-                            />
-                          ) : (
-                            row.dues_detail
-                          )}
-                        </Cell>
-                        <Cell className={cn(row.dues_calc === 'PLUS' ? 'text-blue-500' : 'text-red-500')}>
-                          {isEditing ? (
-                            <Input
-                              type='number'
-                              value={row.dues_amount}
-                              onChange={(e) => handleInputChange(e, id, 'dues_amount')}
-                            />
-                          ) : (
-                            `${Math.abs(row.dues_amount).toLocaleString('ko-KR')}원`
-                          )}
-                        </Cell>
-                        <Cell>
-                          {isEditing ? (
-                            <Select
-                              value={row.dues_calc}
-                              onValueChange={(value) => handleSelectChange(value, id, 'dues_calc')}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="유형" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value='PLUS'>입금</SelectItem>
-                                <SelectItem value='MINUS'>출금</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          ) : (
-                            <Badge variant={row.dues_calc === 'PLUS' ? 'default' : 'destructive'}>
-                              {row.dues_calc === 'PLUS' ? '입금' : '출금'}
-                            </Badge>
-                          )}
-                        </Cell>
-                        <Cell>{row.total_dues.toLocaleString('ko-KR')}원</Cell>
-                        <Cell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-                                size="icon"
+                        >
+                          <Cell>
+                            {isEditing ? (
+                              <InputDatePicker
+                                value={dayjs(row.dues_date).format('YYYY-MM-DD')}
+                                onValueChange={(value) => handleDateChange(value, id)}
+                              />
+                            ) : (
+                              dayjs(row.dues_date).format('YYYY-MM-DD')
+                            )}
+                          </Cell>
+                          <Cell>
+                            {isEditing ? (
+                              <Input
+                                value={row.dues_user_name}
+                                onChange={(e) => handleInputChange(e, id, 'dues_user_name')}
+                              />
+                            ) : (
+                              row.dues_user_name
+                            )}
+                          </Cell>
+                          <Cell>
+                            {isEditing ? (
+                              <Input
+                                value={row.dues_detail}
+                                onChange={(e) => handleInputChange(e, id, 'dues_detail')}
+                              />
+                            ) : (
+                              row.dues_detail
+                            )}
+                          </Cell>
+                          <Cell className={cn(row.dues_calc === 'PLUS' ? 'text-blue-500' : 'text-red-500')}>
+                            {isEditing ? (
+                              <Input
+                                type='number'
+                                value={row.dues_amount}
+                                onChange={(e) => handleInputChange(e, id, 'dues_amount')}
+                              />
+                            ) : (
+                              `${Math.abs(row.dues_amount).toLocaleString('ko-KR')}원`
+                            )}
+                          </Cell>
+                          <Cell>
+                            {isEditing ? (
+                              <Select
+                                value={row.dues_calc}
+                                onValueChange={(value) => handleSelectChange(value, id, 'dues_calc')}
                               >
-                                <EllipsisVertical />
-                                <span className="sr-only">Open menu</span>
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-32">
-                              {isEditing ? (
-                                <DropdownMenuItem onClick={() => setEditingRow(null)}>Save</DropdownMenuItem>
-                              ) : (
-                                <DropdownMenuItem onClick={() => handleEdit(id)}>Edit</DropdownMenuItem>
-                              )}
-                              <DropdownMenuItem
-                                onClick={() => handleCopy(row)}
-                              >
-                                Copy
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem
-                                className="text-destructive focus:text-destructive hover:!bg-destructive/20"
-                                onClick={() => handleDelete(id)}
-                              >
-                                Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </Cell>
-                      </Row>
-                    )
-                  })}
-                </Body>
-              </>
-            )}
-          </Table>
-        </div>
-        <div className="flex items-center justify-between p-4">
-          <div className="text-sm text-muted-foreground">
-            {tableData.length} row(s)
+                                <SelectTrigger>
+                                  <SelectValue placeholder="유형" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value='PLUS'>입금</SelectItem>
+                                  <SelectItem value='MINUS'>출금</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            ) : (
+                              <Badge variant={row.dues_calc === 'PLUS' ? 'default' : 'destructive'}>
+                                {row.dues_calc === 'PLUS' ? '입금' : '출금'}
+                              </Badge>
+                            )}
+                          </Cell>
+                          <Cell>{row.total_dues.toLocaleString('ko-KR')}원</Cell>
+                          <Cell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
+                                  size="icon"
+                                >
+                                  <EllipsisVertical />
+                                  <span className="sr-only">Open menu</span>
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="w-32">
+                                {isEditing ? (
+                                  <DropdownMenuItem onClick={() => setEditingRow(null)}>Save</DropdownMenuItem>
+                                ) : (
+                                  <DropdownMenuItem onClick={() => handleEdit(id)}>Edit</DropdownMenuItem>
+                                )}
+                                <DropdownMenuItem
+                                  onClick={() => handleCopy(row)}
+                                >
+                                  Copy
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                  className="text-destructive focus:text-destructive hover:!bg-destructive/20"
+                                  onClick={() => handleDelete(id)}
+                                >
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </Cell>
+                        </Row>
+                      )
+                    })}
+                  </Body>
+                </>
+              )}
+            </Table>
           </div>
-          <div className="flex items-center space-x-6 lg:space-x-8">
-            <div className="flex items-center space-x-2">
-              <p className="text-sm font-medium">
-                Page {currentPage} of {totalPages}
-              </p>
+          <div className="flex items-center justify-between p-4">
+            <div className="text-sm text-muted-foreground">
+              {tableData.length} row(s)
             </div>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                className="h-8 w-8 p-0"
-                onClick={() => setCurrentPage(1)}
-                disabled={currentPage <= 1}
-              >
-                <span className="sr-only">Go to first page</span>
-                <ChevronsLeft className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                className="h-8 w-8 p-0"
-                onClick={() => setCurrentPage(currentPage - 1)}
-                disabled={currentPage <= 1}
-              >
-                <span className="sr-only">Go to previous page</span>
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                className="h-8 w-8 p-0"
-                onClick={() => setCurrentPage(currentPage + 1)}
-                disabled={currentPage >= totalPages}
-              >
-                <span className="sr-only">Go to next page</span>
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                className="h-8 w-8 p-0"
-                onClick={() => setCurrentPage(totalPages)}
-                disabled={currentPage >= totalPages}
-              >
-                <span className="sr-only">Go to last page</span>
-                <ChevronsRight className="h-4 w-4" />
-              </Button>
+            <div className="flex items-center space-x-6 lg:space-x-8">
+              <div className="flex items-center space-x-2">
+                <p className="text-sm font-medium">
+                  Page {currentPage} of {totalPages}
+                </p>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  className="h-8 w-8 p-0"
+                  onClick={() => setCurrentPage(1)}
+                  disabled={currentPage <= 1}
+                >
+                  <span className="sr-only">Go to first page</span>
+                  <ChevronsLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-8 w-8 p-0"
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                  disabled={currentPage <= 1}
+                >
+                  <span className="sr-only">Go to previous page</span>
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-8 w-8 p-0"
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                  disabled={currentPage >= totalPages}
+                >
+                  <span className="sr-only">Go to next page</span>
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-8 w-8 p-0"
+                  onClick={() => setCurrentPage(totalPages)}
+                  disabled={currentPage >= totalPages}
+                >
+                  <span className="sr-only">Go to last page</span>
+                  <ChevronsRight className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   )
 }

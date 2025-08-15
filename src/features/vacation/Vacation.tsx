@@ -293,11 +293,10 @@ export default function Vacation() {
                       if (active && payload && payload.length) {
                         return (
                           <div className="min-w-[8rem] rounded-lg border bg-background p-2 shadow-sm">
-                            <div className="grid grid-cols-2 gap-2">
-                              <div className="flex flex-col">
-                                <span className="text-[0.70rem] uppercase text-muted-foreground">{label}</span>
-                                <span className="font-bold text-muted-foreground">{payload[0].value}일</span>
-                              </div>
+                            <div className="flex items-center gap-2">
+                              <div className="h-3 w-3 rounded-full" style={{ backgroundColor: '#8884d8' }}></div>
+                              <span className="text-[0.85rem] text-muted-foreground">{label}</span>
+                              <span className="ml-auto font-bold">{payload[0].value}일</span>
                             </div>
                           </div>
                         )
@@ -405,53 +404,58 @@ export default function Vacation() {
             <Button onClick={handleAdd} size="sm">추가</Button>
           </CardHeader>
           <CardContent>
-            <Table data={{ nodes: vacationHistory }} theme={theme} layout={{ fixedHeader: true }}>
-              {(tableList: any) => (
-                <>
-                  <Header>
-                    <HeaderRow className='!bg-muted !text-foreground [&_th]:!p-2 [&_th]:!text-sm [&_th]:!h-10 [&_th]:!font-medium'>
-                      <HeaderCell>날짜</HeaderCell>
-                      <HeaderCell>종류</HeaderCell>
-                      <HeaderCell>사유</HeaderCell>
-                      <HeaderCell></HeaderCell>
-                    </HeaderRow>
-                  </Header>
-                  <Body>
-                    {tableList.map((item: any) => (
-                      <Row key={item.id} item={item} className='hover:!bg-muted/50 !bg-background !text-foreground [&_td]:!p-2 [&_td]:!text-sm'>
-                        <TableCell>{item.date}</TableCell>
-                        <TableCell>{item.type}</TableCell>
-                        <TableCell>{item.reason}</TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-                                size="icon"
-                              >
-                                <EllipsisVertical />
-                                <span className="sr-only">Open menu</span>
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => handleEdit(item.id)}>수정</DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem
-                                className="text-destructive focus:text-destructive hover:!bg-destructive/20"
-                                onClick={() => handleDelete(item.id)}
-                              >
-                                삭제
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </Row>
-                    ))}
-                  </Body>
-                </>
-              )}
-            </Table>
+            <div className='w-full overflow-auto'>
+              <Table data={{ nodes: vacationHistory }} theme={theme} layout={{ fixedHeader: true }} className='w-full !h-auto border overflow-hidden rounded-lg'>
+                {(tableList: any) => (
+                  <>
+                    <Header>
+                      <HeaderRow className='!bg-muted !text-foreground [&_th]:!p-2 [&_th]:!text-sm [&_th]:!h-10 [&_th]:!font-medium [&_div]:!pl-2'>
+                        <HeaderCell>날짜</HeaderCell>
+                        <HeaderCell>종류</HeaderCell>
+                        <HeaderCell>사유</HeaderCell>
+                        <HeaderCell></HeaderCell>
+                      </HeaderRow>
+                    </Header>
+                    <Body>
+                      {tableList.map((item: any, i: number) => (
+                        <Row key={item.id} item={item} className={cn(
+                          'hover:!bg-muted/50 !bg-background !text-foreground [&_td]:!p-2 [&_td]:!text-sm [&_td>div]:!py-1 [&_td>div]:!pl-2',
+                          i !== vacationHistory?.length-1 ? '[&_td]:!border-b' : '[&_td]:!border-b-0'
+                        )}>
+                          <TableCell>{item.date}</TableCell>
+                          <TableCell>{item.type}</TableCell>
+                          <TableCell>{item.reason}</TableCell>
+                          <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
+                                  size="icon"
+                                >
+                                  <EllipsisVertical />
+                                  <span className="sr-only">Open menu</span>
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => handleEdit(item.id)}>수정</DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                  className="text-destructive focus:text-destructive hover:!bg-destructive/20"
+                                  onClick={() => handleDelete(item.id)}
+                                >
+                                  삭제
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </Row>
+                      ))}
+                    </Body>
+                  </>
+                )}
+              </Table>
+            </div>
           </CardContent>
         </Card>
       </div>

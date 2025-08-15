@@ -28,11 +28,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/shadcn/select";
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/shadcn/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/shadcn/card";
 import UserSkeleton from '@/features/user/UserSkeleton';
-import { UserRoundCog, UserRound, EllipsisVertical, Users, UserCheck, UserX } from 'lucide-react';
+import { UserRoundCog, UserRound, EllipsisVertical } from 'lucide-react';
 import { Empty } from 'antd';
 import { cn } from '@/lib/utils';
+import SkaxLogo from '@/assets/img/skax.svg';
+import DtolLogo from '@/assets/img/dtol.svg';
+import InsightonLogo from '@/assets/img/insighton.svg';
+import CnthothLogo from '@/assets/img/cnthoth.svg';
+import BigxdataLogo from '@/assets/img/bigxdata.svg';
 
 interface UserData {
   user_id: string;
@@ -66,7 +71,7 @@ export default function User() {
   });
   const [editingRow, setEditingRow] = useState<string | null>(null);
 
-  const employOptions = ['SK AX', 'DTOL', '인사이트온', '씨앤토트플러스', 'BigxData'];
+  const employOptions = ['skax', 'dtol', '인사이트온', '씨앤토트플러스', 'BigxData'];
   const lunarOptions = ['Y', 'N'];
   const workTimeOptions = [
     { value: '8 ~ 5', className: 'text-rose-500 dark:text-rose-400' },
@@ -77,6 +82,14 @@ export default function User() {
     { value: 'ADMIN', className: 'text-rose-500 dark:text-rose-400' },
     { value: 'USER', className: 'text-sky-500 dark:text-sky-400' }
   ];
+
+  const logoMap: { [key: string]: string } = {
+    'SK AX': SkaxLogo,
+    'DTOL': DtolLogo,
+    '인사이트온': InsightonLogo,
+    '씨앤토트플러스': CnthothLogo,
+    'BigxData': BigxdataLogo,
+  };
 
   useEffect(() => {
     if (users) {
@@ -244,61 +257,52 @@ export default function User() {
     }
   };
 
+  const companyCounts = useMemo(() => {
+    if (!users) return [];
+    const counts: { [key: string]: number } = {};
+    users.forEach((user: UserData) => {
+      if (counts[user.user_employ]) {
+        counts[user.user_employ]++;
+      } else {
+        counts[user.user_employ] = 1;
+      }
+    });
+    return Object.keys(counts).map(companyName => ({
+      name: companyName,
+      count: counts[companyName]
+    }));
+  }, [users]);
+
   if (usersLoading) {
     return <UserSkeleton />
   }
 
   return (
     <div className='p-4 sm:p-6 md:p-8'>
-      <h1 className='text-3xl font-bold mb-6'>사용자 관리 대시보드</h1>
-
-      {/* Summary Cards Section */}
-      <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-6'>
-        <Card>
-          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>총 사용자</CardTitle>
-            <Users className='h-4 w-4 text-muted-foreground' />
-          </CardHeader>
-          <CardContent>
-            <div className='text-2xl font-bold'>{10}</div>
-            <p className='text-xs text-muted-foreground'>등록된 모든 사용자</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>관리자</CardTitle>
-            <UserRoundCog className='h-4 w-4 text-muted-foreground' />
-          </CardHeader>
-          <CardContent>
-            <div className='text-2xl font-bold'>{1}</div>
-            <p className='text-xs text-muted-foreground'>관리자 권한 사용자</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>일반 사용자</CardTitle>
-            <UserRound className='h-4 w-4 text-muted-foreground' />
-          </CardHeader>
-          <CardContent>
-            <div className='text-2xl font-bold'>{9}</div>
-            <p className='text-xs text-muted-foreground'>일반 사용자 권한</p>
-          </CardContent>
-        </Card>
+      <h1 className='text-3xl font-bold mb-6'>사용자 관리</h1>
+      <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-5 mb-6'>
+        {companyCounts.map((company) => (
+          <Card key={company.name}>
+            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+              <CardTitle className='text-sm font-medium'>{company.name}</CardTitle>
+              <img src={logoMap[company.name]} alt={`${company.name} logo`} className="w-8 h-8" />
+            </CardHeader>
+            <CardContent>
+              <div className='text-2xl font-bold'>{company.count}</div>
+              <p className='text-xs text-muted-foreground'>총 인원</p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
-
-      {/* User List Table Section */}
       <Card>
         <CardHeader className='flex flex-row items-center justify-between'>
           <CardTitle>사용자 목록</CardTitle>
           <div className='flex gap-2'>
-            <Button className='text-sm h-8' variant='outline' onClick={handleAdd}>추가</Button>
-            <Button className='text-sm h-8' variant='outline' onClick={handleSave}>저장</Button>
+            <Button className='text-sm h-8' onClick={handleAdd} size="sm">추가</Button>
+            <Button className='text-sm h-8' variant='outline' onClick={handleSave} size="sm">저장</Button>
           </div>
         </CardHeader>
         <CardContent>
-          {/* Search Input (Placeholder for future implementation) */}
-          {/* <Input placeholder="Search users..." className="mb-4" /> */}
-
           {tableData && tableData.length > 0 ? (
             <div className='w-full overflow-auto'>
               <Table
