@@ -7,12 +7,12 @@ import { User as UserIcon, Mail, Cake, Briefcase, Clock, Shield, UserRound, User
 import { cn } from '@/lib/utils';
 
 interface UserInfoCardProps {
-  users: GetUsersResp[];
+  value: GetUsersResp[];
   selectedUserId: string;
   onUserChange: (userId: string) => void;
 }
 
-export default function UserInfoCard({ users, selectedUserId, onUserChange }: UserInfoCardProps) {
+export default function UserInfoCard({ value: users, selectedUserId, onUserChange }: UserInfoCardProps) {
   const selectedUser = users.find(user => user.user_id === selectedUserId);
 
   if (!selectedUser) {

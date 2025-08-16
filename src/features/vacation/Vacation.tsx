@@ -58,7 +58,7 @@ export default function Vacation() {
       <h1 className='text-3xl font-bold mb-6'>휴가 관리</h1>
       <div className='flex flex-col lg:flex-row gap-6'>
         <UserInfoCard
-          users={users || []}
+          value={users || []}
           selectedUserId={selectedUserId}
           onUserChange={setSelectedUserId}
         />
