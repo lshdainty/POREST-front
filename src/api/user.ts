@@ -15,11 +15,13 @@ const enum UserQueryKey {
   DELETE_USER = 'deleteUser'
 }
 
-interface getUsersResp {
+interface GetUsersResp {
   user_id: string
   user_name: string
-  user_employ: string
+  user_email: string
   user_birth: string
+  user_employ: string
+  user_role: string
   user_work_time: string
   lunar_yn: string
 }
@@ -27,7 +29,7 @@ interface getUsersResp {
 const useGetUsers = () => {
   return useQuery({
     queryKey: [UserQueryKey.GET_USERS],
-    queryFn: async (): Promise<getUsersResp[]> => {
+    queryFn: async (): Promise<GetUsersResp[]> => {
       const resp: ApiResponse = await api.request({
         method: 'get',
         url: `/users`
@@ -144,4 +146,9 @@ export {
   usePostUser,
   usePutUser,
   useDeleteUser
+}
+
+export type {
+  // Interface
+  GetUsersResp
 }
