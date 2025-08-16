@@ -1,5 +1,5 @@
-import { Skeleton } from "@/components/shadcn/skeleton";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/shadcn/card";
+import { Skeleton } from '@/components/shadcn/skeleton';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/shadcn/card';
 
 export default function UserCompanyCardSkeleton() {
   return (
@@ -8,13 +8,13 @@ export default function UserCompanyCardSkeleton() {
         <Card key={i}>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
             <CardTitle className='text-sm font-medium'>
-              <Skeleton className="h-5 w-20" />
+              <Skeleton className='h-5 w-20' />
             </CardTitle>
-            <Skeleton className="h-8 w-8 rounded-full" />
+            <Skeleton className='h-8 w-8 rounded-full' />
           </CardHeader>
           <CardContent>
-            <Skeleton className="h-7 w-8 mb-1" />
-            <Skeleton className="h-4 w-16" />
+            <Skeleton className='h-7 w-8 mb-1' />
+            <Skeleton className='h-4 w-16' />
           </CardContent>
         </Card>
       ))}

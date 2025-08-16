@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { GetUsersResp } from '@/api/user';
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/shadcn/card";
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/shadcn/card';
 import SkaxLogo from '@/assets/img/skax.svg';
 import DtolLogo from '@/assets/img/dtol.svg';
 import InsightonLogo from '@/assets/img/insighton.svg';
@@ -41,7 +41,7 @@ export default function UserCompanyCard({ value: users }: UserCompanyCardProps) 
         <Card key={company.name}>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
             <CardTitle className='text-sm font-medium'>{company.name}</CardTitle>
-            <img src={logoMap[company.name]} alt={`${company.name} logo`} className="w-8 h-8" />
+            <img src={logoMap[company.name]} alt={`${company.name} logo`} className='w-8 h-8' />
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>{company.count}</div>

@@ -14,11 +14,11 @@ export default function UserTableSkeleton() {
     <Card>
       <CardHeader className='flex flex-row items-center justify-between'>
         <CardTitle>
-          <Skeleton className="h-6 w-24" />
+          <Skeleton className='h-6 w-24' />
         </CardTitle>
         <div className='flex gap-2'>
-          <Skeleton className="h-8 w-16" />
-          <Skeleton className="h-8 w-16" />
+          <Skeleton className='h-8 w-16' />
+          <Skeleton className='h-8 w-16' />
         </div>
       </CardHeader>
       <CardContent>
@@ -51,15 +51,15 @@ export default function UserTableSkeleton() {
                       item={_}
                       className={'hover:!bg-muted/50 !bg-background !text-foreground [&_td]:!p-2 [&_td]:!text-sm [&_td>div]:!py-1 [&_td>div]:!pl-2 [&_td]:!border-b'}
                     >
-                      <Cell><Skeleton className="h-8 w-full" /></Cell>
-                      <Cell><Skeleton className="h-8 w-full" /></Cell>
-                      <Cell><Skeleton className="h-8 w-full" /></Cell>
-                      <Cell><Skeleton className="h-8 w-full" /></Cell>
-                      <Cell><Skeleton className="h-8 w-full" /></Cell>
-                      <Cell><Skeleton className="h-8 w-full" /></Cell>
-                      <Cell><Skeleton className="h-8 w-full" /></Cell>
-                      <Cell><Skeleton className="h-8 w-full" /></Cell>
-                      <Cell><Skeleton className="h-8 w-8" /></Cell>
+                      <Cell><Skeleton className='h-8 w-full' /></Cell>
+                      <Cell><Skeleton className='h-8 w-full' /></Cell>
+                      <Cell><Skeleton className='h-8 w-full' /></Cell>
+                      <Cell><Skeleton className='h-8 w-full' /></Cell>
+                      <Cell><Skeleton className='h-8 w-full' /></Cell>
+                      <Cell><Skeleton className='h-8 w-full' /></Cell>
+                      <Cell><Skeleton className='h-8 w-full' /></Cell>
+                      <Cell><Skeleton className='h-8 w-full' /></Cell>
+                      <Cell><Skeleton className='h-8 w-8' /></Cell>
                     </Row>
                   ))}
                 </Body>
