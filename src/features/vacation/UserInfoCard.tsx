@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { GetUsersResp } from '@/api/user';
 import { Separator } from '@/components/shadcn/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
@@ -8,11 +7,12 @@ import { User as UserIcon, Mail, Cake, Briefcase, Clock, Shield, UserRound, User
 import { cn } from '@/lib/utils';
 
 interface UserInfoCardProps {
-  value: GetUsersResp[];
+  users: GetUsersResp[];
+  selectedUserId: string;
+  onUserChange: (userId: string) => void;
 }
 
-export default function UserInfoCard({ value: users }: UserInfoCardProps) {
-  const [selectedUserId, setSelectedUserId] = useState(users[0].user_id);
+export default function UserInfoCard({ users, selectedUserId, onUserChange }: UserInfoCardProps) {
   const selectedUser = users.find(user => user.user_id === selectedUserId);
 
   if (!selectedUser) {
@@ -47,7 +47,7 @@ export default function UserInfoCard({ value: users }: UserInfoCardProps) {
       <Card className='h-full min-w-[350px]'>
         <CardHeader className='flex flex-row items-center justify-between pb-4'>
           <CardTitle>사용자 정보</CardTitle>
-          <Select onValueChange={setSelectedUserId} defaultValue={selectedUser.user_id}>
+          <Select onValueChange={onUserChange} value={selectedUserId}>
             <SelectTrigger className='w-[150px]'>
               <SelectValue placeholder='사용자 선택' />
             </SelectTrigger>
