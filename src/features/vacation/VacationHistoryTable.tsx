@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTheme } from '@table-library/react-table-library/theme';
 import { Table, Header, HeaderRow, Body, Row, HeaderCell, Cell as TableCell } from '@table-library/react-table-library/table';
+import { GetUserPeriodVacationUseHistoriesResp } from '@/api/vacation';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/shadcn/dropdownMenu';
@@ -34,7 +35,11 @@ const initialVacationHistory = [
   }
 ];
 
-export default function VacationHistoryTable() {
+interface VacationHistoryTableProps {
+  value: GetUserPeriodVacationUseHistoriesResp[]
+}
+
+export default function VacationHistoryTable({ value: data }: VacationHistoryTableProps) {
   const [vacationHistory, setVacationHistory] = useState(initialVacationHistory);
 
   const handleAdd = () => {
@@ -69,13 +74,18 @@ export default function VacationHistoryTable() {
       </CardHeader>
       <CardContent>
         <div className='w-full overflow-auto'>
-          <Table data={{ nodes: vacationHistory }} theme={theme} layout={{ fixedHeader: true }} className='w-full !h-auto border overflow-hidden rounded-lg'>
+          <Table
+            data={{ nodes: vacationHistory }}
+            theme={theme}
+            layout={{ fixedHeader: true }}
+            className='w-full !h-auto border overflow-hidden rounded-lg'
+          >
             {(tableList: any) => (
               <>
                 <Header>
                   <HeaderRow className='!bg-muted !text-foreground [&_th]:!p-2 [&_th]:!text-sm [&_th]:!h-10 [&_th]:!font-medium [&_div]:!pl-2'>
                     <HeaderCell>날짜</HeaderCell>
-                    <HeaderCell>종류</HeaderCell>
+                    <HeaderCell>휴가 종류</HeaderCell>
                     <HeaderCell>사유</HeaderCell>
                     <HeaderCell></HeaderCell>
                   </HeaderRow>
