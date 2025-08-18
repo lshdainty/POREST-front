@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { ResponsiveContainer, Tooltip, Pie, PieChart, Cell, Label } from 'recharts';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/shadcn/card';
+import { cn } from '@/lib/utils';
 
 const vacationTypes = [
   { name: '연차', value: 10, fill: 'var(--color-vacation-annual)' },
@@ -9,7 +10,7 @@ const vacationTypes = [
   { name: '기타', value: 1, fill: 'var(--color-vacation-other)' },
 ];
 
-export default function VacationTypeStatsCard() {
+export default function VacationTypeStatsCard({className}: {className?: string;}) {
   const totalVacationDays = useMemo(() => {
     return vacationTypes.reduce((total, item) => total + item.value, 0)
   }, []);
@@ -26,7 +27,7 @@ export default function VacationTypeStatsCard() {
           }
         `}
       </style>
-      <Card>
+      <Card className={cn(className)}>
         <CardHeader className='items-center pb-0'>
           <CardTitle>휴가 유형</CardTitle>
           <CardDescription>올해 부여받은 휴가 유형</CardDescription>

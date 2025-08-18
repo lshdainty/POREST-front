@@ -180,5 +180,6 @@ export {
 
 export type {
   // Interface
+  GetUserPeriodVacationUseHistoriesResp,
   GetUserMonthStatsVacationUseHistoriesResp
 }

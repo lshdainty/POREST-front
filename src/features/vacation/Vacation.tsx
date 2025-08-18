@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useGetUsers } from '@/api/user';
-import { useGetUserMonthStatsVacationUseHistories } from '@/api/vacation';
+import { useGetUserMonthStatsVacationUseHistories, useGetUserPeriodVacationUseHistories } from '@/api/vacation';
 import UserInfoCard from '@/features/vacation/UserInfoCard';
 import UserInfoCardSkeleton from '@/features/vacation/UserInfoCardSkeleton';
 import VacationStatsCard from '@/features/vacation/VacationStatsCard';
@@ -20,6 +20,11 @@ export default function Vacation() {
     user_id: selectedUserId,
     year: dayjs().format('YYYY'),
   });
+  const { data: histories, isLoading: historiesLoading } = useGetUserPeriodVacationUseHistories({
+    user_id: selectedUserId,
+    start_date: `${dayjs().format('YYYY')}-01-01T00:00:00`,
+    end_date: `${dayjs().format('YYYY')}-12-31T23:59:59`,
+  });
 
   useEffect(() => {
     if (users && users.length > 0 && !selectedUserId) {
@@ -27,7 +32,7 @@ export default function Vacation() {
     }
   }, [users, selectedUserId]);
 
-  if (usersLoading || monthStatsLoading) {
+  if (usersLoading || monthStatsLoading || historiesLoading) {
     return (
       <div className='p-4 sm:p-6 md:p-8'>
         <h1 className='text-3xl font-bold mb-6'>휴가 관리</h1>
@@ -38,11 +43,11 @@ export default function Vacation() {
             <MonthVacationStatsCardSkeleton />
           </div>
         </div>
-        <div className='flex flex-col xl:flex-row gap-6 mt-6'>
-          <div className='xl:w-1/3 flex flex-col'>
+        <div className='grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6'>
+          <div className='xl:col-span-1 flex flex-col'>
             <VacationTypeStatsCardSkeleton />
           </div>
-          <div className='xl:w-2/3'>
+          <div className='xl:col-span-2 flex flex-col'>
             <VacationHistoryTableSkeleton />
           </div>
         </div>
@@ -75,12 +80,14 @@ export default function Vacation() {
           />
         </div>
       </div>
-      <div className='flex flex-col xl:flex-row gap-6 mt-6'>
-        <div className='xl:w-1/3 flex flex-col'>
-          <VacationTypeStatsCard />
+      <div className='grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6'>
+        <div className='xl:col-span-1 flex flex-col'>
+          <VacationTypeStatsCard className='h-full' />
         </div>
-        <div className='xl:w-2/3'>
-          <VacationHistoryTable />
+        <div className='xl:col-span-2 flex flex-col'>
+          <VacationHistoryTable
+            value={histories || []}
+          />
         </div>
       </div>
     </div>
