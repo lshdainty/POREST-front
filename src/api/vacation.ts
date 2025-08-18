@@ -12,7 +12,9 @@ interface ApiResponse<T = any> {
 const enum VacationQueryKey {
   POST_USE_VACATION = 'postUseVacation',
   GET_AVAILABLE_VACATIONS = 'getAvailableVacations',
-  DELETE_VACATION_HISTORY = 'deleteVacationHistory'
+  DELETE_VACATION_HISTORY = 'deleteVacationHistory',
+  GET_USER_PERIOD_VACATION_USE_HISTORIES = 'getUserPeriodVacationUseHistories',
+  GET_USER_MONTH_STATS_VACATION_USE_HISTORIES = 'getUserMonthStatsVacationUseHistories'
 }
 
 interface PostUseVacationReq {
@@ -30,11 +32,11 @@ const usePostUseVacation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (d: PostUseVacationReq) => {
+    mutationFn: async (reqData: PostUseVacationReq) => {
       const resp: ApiResponse = await api.request({
         method: 'post',
-        url: `/vacation/use/${d.vacation_id}`,
-        data: d.vacation_data
+        url: `/vacation/use/${reqData.vacation_id}`,
+        data: reqData.vacation_data
       });
 
       if (resp.code !== 200) throw new Error(resp.data.data.message);
@@ -65,13 +67,13 @@ interface GetAvailableVacationsResp {
   expiry_date: Date;
 }
 
-const useGetAvailableVacations = (d: GetAvailableVacationsReq) => {
+const useGetAvailableVacations = (reqData: GetAvailableVacationsReq) => {
   return useQuery({
-    queryKey: [VacationQueryKey.GET_AVAILABLE_VACATIONS],
+    queryKey: [VacationQueryKey.GET_AVAILABLE_VACATIONS, reqData],
     queryFn: async (): Promise<GetAvailableVacationsResp[]> => {
       const resp: ApiResponse = await api.request({
         method: 'get',
-        url: `/vacation/available/${d.user_id}?startDate=${d.start_date}`
+        url: `/vacation/available/${reqData.user_id}?startDate=${reqData.start_date}`
       });
 
       if (resp.code !== 200) throw new Error(resp.data.data.message);
@@ -85,7 +87,7 @@ const useDeleteVacationHistory = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (vacationHistoryId: Number) => {
+    mutationFn: async (vacationHistoryId: number) => {
       const resp: ApiResponse = await api.request({
         method: 'delete',
         url: `/vacation/history/${vacationHistoryId}`,
@@ -105,6 +107,65 @@ const useDeleteVacationHistory = () => {
   });
 }
 
+interface GetUserPeriodVacationUseHistoriesReq {
+  user_id: string
+  start_date: string
+  end_date: string
+}
+
+interface GetUserPeriodVacationUseHistoriesResp {
+  vacation_id: number
+  vacation_desc: string
+  vacation_history_id: number
+  vacation_time_type: string
+  vacation_time_type_name: string
+  start_date: Date
+  end_date: Date
+}
+
+const useGetUserPeriodVacationUseHistories = (reqData: GetUserPeriodVacationUseHistoriesReq) => {
+  return useQuery({
+    queryKey: [VacationQueryKey.GET_USER_PERIOD_VACATION_USE_HISTORIES, reqData],
+    queryFn: async (): Promise<GetUserPeriodVacationUseHistoriesResp[]> => {
+      const resp: ApiResponse = await api.request({
+        method: 'get',
+        url: `/vacation/use/histories/user/period?userId=${reqData.user_id}&startDate=${reqData.start_date}&endDate=${reqData.end_date}`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.data.data.message);
+
+      return resp.data;
+    }
+  });
+}
+
+interface GetUserMonthStatsVacationUseHistoriesReq {
+  user_id: string
+  year: string
+}
+
+interface GetUserMonthStatsVacationUseHistoriesResp {
+  month: number
+  used_date_time: number
+  used_date_time_str: string
+}
+
+const useGetUserMonthStatsVacationUseHistories = (reqData: GetUserMonthStatsVacationUseHistoriesReq) => {
+  return useQuery({
+    queryKey: [VacationQueryKey.GET_USER_MONTH_STATS_VACATION_USE_HISTORIES, reqData],
+    queryFn: async (): Promise<GetUserMonthStatsVacationUseHistoriesResp[]> => {
+      const resp: ApiResponse = await api.request({
+        method: 'get',
+        url: `/vacation/use/histories/user/month/stats?userId=${reqData.user_id}&year=${reqData.year}`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.data.data.message);
+
+      return resp.data;
+    }
+  });
+}
+
 export {
   // QueryKey
   VacationQueryKey,
@@ -112,5 +173,12 @@ export {
   // API Hook
   usePostUseVacation,
   useGetAvailableVacations,
-  useDeleteVacationHistory
+  useDeleteVacationHistory,
+  useGetUserPeriodVacationUseHistories,
+  useGetUserMonthStatsVacationUseHistories
+}
+
+export type {
+  // Interface
+  GetUserMonthStatsVacationUseHistoriesResp
 }
