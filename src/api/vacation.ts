@@ -69,7 +69,7 @@ interface GetAvailableVacationsResp {
 
 const useGetAvailableVacations = (reqData: GetAvailableVacationsReq) => {
   return useQuery({
-    queryKey: [VacationQueryKey.GET_AVAILABLE_VACATIONS, reqData],
+    queryKey: [VacationQueryKey.GET_AVAILABLE_VACATIONS, reqData.user_id, reqData.start_date],
     queryFn: async (): Promise<GetAvailableVacationsResp[]> => {
       const resp: ApiResponse = await api.request({
         method: 'get',
@@ -125,7 +125,7 @@ interface GetUserPeriodVacationUseHistoriesResp {
 
 const useGetUserPeriodVacationUseHistories = (reqData: GetUserPeriodVacationUseHistoriesReq) => {
   return useQuery({
-    queryKey: [VacationQueryKey.GET_USER_PERIOD_VACATION_USE_HISTORIES, reqData],
+    queryKey: [VacationQueryKey.GET_USER_PERIOD_VACATION_USE_HISTORIES, reqData.user_id, reqData.start_date, reqData.end_date],
     queryFn: async (): Promise<GetUserPeriodVacationUseHistoriesResp[]> => {
       const resp: ApiResponse = await api.request({
         method: 'get',
@@ -152,7 +152,7 @@ interface GetUserMonthStatsVacationUseHistoriesResp {
 
 const useGetUserMonthStatsVacationUseHistories = (reqData: GetUserMonthStatsVacationUseHistoriesReq) => {
   return useQuery({
-    queryKey: [VacationQueryKey.GET_USER_MONTH_STATS_VACATION_USE_HISTORIES, reqData],
+    queryKey: [VacationQueryKey.GET_USER_MONTH_STATS_VACATION_USE_HISTORIES, reqData.user_id, reqData.year],
     queryFn: async (): Promise<GetUserMonthStatsVacationUseHistoriesResp[]> => {
       const resp: ApiResponse = await api.request({
         method: 'get',
