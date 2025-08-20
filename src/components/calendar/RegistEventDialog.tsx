@@ -188,7 +188,7 @@ export const RegistEventDialog: React.FC = () => {
                         vacations && vacations.map(v => {
                           return (
                             <SelectItem key={v.vacation_id} value={String(v.vacation_id)}>
-                              {`${v.vacation_type_name} (${v.remain_time})`}
+                              {`${v.vacation_type_name} (${v.remain_time_str})`}
                             </SelectItem>
                           )
                         })

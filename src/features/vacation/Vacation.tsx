@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useGetUsers } from '@/api/user';
-import { useGetUserMonthStatsVacationUseHistories, useGetUserPeriodVacationUseHistories } from '@/api/vacation';
+import {
+  useGetAvailableVacations,
+  useGetUserMonthStatsVacationUseHistories,
+  useGetUserPeriodVacationUseHistories
+} from '@/api/vacation';
 import UserInfoCard from '@/features/vacation/UserInfoCard';
 import UserInfoCardSkeleton from '@/features/vacation/UserInfoCardSkeleton';
 import VacationStatsCard from '@/features/vacation/VacationStatsCard';
@@ -16,6 +20,10 @@ import dayjs from 'dayjs';
 export default function Vacation() {
   const [selectedUserId, setSelectedUserId] = useState<string | undefined>();
   const { data: users, isLoading: usersLoading } = useGetUsers();
+  const { data: vacationTypes, isLoading: vacationTypesLoading } = useGetAvailableVacations({
+    user_id: selectedUserId,
+    start_date: dayjs().format('YYYY-MM-DDTHH:mm:ss'),
+  });
   const { data: monthStats, isLoading: monthStatsLoading } = useGetUserMonthStatsVacationUseHistories({
     user_id: selectedUserId,
     year: dayjs().format('YYYY'),
@@ -32,7 +40,7 @@ export default function Vacation() {
     }
   }, [users, selectedUserId]);
 
-  if (usersLoading || monthStatsLoading || historiesLoading) {
+  if (usersLoading || vacationTypesLoading || monthStatsLoading || historiesLoading) {
     return (
       <div className='p-4 sm:p-6 md:p-8'>
         <h1 className='text-3xl font-bold mb-6'>휴가 관리</h1>
@@ -54,6 +62,8 @@ export default function Vacation() {
       </div>
     );
   }
+
+  console.log(vacationTypes)
 
   if (!selectedUserId) {
     return (
@@ -82,7 +92,10 @@ export default function Vacation() {
       </div>
       <div className='grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6'>
         <div className='xl:col-span-1 flex flex-col'>
-          <VacationTypeStatsCard className='h-full' />
+          <VacationTypeStatsCard
+            value={vacationTypes || []}
+            className='h-full'
+          />
         </div>
         <div className='xl:col-span-2 flex flex-col'>
           <VacationHistoryTable

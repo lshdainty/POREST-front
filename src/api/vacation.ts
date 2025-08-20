@@ -63,6 +63,7 @@ interface GetAvailableVacationsResp {
   vacation_type: string;
   vacation_type_name: string;
   remain_time: number;
+  remain_time_str: string;
   occur_date: Date;
   expiry_date: Date;
 }
@@ -180,6 +181,7 @@ export {
 
 export type {
   // Interface
+  GetAvailableVacationsResp,
   GetUserPeriodVacationUseHistoriesResp,
   GetUserMonthStatsVacationUseHistoriesResp
 }
