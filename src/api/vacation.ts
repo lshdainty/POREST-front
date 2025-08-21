@@ -147,8 +147,8 @@ interface GetUserMonthStatsVacationUseHistoriesReq {
 
 interface GetUserMonthStatsVacationUseHistoriesResp {
   month: number
-  used_date_time: number
-  used_date_time_str: string
+  used_time: number
+  used_time_str: string
 }
 
 const useGetUserMonthStatsVacationUseHistories = (reqData: GetUserMonthStatsVacationUseHistoriesReq) => {

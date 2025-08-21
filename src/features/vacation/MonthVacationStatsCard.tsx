@@ -39,7 +39,7 @@ export default function MonthVacationStatsCard({ value: data }: MonthVacationSta
                       <div className='flex items-center gap-2'>
                         <div className='h-3 w-3 rounded-full' style={{ backgroundColor: '#8884d8' }}></div>
                         <span className='text-[0.85rem] text-muted-foreground'>{`${label}월`}</span>
-                        <span className='ml-auto font-bold'>{payload[0].payload.used_date_time_str}</span>
+                        <span className='ml-auto font-bold'>{payload[0].payload.used_time_str}</span>
                       </div>
                     </div>
                   )
@@ -47,7 +47,7 @@ export default function MonthVacationStatsCard({ value: data }: MonthVacationSta
                 return null
               }}
             />
-            <Bar dataKey='used_date_time' fill='#8884d8' radius={[4, 4, 0, 0]} />
+            <Bar dataKey='used_time' fill='#8884d8' radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>
