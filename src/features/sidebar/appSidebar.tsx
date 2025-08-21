@@ -54,8 +54,10 @@ const navDatas = [
     icon: ShieldUser,
     items: [
       { title: 'User', url: '/admin/user' },
+      { title: 'Company', url: '/admin/company' },
       { title: 'Vacation', url: '/admin/vacation' },
-      { title: 'Calendar', url: '/admin/calendar' },
+      { title: 'Authority', url: '/admin/authority' },
+      { title: 'Holiday', url: '/admin/holiday' },
     ],
   },
 ]
