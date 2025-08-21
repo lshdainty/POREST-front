@@ -167,6 +167,46 @@ const useGetUserMonthStatsVacationUseHistories = (reqData: GetUserMonthStatsVaca
   });
 }
 
+interface GetUserVacationUseStatsReq {
+  user_id: string
+  base_date: string
+}
+
+interface GetUserVacationUseStatsResp {
+  remain_time: number
+  remain_time_str: string
+  used_time: number
+  used_time_str: string
+  expect_used_time: number
+  expect_used_time_str: string
+  prev_remain_time: number
+  prev_remain_time_str: string
+  prev_used_time: number
+  prev_used_time_str: string
+  prev_expect_used_time: number
+  prev_expect_used_time_str: string
+  remain_time_gap: number
+  remain_time_gap_str: string
+  used_time_gap: number
+  used_time_gap_str: string
+}
+
+const useGetUserVacationUseStats = (reqData: GetUserVacationUseStatsReq) => {
+  return useQuery({
+    queryKey: [VacationQueryKey.GET_USER_MONTH_STATS_VACATION_USE_HISTORIES, reqData.user_id, reqData.base_date],
+    queryFn: async (): Promise<GetUserVacationUseStatsResp> => {
+      const resp: ApiResponse = await api.request({
+        method: 'get',
+        url: `/vacation/use/stats/user?userId=${reqData.user_id}&baseDate=${reqData.base_date}`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.data.data.message);
+
+      return resp.data;
+    }
+  });
+}
+
 export {
   // QueryKey
   VacationQueryKey,
@@ -176,12 +216,14 @@ export {
   useGetAvailableVacations,
   useDeleteVacationHistory,
   useGetUserPeriodVacationUseHistories,
-  useGetUserMonthStatsVacationUseHistories
+  useGetUserMonthStatsVacationUseHistories,
+  useGetUserVacationUseStats
 }
 
 export type {
   // Interface
   GetAvailableVacationsResp,
   GetUserPeriodVacationUseHistoriesResp,
-  GetUserMonthStatsVacationUseHistoriesResp
+  GetUserMonthStatsVacationUseHistoriesResp,
+  GetUserVacationUseStatsResp
 }

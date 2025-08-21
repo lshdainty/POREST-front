@@ -1,31 +1,40 @@
+import { GetUserVacationUseStatsResp } from '@/api/vacation';
 import { Badge } from '@/components/shadcn/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { ArrowUpIcon, ArrowDownIcon } from 'lucide-react';
 
-const vacationStats = [
-  {
-    title: '잔여 휴가',
-    value: '5일',
-    change: -1,
-    changeType: 'decrease',
-    description: '지난 달 대비 1일 감소'
-  },
-  {
-    title: '사용 휴가',
-    value: '10일',
-    change: 2,
-    changeType: 'increase',
-    description: '지난 달 대비 2일 증가'
-  },
-  {
-    title: '사용 예정 휴가',
-    value: '2일',
-    change: 0,
-    changeType: ''
-  },
-];
+interface VacationStatsCardProps {
+  value: GetUserVacationUseStatsResp
+}
 
-export default function VacationStatsCard() {
+export default function VacationStatsCard({ value: data }: VacationStatsCardProps) {
+  if (!data || Array.isArray(data)) {
+    return null;
+  }
+
+  const vacationStats = [
+    {
+      title: '잔여 휴가',
+      value: `${data.remain_time_str}`,
+      change: data.remain_time_gap,
+      changeType: data.remain_time_gap > 0 ? 'increase' : data.remain_time_gap < 0 ? 'decrease' : '',
+      description: data.remain_time_gap !== 0 ? `지난 달 대비 ${data.remain_time_gap_str} ${data.remain_time_gap > 0 ? '증가' : '감소'}` : ''
+    },
+    {
+      title: '사용 휴가',
+      value: `${data.used_time_str}`,
+      change: data.used_time_gap,
+      changeType: data.used_time_gap > 0 ? 'increase' : data.used_time_gap < 0 ? 'decrease' : '',
+      description: data.used_time_gap !== 0 ? `지난 달 대비 ${data.used_time_gap_str} ${data.used_time_gap > 0 ? '증가' : '감소'}` : ''
+    },
+    {
+      title: '사용 예정 휴가',
+      value: `${data.expect_used_time_str}`,
+      change: 0,
+      changeType: '',
+      description: ''
+    },
+  ];
   return (
     <div className='flex flex-wrap gap-6'>
       {vacationStats.map((stat, index) => (
@@ -39,7 +48,7 @@ export default function VacationStatsCard() {
                 ) : (
                   <ArrowDownIcon className='h-3 w-3 mr-1' />
                 )}
-                {Math.abs(stat.change)}일
+                {Math.abs(stat.change)}
               </Badge>
             )}
           </CardHeader>

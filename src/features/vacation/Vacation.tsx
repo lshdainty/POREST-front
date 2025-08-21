@@ -3,7 +3,8 @@ import { useGetUsers } from '@/api/user';
 import {
   useGetAvailableVacations,
   useGetUserMonthStatsVacationUseHistories,
-  useGetUserPeriodVacationUseHistories
+  useGetUserPeriodVacationUseHistories,
+  useGetUserVacationUseStats
 } from '@/api/vacation';
 import UserInfoCard from '@/features/vacation/UserInfoCard';
 import UserInfoCardSkeleton from '@/features/vacation/UserInfoCardSkeleton';
@@ -33,6 +34,10 @@ export default function Vacation() {
     start_date: `${dayjs().format('YYYY')}-01-01T00:00:00`,
     end_date: `${dayjs().format('YYYY')}-12-31T23:59:59`,
   });
+  const { data: vacationStats, isLoading: vacationStatsLoading } = useGetUserVacationUseStats({
+    user_id: selectedUserId,
+    base_date: dayjs().format('YYYY-MM-DDTHH:mm:ss'),
+  });
 
   useEffect(() => {
     if (users && users.length > 0 && !selectedUserId) {
@@ -40,7 +45,7 @@ export default function Vacation() {
     }
   }, [users, selectedUserId]);
 
-  if (usersLoading || vacationTypesLoading || monthStatsLoading || historiesLoading) {
+  if (usersLoading || vacationTypesLoading || monthStatsLoading || historiesLoading || vacationStatsLoading) {
     return (
       <div className='p-4 sm:p-6 md:p-8'>
         <h1 className='text-3xl font-bold mb-6'>휴가 관리</h1>
@@ -63,8 +68,6 @@ export default function Vacation() {
     );
   }
 
-  console.log(vacationTypes)
-
   if (!selectedUserId) {
     return (
         <div className='p-4 sm:p-6 md:p-8'>
@@ -84,7 +87,9 @@ export default function Vacation() {
           onUserChange={setSelectedUserId}
         />
         <div className='flex flex-col gap-6 flex-1'>
-          <VacationStatsCard />
+          <VacationStatsCard
+            value={vacationStats || []}
+          />
           <MonthVacationStatsCard
             value={monthStats || []}
           />
