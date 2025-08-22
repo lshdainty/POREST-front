@@ -20,8 +20,12 @@ interface GetUsersResp {
   user_name: string
   user_email: string
   user_birth: string
-  user_employ: string
-  user_role: string
+  user_role_type: string
+  user_role_name: string
+  user_company_type: string
+  user_company_name: string
+  user_department_type: string
+  user_department_name: string
   user_work_time: string
   lunar_yn: string
 }
@@ -48,7 +52,8 @@ interface PostUserReq {
   user_name: string
   user_email: string
   user_birth: string
-  user_employ: string
+  user_company_type: string
+  user_department_type: string
   user_work_time: string
   lunar_yn: string
 }
@@ -83,7 +88,8 @@ interface PutUserReq {
   user_name: string
   user_email: string
   user_birth: string
-  user_employ: string
+  user_company_type: string
+  user_department_type: string
   user_work_time: string
   lunar_yn: string
 }

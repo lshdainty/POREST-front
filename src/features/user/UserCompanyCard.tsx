@@ -18,7 +18,7 @@ export default function UserCompanyCard({ value: users }: UserCompanyCardProps) 
     const counts: { [key: string]: number } = {};
 
     users.forEach((user: GetUsersResp) => {
-      (counts[user.user_employ]) ? counts[user.user_employ]++ : counts[user.user_employ] = 1;
+      (counts[user.user_company_name]) ? counts[user.user_company_name]++ : counts[user.user_company_name] = 1;
     });
 
     return Object.keys(counts).map(companyName => ({
@@ -29,7 +29,7 @@ export default function UserCompanyCard({ value: users }: UserCompanyCardProps) 
 
   const logoMap: { [key: string]: string } = {
     'SK AX': SkaxLogo,
-    'DTOL': DtolLogo,
+    '디투엘': DtolLogo,
     '인사이트온': InsightonLogo,
     '씨앤토트플러스': CnthothLogo,
     'BigxData': BigxdataLogo,
