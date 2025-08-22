@@ -48,6 +48,7 @@
     "react-day-picker": "^9.8.1",
     "react-dom": "^19.0.0",
     "react-markdown": "^10.1.0",
+    "react-resizable-panels": "^3.0.4",
     "react-router-dom": "^6.30.0",
     "recharts": "^3.1.2",
     "rehype-highlight": "^7.0.2",
