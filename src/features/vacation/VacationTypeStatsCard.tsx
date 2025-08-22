@@ -20,7 +20,7 @@ const renderChartColor = (type: string) => {
 }
 
 interface VacationTypeStatsCardProps {
-  value: GetAvailableVacationsResp[]
+  value: GetAvailableVacationsResp[] | undefined
   className: string | undefined;
 }
 
@@ -33,11 +33,12 @@ export default function VacationTypeStatsCard({ value, className }: VacationType
       }));
       return formattedTypes;
     }
+    return [];
   }, [value]);
   
   const totalVacationDays = useMemo(() => {
     return vacationTypes?.reduce((total, item) => total + item.remain_time, 0)
-  }, []);
+  }, [vacationTypes]);
 
   return (
     <Card className={cn(className)}>

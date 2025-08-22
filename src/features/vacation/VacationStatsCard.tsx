@@ -4,11 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/ca
 import { ArrowUpIcon, ArrowDownIcon } from 'lucide-react';
 
 interface VacationStatsCardProps {
-  value: GetUserVacationUseStatsResp
+  value: GetUserVacationUseStatsResp | undefined
 }
 
 export default function VacationStatsCard({ value: data }: VacationStatsCardProps) {
-  if (!data || Array.isArray(data)) {
+  if (!data) {
     return null;
   }
 

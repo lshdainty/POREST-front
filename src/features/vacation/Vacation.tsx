@@ -88,10 +88,11 @@ export default function Vacation() {
         />
         <div className='flex flex-col gap-6 flex-1'>
           <VacationStatsCard
-            value={vacationStats || []}
+            value={vacationStats}
           />
           <MonthVacationStatsCard
             value={monthStats || []}
+            className='h-full'
           />
         </div>
       </div>

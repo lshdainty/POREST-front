@@ -1,14 +1,16 @@
 import { GetUserMonthStatsVacationUseHistoriesResp } from '@/api/vacation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { cn } from '@/lib/utils';
 
 interface MonthVacationStatsCardProps { 
-  value: GetUserMonthStatsVacationUseHistoriesResp[]
+  value: GetUserMonthStatsVacationUseHistoriesResp[] | undefined
+  className: string | undefined;
 }
 
-export default function MonthVacationStatsCard({ value: data }: MonthVacationStatsCardProps) {
+export default function MonthVacationStatsCard({ value: data, className }: MonthVacationStatsCardProps) {
   return (
-    <Card>
+    <Card className={cn(className)}>
       <CardHeader>
         <CardTitle>월별 휴가 사용 추이</CardTitle>
       </CardHeader>
