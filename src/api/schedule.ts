@@ -1,6 +1,7 @@
 import { api } from '@/api/index'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { CalendarQueryKey } from '@/api/calendar';
+import { toast } from '@/components/alert/toast';
 
 interface ApiResponse<T = any> {
   code: number
@@ -37,12 +38,12 @@ const usePostSchedule = () => {
 
       return resp.data;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [CalendarQueryKey.GET_EVENTS_BY_PERIOD] });
-      console.log(`POST 성공! 생성된 데이터: ${JSON.stringify(data, null, 2)}`);
+      toast.success('일정이 등록되었습니다.');
     },
     onError: (error) => {
-      console.log(`POST 실패: ${error.message}`);
+      toast.error(error.message);
     }
   });
 }
@@ -61,12 +62,12 @@ const useDeleteSchedule = () => {
   
         return resp.data;
       },
-      onSuccess: (data) => {
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [CalendarQueryKey.GET_EVENTS_BY_PERIOD] });
-        console.log(`POST 성공! 생성된 데이터: ${JSON.stringify(data, null, 2)}`);
+        toast.success('일정이 삭제되었습니다.');
       },
       onError: (error) => {
-        console.log(`POST 실패: ${error.message}`);
+        toast.error(error.message);
       }
     });
 }

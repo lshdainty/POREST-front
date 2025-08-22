@@ -37,7 +37,7 @@ export default function UserTable({ value: users }: UserTableProps) {
   });
   const [editingRow, setEditingRow] = useState<string | null>(null);
 
-  const employOptions = ['SK AX', 'DTOL', '인사이트온', '씨앤토트플러스', 'BigxData'];
+  const companyOptions = ['SK AX', 'DTOL', '인사이트온', '씨앤토트플러스', 'BigxData'];  // api화 진행 필요
   const lunarOptions = ['Y', 'N'];
   const workTimeOptions = [
     { value: '8 ~ 5', className: 'text-rose-500 dark:text-rose-400' },
@@ -108,10 +108,10 @@ export default function UserTable({ value: users }: UserTableProps) {
       user_name: '',
       user_email: '',
       user_birth: '',
-      user_employ: employOptions[0],
+      user_company_name: companyOptions[0],
       lunar_yn: 'N',
       user_work_time: workTimeOptions[1].value,
-      user_role: 'USER',
+      user_role_type: 'USER',
       isNew: true,
       tempId: tempId,
     };
@@ -313,20 +313,20 @@ export default function UserTable({ value: users }: UserTableProps) {
                           <Cell>
                             {isEditing ? (
                               <Select
-                                value={row.user_employ}
-                                onValueChange={(value) => handleSelectChange(value, id, 'user_employ')}
+                                value={row.user_company_name}
+                                onValueChange={(value) => handleSelectChange(value, id, 'user_company_name')}
                               >
                                 <SelectTrigger>
                                   <SelectValue placeholder='소속 선택' />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {employOptions.map(option => (
+                                  {companyOptions.map(option => (
                                     <SelectItem key={option} value={option}>{option}</SelectItem>
                                   ))}
                                 </SelectContent>
                               </Select>
                             ) : (
-                              row.user_employ
+                              row.user_company_name
                             )}
                           </Cell>
                           <Cell>
@@ -378,8 +378,8 @@ export default function UserTable({ value: users }: UserTableProps) {
                           <Cell>
                             {isEditing ? (
                               <Select
-                                value={row.user_role}
-                                onValueChange={(value) => handleSelectChange(value, id, 'user_role')}
+                                value={row.user_role_type}
+                                onValueChange={(value) => handleSelectChange(value, id, 'user_role_type')}
                               >
                                 <SelectTrigger>
                                   <SelectValue placeholder='권한' />
@@ -396,11 +396,11 @@ export default function UserTable({ value: users }: UserTableProps) {
                               <div className={cn(
                                 'flex flex-row items-center text-sm gap-1',
                                 {
-                                  'text-rose-500 dark:text-rose-400': row.user_role === 'ADMIN',
-                                  'text-sky-500 dark:text-sky-400': row.user_role === 'USER'
+                                  'text-rose-500 dark:text-rose-400': row.user_role_type === 'ADMIN',
+                                  'text-sky-500 dark:text-sky-400': row.user_role_type === 'USER'
                                 }
                               )}>
-                                {row.user_role === 'ADMIN' ? <UserRoundCog size={14}/> : <UserRound size={14}/>}{row.user_role}
+                                {row.user_role_type === 'ADMIN' ? <UserRoundCog size={14}/> : <UserRound size={14}/>}{row.user_role_type}
                               </div>
                             )}
                           </Cell>

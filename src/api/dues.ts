@@ -1,5 +1,6 @@
 import { api } from '@/api/index'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from '@/components/alert/toast';
 
 interface ApiResponse<T = any> {
   code: number
@@ -149,12 +150,12 @@ const usePostDues = () => {
 
       return resp.data;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [DuesQueryKey.GET_YEAR_DUES] });
-      console.log(`POST 성공! 생성된 데이터: ${JSON.stringify(data, null, 2)}`);
+      toast.success('회비가 등록되었습니다.');
     },
     onError: (error) => {
-      console.log(`POST 실패: ${error.message}`);
+      toast.error(error.message);
     }
   });
 }
@@ -184,12 +185,12 @@ const usePutDues = () => {
 
       return resp.data;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [DuesQueryKey.GET_YEAR_DUES] });
-      console.log(`PUT 성공!`);
+      toast.success('회비가 수정되었습니다.');
     },
     onError: (error) => {
-      console.log(`PUT 실패: ${error.message}`);
+      toast.error(error.message);
     }
   });
 }
@@ -210,10 +211,10 @@ const useDeleteDues = () => {
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [DuesQueryKey.GET_YEAR_DUES] });
-        console.log(`DELETE 성공!`);
+        toast.success('회비가 삭제되었습니다.');
       },
       onError: (error) => {
-        console.log(`DELETE 실패: ${error.message}`);
+        toast.error(error.message);
       }
     }); 
 } 

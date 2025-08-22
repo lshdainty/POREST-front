@@ -1,6 +1,7 @@
 import { api } from '@/api/index'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { CalendarQueryKey } from '@/api/calendar';
+import { toast } from '@/components/alert/toast';
 
 interface ApiResponse<T = any> {
   code: number
@@ -14,7 +15,8 @@ const enum VacationQueryKey {
   GET_AVAILABLE_VACATIONS = 'getAvailableVacations',
   DELETE_VACATION_HISTORY = 'deleteVacationHistory',
   GET_USER_PERIOD_VACATION_USE_HISTORIES = 'getUserPeriodVacationUseHistories',
-  GET_USER_MONTH_STATS_VACATION_USE_HISTORIES = 'getUserMonthStatsVacationUseHistories'
+  GET_USER_MONTH_STATS_VACATION_USE_HISTORIES = 'getUserMonthStatsVacationUseHistories',
+  GET_USER_VACATION_USE_STATS = 'getUserVacationUseStats'
 }
 
 interface PostUseVacationReq {
@@ -43,12 +45,12 @@ const usePostUseVacation = () => {
 
       return resp.data;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [CalendarQueryKey.GET_EVENTS_BY_PERIOD] });
-      console.log(`POST 성공! 생성된 데이터: ${JSON.stringify(data, null, 2)}`);
+      toast.success('휴가/외출이 등록되었습니다.');
     },
     onError: (error) => {
-      console.log(`POST 실패: ${error.message}`);
+      toast.error(error.message);
     }
   });
 }
@@ -98,12 +100,12 @@ const useDeleteVacationHistory = () => {
 
       return resp.data;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [CalendarQueryKey.GET_EVENTS_BY_PERIOD] });
-      console.log(`POST 성공! 생성된 데이터: ${JSON.stringify(data, null, 2)}`);
+      toast.success('휴가/외출이 삭제되었습니다.');
     },
     onError: (error) => {
-      console.log(`POST 실패: ${error.message}`);
+      toast.error(error.message);
     }
   });
 }
@@ -193,7 +195,7 @@ interface GetUserVacationUseStatsResp {
 
 const useGetUserVacationUseStats = (reqData: GetUserVacationUseStatsReq) => {
   return useQuery({
-    queryKey: [VacationQueryKey.GET_USER_MONTH_STATS_VACATION_USE_HISTORIES, reqData.user_id, reqData.base_date],
+    queryKey: [VacationQueryKey.GET_USER_VACATION_USE_STATS, reqData.user_id, reqData.base_date],
     queryFn: async (): Promise<GetUserVacationUseStatsResp> => {
       const resp: ApiResponse = await api.request({
         method: 'get',
