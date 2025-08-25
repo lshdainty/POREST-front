@@ -74,8 +74,7 @@ export default function VacationTypeStatsCard({ value, className }: VacationType
               cx='50%'
               cy='50%'
               innerRadius={80}
-              outerRadius={120}
-              strokeWidth={2}
+              strokeWidth={0}
             >
               {vacationTypes?.map((entry) => (
                 <Cell key={`cell-${entry.vacation_type_name}`} fill={entry.fill} />

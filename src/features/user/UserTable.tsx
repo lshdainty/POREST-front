@@ -38,6 +38,7 @@ export default function UserTable({ value: users }: UserTableProps) {
   const [editingRow, setEditingRow] = useState<string | null>(null);
 
   const companyOptions = ['SK AX', 'DTOL', '인사이트온', '씨앤토트플러스', 'BigxData'];  // api화 진행 필요
+  const departmentOptions = ['SKC', 'GMES', 'GSCM', 'CMP', 'OLIVE', 'MYDATA', 'TABLEAU', 'AOI'];
   const lunarOptions = ['Y', 'N'];
   const workTimeOptions = [
     { value: '8 ~ 5', className: 'text-rose-500 dark:text-rose-400' },
@@ -59,7 +60,7 @@ export default function UserTable({ value: users }: UserTableProps) {
   }, [users]);
 
   const theme = useTheme([{
-    Table: `--data-table-library_grid-template-columns: minmax(120px, 11%) minmax(100px, 11%) minmax(200px, 18%) minmax(150px, 14%) minmax(120px, 11%) minmax(90px, 10%) minmax(100px, 11%) minmax(100px, 11%) minmax(60px, 4%) !important;`,
+    Table: `--data-table-library_grid-template-columns: minmax(120px, 11%) minmax(100px, 11%) minmax(200px, 18%) minmax(150px, 14%) minmax(120px, 11%) minmax(120px, 11%) minmax(90px, 10%) minmax(100px, 11%) minmax(100px, 11%) minmax(60px, 4%) !important;`,
   }]);
 
   const handleDelete = (id: string) => {
@@ -109,6 +110,7 @@ export default function UserTable({ value: users }: UserTableProps) {
       user_email: '',
       user_birth: '',
       user_company_name: companyOptions[0],
+      user_department_name: departmentOptions[0],
       lunar_yn: 'N',
       user_work_time: workTimeOptions[1].value,
       user_role_type: 'USER',
@@ -241,7 +243,8 @@ export default function UserTable({ value: users }: UserTableProps) {
                       <HeaderCell>ID</HeaderCell>
                       <HeaderCell>Email</HeaderCell>
                       <HeaderCell>생년월일</HeaderCell>
-                      <HeaderCell>소속</HeaderCell>
+                      <HeaderCell>회사</HeaderCell>
+                      <HeaderCell>부서</HeaderCell>
                       <HeaderCell>음력여부</HeaderCell>
                       <HeaderCell>유연근무제</HeaderCell>
                       <HeaderCell>권한</HeaderCell>
@@ -317,7 +320,7 @@ export default function UserTable({ value: users }: UserTableProps) {
                                 onValueChange={(value) => handleSelectChange(value, id, 'user_company_name')}
                               >
                                 <SelectTrigger>
-                                  <SelectValue placeholder='소속 선택' />
+                                  <SelectValue placeholder='회사 선택' />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {companyOptions.map(option => (
@@ -327,6 +330,25 @@ export default function UserTable({ value: users }: UserTableProps) {
                               </Select>
                             ) : (
                               row.user_company_name
+                            )}
+                          </Cell>
+                          <Cell>
+                            {isEditing ? (
+                              <Select
+                                value={row.user_department_name}
+                                onValueChange={(value) => handleSelectChange(value, id, 'user_department_name')}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder='부서 선택' />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {departmentOptions.map(option => (
+                                    <SelectItem key={option} value={option}>{option}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            ) : (
+                              row.user_department_name
                             )}
                           </Cell>
                           <Cell>
