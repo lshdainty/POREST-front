@@ -3,6 +3,15 @@ import {
   Briefcase,
   Cake,
   ShieldUser,
+  LayoutDashboard,
+  CalendarDays,
+  FileText,
+  CircleDollarSign,
+  Scale,
+  Users,
+  Plane,
+  ShieldCheck,
+  CalendarCog,
 } from 'lucide-react';
 
 import {
@@ -27,8 +36,8 @@ const navDatas = [
     url: '/',
     icon: Home,
     items: [
-      { title: 'Dashboard', url: '/dashboard' },
-      { title: 'Calendar', url: '/calendar' }
+      { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
+      { title: 'Calendar', url: '/calendar', icon: CalendarDays }
     ],
   },
   {
@@ -36,7 +45,7 @@ const navDatas = [
     url: '/work',
     icon: Briefcase,
     items: [
-      { title: 'Report', url: '/work/report' },
+      { title: 'Report', url: '/work/report', icon: FileText },
     ],
   },
   {
@@ -44,8 +53,8 @@ const navDatas = [
     url: '/culture',
     icon: Cake,
     items: [
-      { title: 'Dues', url: '/culture/dues' },
-      { title: 'Rule', url: '/culture/rule' },
+      { title: 'Dues', url: '/culture/dues', icon: CircleDollarSign },
+      { title: 'Rule', url: '/culture/rule', icon: Scale },
     ],
   },
   {
@@ -53,10 +62,10 @@ const navDatas = [
     url: '/admin',
     icon: ShieldUser,
     items: [
-      { title: 'User', url: '/admin/user' },
-      { title: 'Vacation', url: '/admin/vacation' },
-      { title: 'Authority', url: '/admin/authority' },
-      { title: 'Holiday', url: '/admin/holiday' },
+      { title: 'User', url: '/admin/user', icon: Users },
+      { title: 'Vacation', url: '/admin/vacation', icon: Plane },
+      { title: 'Authority', url: '/admin/authority', icon: ShieldCheck },
+      { title: 'Holiday', url: '/admin/holiday', icon: CalendarCog },
     ],
   },
 ]

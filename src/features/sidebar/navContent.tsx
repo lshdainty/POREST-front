@@ -27,6 +27,7 @@ export function NavContent({
     items?: {
       title: string
       url: string
+      icon?: LucideIcon
     }[]
   }[]
 }) {
@@ -54,7 +55,8 @@ export function NavContent({
                   {item.items?.map((subItem) => (
                     <SidebarMenuSubItem key={subItem.title}>
                       <SidebarMenuSubButton asChild>
-                        <Link to={subItem.url} >
+                        <Link to={subItem.url} className="flex items-center">
+                          {subItem.icon && <span><subItem.icon className="h-4 w-4" /></span>}
                           <span>{subItem.title}</span>
                         </Link>
                       </SidebarMenuSubButton>
