@@ -9,6 +9,7 @@ import Calendar from '@/features/calendar/Calendar';
 import Work from '@/features/work/Work';
 import Dues from '@/features/dues/Dues';
 import Rule from '@/features/rule/Rule';
+import Rule2 from '@/features/rule/Rule2';
 import User from '@/features/user/User';
 import Vacation from '@/features/vacation/Vacation';
 import Authority from '@/features/authority/Authority';
@@ -37,6 +38,7 @@ const Router = () => {
         <Route path='/work/report' element={<Work/>} />
         <Route path='/culture/dues' element={<Dues/>} />
         <Route path='/culture/rule' element={<Rule/>} />
+        <Route path='/culture/rule2' element={<Rule2/>} />
         <Route path='/admin/user' element={<User/>} />
         <Route path='/admin/vacation' element={<Vacation/>} />
         <Route path='/admin/authority' element={<Authority/>} />
