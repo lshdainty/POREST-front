@@ -44,7 +44,7 @@ export default function VacationTypeStatsCard({ value, className }: VacationType
     <Card className={cn(className)}>
       <CardHeader className='items-center pb-0'>
         <CardTitle>휴가 유형</CardTitle>
-        <CardDescription>올해 부여받은 휴가 유형</CardDescription>
+        <CardDescription>잔여 휴가별 휴가 유형</CardDescription>
       </CardHeader>
       <CardContent className='flex-1 pb-0'>
         <ResponsiveContainer width='100%' height={300}>

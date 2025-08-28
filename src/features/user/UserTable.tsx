@@ -3,15 +3,14 @@ import { usePostUser, usePutUser, useDeleteUser, GetUsersResp } from '@/api/user
 import { useTheme } from '@table-library/react-table-library/theme';
 import { Table, Header, HeaderRow, Body, Row, HeaderCell, Cell } from '@table-library/react-table-library/table';
 import { Badge } from '@/components/shadcn/badge';
-import { Input } from '@/components/shadcn/input';
 import { Button } from '@/components/shadcn/button';
 import { Avatar, AvatarFallback } from '@/components/shadcn/avatar';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/shadcn/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/shadcn/dropdownMenu';
 import { UserRoundCog, UserRound, EllipsisVertical } from 'lucide-react';
 import { Empty } from 'antd';
 import { cn } from '@/lib/utils';
+import UserEditDialog from './UserEditDialog';
 
 type EditableUserData = GetUsersResp & { isNew?: boolean; tempId?: string };
 
@@ -35,19 +34,13 @@ export default function UserTable({ value: users }: UserTableProps) {
     updated: [],
     deleted: [],
   });
-  const [editingRow, setEditingRow] = useState<string | null>(null);
 
-  const companyOptions = ['SK AX', 'DTOL', '인사이트온', '씨앤토트플러스', 'BigxData'];  // api화 진행 필요
+  const companyOptions = ['SK AX', 'DTOL', '인사이트온', '씨앤토트플러스', 'BigxData'];
   const departmentOptions = ['SKC', 'GMES', 'GSCM', 'CMP', 'OLIVE', 'MYDATA', 'TABLEAU', 'AOI'];
-  const lunarOptions = ['Y', 'N'];
   const workTimeOptions = [
     { value: '8 ~ 5', className: 'text-rose-500 dark:text-rose-400' },
     { value: '9 ~ 6', className: 'text-sky-500 dark:text-sky-400' },
     { value: '10 ~ 7', className: 'text-emerald-500 dark:text-emerald-400' }
-  ];
-  const roleOptions = [
-    { value: 'ADMIN', className: 'text-rose-500 dark:text-rose-400' },
-    { value: 'USER', className: 'text-sky-500 dark:text-sky-400' }
   ];
 
   useEffect(() => {
@@ -98,7 +91,6 @@ export default function UserTable({ value: users }: UserTableProps) {
       ...modifiedData,
       created: [...modifiedData.created, newRow],
     });
-    setEditingRow(tempId);
   };
 
   const handleAddBtn = () => {
@@ -123,11 +115,6 @@ export default function UserTable({ value: users }: UserTableProps) {
       ...modifiedData,
       created: [...modifiedData.created, newRow],
     });
-    setEditingRow(tempId);
-  };
-
-  const handleEdit = (id: string) => {
-    setEditingRow(id);
   };
 
   const handleSaveBtn = () => {
@@ -147,62 +134,17 @@ export default function UserTable({ value: users }: UserTableProps) {
     setModifiedData({ created: [], updated: [], deleted: [] });
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, id: string, field: keyof GetUsersResp) => {
-    if (!tableData) return;
+  const handleDialogSave = (updatedUser: GetUsersResp) => {
+    const id = updatedUser.user_id;
     const newData = tableData.map((row) => {
       if ((row.isNew ? row.tempId : row.user_id) === id) {
-        return { ...row, [field]: e.target.value };
+        return { ...row, ...updatedUser };
       }
       return row;
     });
     setTableData(newData);
 
-    const updatedUser = newData.find(user => (user.isNew ? user.tempId : user.user_id) === id);
-    if (!updatedUser) return;
-
-    if (updatedUser.isNew) {
-      setModifiedData({
-        ...modifiedData,
-        created: modifiedData.created.map((user) =>
-          user.tempId === id ? updatedUser : user
-        ),
-      });
-    } else if (!modifiedData.updated.find((user) => user.user_id === id)) {
-      setModifiedData({
-        ...modifiedData,
-        updated: [...modifiedData.updated, updatedUser],
-      });
-    } else {
-      setModifiedData({
-        ...modifiedData,
-        updated: modifiedData.updated.map((user) =>
-          user.user_id === id ? updatedUser : user
-        ),
-      });
-    }
-  };
-
-  const handleSelectChange = (value: string, id: string, field: keyof GetUsersResp) => {
-    if (!tableData) return;
-    const newData = tableData.map((row) => {
-      if ((row.isNew ? row.tempId : row.user_id) === id) {
-        return { ...row, [field]: value };
-      }
-      return row;
-    });
-    setTableData(newData);
-
-    const updatedUser = newData.find(user => (user.isNew ? user.tempId : user.user_id) === id);
-    if (!updatedUser) return;
-
-    if (updatedUser.isNew) {
-      setModifiedData({
-        ...modifiedData,
-        created: modifiedData.created.map((user) =>
-          user.tempId === id ? updatedUser : user
-        ),
-      });
-    } else if (!modifiedData.updated.find((user) => user.user_id === id)) {
+    if (!modifiedData.updated.find((user) => user.user_id === id)) {
       setModifiedData({
         ...modifiedData,
         updated: [...modifiedData.updated, updatedUser],
@@ -222,7 +164,21 @@ export default function UserTable({ value: users }: UserTableProps) {
       <CardHeader className='flex flex-row items-center justify-between'>
         <CardTitle>사용자 목록</CardTitle>
         <div className='flex gap-2'>
-          <Button className='text-sm h-8' onClick={handleAddBtn} size='sm'>추가</Button>
+          <UserEditDialog
+            user={{
+                user_id: '',
+                user_name: '',
+                user_email: '',
+                user_birth: '',
+                user_company_name: companyOptions[0],
+                user_department_name: departmentOptions[0],
+                lunar_yn: 'N',
+                user_work_time: '9 ~ 6',
+                user_role_type: 'USER',
+            }}
+            onSave={handleAddBtn}
+            trigger={<Button className='text-sm h-8' size='sm'>추가</Button>}
+          />
           <Button className='text-sm h-8' variant='outline' onClick={handleSaveBtn} size='sm'>저장</Button>
         </div>
       </CardHeader>
@@ -254,7 +210,6 @@ export default function UserTable({ value: users }: UserTableProps) {
                   <Body>
                     {tableList.map((row: EditableUserData, i: number) => {
                       const id = row.isNew ? row.tempId! : row.user_id;
-                      const isEditing = editingRow === id;
                       return (
                         <Row
                           item={row}
@@ -265,166 +220,40 @@ export default function UserTable({ value: users }: UserTableProps) {
                           key={id}
                         >
                           <Cell>
-                            {isEditing ? (
-                              <Input
-                                value={row.user_name}
-                                onChange={(e) => handleInputChange(e, id, 'user_name')}
-                              />
-                            ) : (
-                              <div className='flex flex-row items-center'>
-                                <Avatar className='h-8 w-8 mr-1.5'>
-                                  <AvatarFallback>
-                                    <UserRound className='w-5 h-5' />
-                                  </AvatarFallback>
-                                </Avatar>
-                                {row.user_name}
-                              </div>
-                            )}
+                            <div className='flex flex-row items-center'>
+                              <Avatar className='h-8 w-8 mr-1.5'>
+                                <AvatarFallback>
+                                  <UserRound className='w-5 h-5' />
+                                </AvatarFallback>
+                              </Avatar>
+                              {row.user_name}
+                            </div>
+                          </Cell>
+                          <Cell>{row.user_id}</Cell>
+                          <Cell>{row.user_email}</Cell>
+                          <Cell>{row.user_birth && `${row.user_birth.substr(0, 4)}년 ${row.user_birth.substr(4, 2)}월 ${row.user_birth.substr(6, 2)}일`}</Cell>
+                          <Cell>{row.user_company_name}</Cell>
+                          <Cell>{row.user_department_name}</Cell>
+                          <Cell>{row.lunar_yn}</Cell>
+                          <Cell>
+                            <Badge className={cn(
+                              {
+                                'bg-rose-500 dark:bg-rose-400': row.user_work_time === '8 ~ 5',
+                                'bg-sky-500 dark:bg-sky-400': row.user_work_time === '9 ~ 6',
+                                'bg-emerald-500 dark:bg-emerald-400': row.user_work_time === '10 ~ 7'
+                              }
+                            )}>{row.user_work_time}</Badge>
                           </Cell>
                           <Cell>
-                            {isEditing ? (
-                              <Input
-                                value={row.user_id}
-                                onChange={(e) => handleInputChange(e, id, 'user_id')}
-                                disabled={!row.isNew}
-                                placeholder='Enter new ID'
-                              />
-                            ) : (
-                              row.user_id
-                            )}
-                          </Cell>
-                          <Cell>
-                            {isEditing ? (
-                              <Input
-                                value={row.user_email}
-                                onChange={(e) => handleInputChange(e, id, 'user_email')}
-                              />
-                            ) : (
-                              row.user_email
-                            )}
-                          </Cell>
-                          <Cell>
-                            {isEditing ? (
-                              <Input
-                                value={row.user_birth}
-                                onChange={(e) => handleInputChange(e, id, 'user_birth')}
-                              />
-                            ) : (
-                              row.user_birth && `${row.user_birth.substr(0, 4)}년 ${row.user_birth.substr(4, 2)}월 ${row.user_birth.substr(6, 2)}일`
-                            )}
-                          </Cell>
-                          <Cell>
-                            {isEditing ? (
-                              <Select
-                                value={row.user_company_name}
-                                onValueChange={(value) => handleSelectChange(value, id, 'user_company_name')}
-                              >
-                                <SelectTrigger>
-                                  <SelectValue placeholder='회사 선택' />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {companyOptions.map(option => (
-                                    <SelectItem key={option} value={option}>{option}</SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            ) : (
-                              row.user_company_name
-                            )}
-                          </Cell>
-                          <Cell>
-                            {isEditing ? (
-                              <Select
-                                value={row.user_department_name}
-                                onValueChange={(value) => handleSelectChange(value, id, 'user_department_name')}
-                              >
-                                <SelectTrigger>
-                                  <SelectValue placeholder='부서 선택' />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {departmentOptions.map(option => (
-                                    <SelectItem key={option} value={option}>{option}</SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            ) : (
-                              row.user_department_name
-                            )}
-                          </Cell>
-                          <Cell>
-                            {isEditing ? (
-                              <Select
-                                value={row.lunar_yn}
-                                onValueChange={(value) => handleSelectChange(value, id, 'lunar_yn')}
-                              >
-                                <SelectTrigger>
-                                  <SelectValue placeholder='음력 여부' />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {lunarOptions.map(option => (
-                                    <SelectItem key={option} value={option}>{option}</SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            ) : (
-                              row.lunar_yn
-                            )}
-                          </Cell>
-                          <Cell>
-                            {isEditing ? (
-                              <Select
-                                value={row.user_work_time}
-                                onValueChange={(value) => handleSelectChange(value, id, 'user_work_time')}
-                              >
-                                <SelectTrigger>
-                                  <SelectValue placeholder='유연근무제' />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {workTimeOptions.map(option => (
-                                    <SelectItem key={option.value} value={option.value} className={option.className}>
-                                      {option.value}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            ) : (
-                              <Badge className={cn(
-                                {
-                                  'bg-rose-500 dark:bg-rose-400': row.user_work_time === '8 ~ 5',
-                                  'bg-sky-500 dark:bg-sky-400': row.user_work_time === '9 ~ 6',
-                                  'bg-emerald-500 dark:bg-emerald-400': row.user_work_time === '10 ~ 7'
-                                }
-                              )}>{row.user_work_time}</Badge>
-                            )}
-                          </Cell>
-                          <Cell>
-                            {isEditing ? (
-                              <Select
-                                value={row.user_role_type}
-                                onValueChange={(value) => handleSelectChange(value, id, 'user_role_type')}
-                              >
-                                <SelectTrigger>
-                                  <SelectValue placeholder='권한' />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {roleOptions.map(option => (
-                                    <SelectItem key={option.value} value={option.value} className={option.className}>
-                                      {option.value}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            ) : (
-                              <div className={cn(
-                                'flex flex-row items-center text-sm gap-1',
-                                {
-                                  'text-rose-500 dark:text-rose-400': row.user_role_type === 'ADMIN',
-                                  'text-sky-500 dark:text-sky-400': row.user_role_type === 'USER'
-                                }
-                              )}>
-                                {row.user_role_type === 'ADMIN' ? <UserRoundCog size={14}/> : <UserRound size={14}/>}{row.user_role_type}
-                              </div>
-                            )}
+                            <div className={cn(
+                              'flex flex-row items-center text-sm gap-1',
+                              {
+                                'text-rose-500 dark:text-rose-400': row.user_role_type === 'ADMIN',
+                                'text-sky-500 dark:text-sky-400': row.user_role_type === 'USER'
+                              }
+                            )}>
+                              {row.user_role_type === 'ADMIN' ? <UserRoundCog size={14}/> : <UserRound size={14}/>}{row.user_role_type}
+                            </div>
                           </Cell>
                           <Cell>
                             <DropdownMenu>
@@ -439,11 +268,11 @@ export default function UserTable({ value: users }: UserTableProps) {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align='end' className='w-32'>
-                                {isEditing ? (
-                                  <DropdownMenuItem onClick={() => setEditingRow(null)}>저장</DropdownMenuItem>
-                                ) : (
-                                  <DropdownMenuItem onClick={() => handleEdit(id)}>수정</DropdownMenuItem>
-                                )}
+                                <UserEditDialog
+                                  user={row}
+                                  onSave={handleDialogSave}
+                                  trigger={<DropdownMenuItem onSelect={(e) => e.preventDefault()}>수정</DropdownMenuItem>}
+                                />
                                 <DropdownMenuItem
                                   onClick={() => handleCopy(row)}
                                 >
