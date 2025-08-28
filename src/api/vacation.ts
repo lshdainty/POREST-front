@@ -149,8 +149,12 @@ interface GetUserMonthStatsVacationUseHistoriesReq {
 
 interface GetUserMonthStatsVacationUseHistoriesResp {
   month: number
-  used_time: number
-  used_time_str: string
+  stats: {
+    vacation_type: string
+    vacation_type_name: string
+    used_time: number
+    used_time_str: string
+  }[]
 }
 
 const useGetUserMonthStatsVacationUseHistories = (reqData: GetUserMonthStatsVacationUseHistoriesReq) => {
