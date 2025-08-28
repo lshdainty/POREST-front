@@ -5,22 +5,10 @@ import { cn } from '@/lib/utils';
 
 interface MonthVacationStatsCardProps { 
   value: GetUserMonthStatsVacationUseHistoriesResp[] | undefined
-  chartValue: any
   className: string | undefined;
 }
 
-const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "var(--chart-1)",
-  },
-  mobile: {
-    label: "Mobile",
-    color: "var(--chart-2)",
-  },
-} satisfies ChartConfig
-
-export default function MonthVacationStatsCard({ value: data, chartValue, className }: MonthVacationStatsCardProps) {
+export default function MonthVacationStatsCard({ value: data, className }: MonthVacationStatsCardProps) {
   return (
     <Card className={cn(className)}>
       <CardHeader>
@@ -28,7 +16,7 @@ export default function MonthVacationStatsCard({ value: data, chartValue, classN
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width='100%' height={350}>
-          <BarChart data={chartValue}>
+          <BarChart data={data}>
             <CartesianGrid vertical={false} />
             <XAxis
               dataKey='month'

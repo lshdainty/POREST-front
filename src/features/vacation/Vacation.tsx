@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useGetUsers } from '@/api/user';
 import {
   useGetAvailableVacations,
@@ -38,35 +38,6 @@ export default function Vacation() {
     user_id: selectedUserId,
     base_date: dayjs().format('YYYY-MM-DDTHH:mm:ss'),
   });
-
-  const monthStatsChartData = useMemo(() => {
-    if (!monthStats) return [];
-
-    const vacationTypes = [...new Set(monthStats.flatMap(item => item.stats.map(s => s.vacation_type)))];
-
-    const chartData = Array.from({ length: 12 }, (_, i) => {
-      const month = i + 1;
-      const monthData: { month: number, [key: string]: number } = { month };
-
-      vacationTypes.forEach(type => {
-        monthData[type] = 0;
-      });
-
-      const dataForMonth = monthStats.find(item => item.month === month);
-
-      if (dataForMonth) {
-        dataForMonth.stats.forEach(stat => {
-          monthData[stat.vacation_type] = stat.used_time;
-        });
-      }
-
-      return monthData;
-    });
-
-    return chartData;
-  }, [monthStats]);
-
-  console.log(convertMonthStats);
 
   useEffect(() => {
     if (users && users.length > 0 && !selectedUserId) {
@@ -120,8 +91,7 @@ export default function Vacation() {
             value={vacationStats}
           />
           <MonthVacationStatsCard
-            value={convertMonthStats}
-            chartValue={monthStatsChartData}
+            value={monthStats || []}
             className='h-full'
           />
         </div>
