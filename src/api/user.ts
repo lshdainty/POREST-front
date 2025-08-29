@@ -49,7 +49,7 @@ const useGetUsers = () => {
 
 interface PostUserReq {
   user_id: string
-  user_pwd: string
+  // user_pwd: string
   user_name: string
   user_email: string
   user_birth: string
@@ -157,5 +157,7 @@ export {
 
 export type {
   // Interface
-  GetUsersResp
+  GetUsersResp,
+  PostUserReq,
+  PutUserReq
 }

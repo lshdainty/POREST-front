@@ -1,24 +1,18 @@
-import { useEffect, useState } from 'react';
-import { usePostUser, usePutUser, useDeleteUser, GetUsersResp } from '@/api/user';
+import { useState } from 'react';
+import { GetUsersResp, usePostUser, usePutUser, useDeleteUser } from '@/api/user';
 import { useTheme } from '@table-library/react-table-library/theme';
 import { Table, Header, HeaderRow, Body, Row, HeaderCell, Cell } from '@table-library/react-table-library/table';
+import UserEditDialog from '@/features/user/UserEditDialog';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Avatar, AvatarFallback } from '@/components/shadcn/avatar';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/shadcn/card';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/shadcn/dropdownMenu';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/shadcn/dialog';
 import { UserRoundCog, UserRound, EllipsisVertical } from 'lucide-react';
 import { Empty } from 'antd';
 import { cn } from '@/lib/utils';
-import UserEditDialog from './UserEditDialog';
-
-type EditableUserData = GetUsersResp & { isNew?: boolean; tempId?: string };
-
-interface ModifiedData {
-  created: EditableUserData[];
-  updated: GetUsersResp[];
-  deleted: string[];
-}
+import dayjs from 'dayjs';
 
 interface UserTableProps {
   value: GetUsersResp[];
@@ -28,135 +22,53 @@ export default function UserTable({ value: users }: UserTableProps) {
   const { mutate: postUser } = usePostUser();
   const { mutate: putUser } = usePutUser();
   const { mutate: deleteUser } = useDeleteUser();
-  const [tableData, setTableData] = useState<EditableUserData[]>([]);
-  const [modifiedData, setModifiedData] = useState<ModifiedData>({
-    created: [],
-    updated: [],
-    deleted: [],
-  });
+  const [delDialogOpen, setDelDialogOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<GetUsersResp | null>(null); // 추가
 
   const companyOptions = ['SK AX', 'DTOL', '인사이트온', '씨앤토트플러스', 'BigxData'];
   const departmentOptions = ['SKC', 'GMES', 'GSCM', 'CMP', 'OLIVE', 'MYDATA', 'TABLEAU', 'AOI'];
-  const workTimeOptions = [
-    { value: '8 ~ 5', className: 'text-rose-500 dark:text-rose-400' },
-    { value: '9 ~ 6', className: 'text-sky-500 dark:text-sky-400' },
-    { value: '10 ~ 7', className: 'text-emerald-500 dark:text-emerald-400' }
-  ];
-
-  useEffect(() => {
-    if (users) {
-      const formattedUsers = users.map((user: GetUsersResp) => ({
-        ...user,
-      }));
-      setTableData(formattedUsers);
-    }
-  }, [users]);
 
   const theme = useTheme([{
     Table: `--data-table-library_grid-template-columns: minmax(120px, 11%) minmax(100px, 11%) minmax(200px, 18%) minmax(150px, 14%) minmax(120px, 11%) minmax(120px, 11%) minmax(90px, 10%) minmax(100px, 11%) minmax(100px, 11%) minmax(60px, 4%) !important;`,
   }]);
 
-  const handleDelete = (id: string) => {
-    if (!tableData) return;
-    const rowToDelete = tableData.find(row => (row.isNew ? row.tempId : row.user_id) === id);
-    if (!rowToDelete) return;
+  const handleCreateUser = (user: GetUsersResp) => {
+    postUser({
+      user_id: user.user_id,
+      user_name: user.user_name,
+      user_email: user.user_email,
+      user_birth: dayjs(user.user_birth).format('YYYYMMDD'),
+      user_company_type: user.user_company_type,
+      user_department_type: user.user_department_type,
+      user_work_time: user.user_work_time,
+      lunar_yn: user.lunar_yn
+    });
+  };
 
-    if (rowToDelete.isNew) {
-      setModifiedData({
-        ...modifiedData,
-        created: modifiedData.created.filter((user) => user.tempId !== id),
-      });
-    } else {
-      setModifiedData({
-        ...modifiedData,
-        updated: modifiedData.updated.filter((user) => user.user_id !== id),
-        deleted: [...modifiedData.deleted, id],
-      });
+  const handleUpdateUser = (user: GetUsersResp) => {
+    putUser({
+      user_id: user.user_id,
+      user_name: user.user_name,
+      user_email: user.user_email,
+      user_birth: dayjs(user.user_birth).format('YYYYMMDD'),
+      user_company_type: user.user_company_type,
+      user_department_type: user.user_department_type,
+      user_work_time: user.user_work_time,
+      lunar_yn: user.lunar_yn
+    });
+  };
+
+  const handleDeleteUser = () => {
+    if (userToDelete) {
+      // deleteUser(userToDelete.user_id); // 실제 삭제 로직
+      setDelDialogOpen(false);
+      setUserToDelete(null);
     }
-
-    setTableData(tableData.filter((user) => (user.isNew ? user.tempId : user.user_id) !== id));
   };
 
-  const handleCopy = (row: EditableUserData) => {
-    if (!tableData) return;
-    const tempId = `new_${Date.now()}`;
-    const newRow: EditableUserData = {
-      ...row,
-      user_id: '',
-      isNew: true,
-      tempId: tempId,
-    };
-    setTableData([...tableData, newRow]);
-    setModifiedData({
-      ...modifiedData,
-      created: [...modifiedData.created, newRow],
-    });
-  };
-
-  const handleAddBtn = () => {
-    if (!tableData) return;
-    const tempId = `new_${Date.now()}`;
-    const newRow: EditableUserData = {
-      user_id: '',
-      user_name: '',
-      user_email: '',
-      user_birth: '',
-      user_company_name: companyOptions[0],
-      user_department_name: departmentOptions[0],
-      lunar_yn: 'N',
-      user_work_time: workTimeOptions[1].value,
-      user_role_type: 'USER',
-      isNew: true,
-      tempId: tempId,
-    };
-
-    setTableData([...tableData, newRow]);
-    setModifiedData({
-      ...modifiedData,
-      created: [...modifiedData.created, newRow],
-    });
-  };
-
-  const handleSaveBtn = () => {
-    modifiedData.created.forEach(user => {
-      const { isNew, tempId, ...GetUsersResp } = user;
-      postUser({...GetUsersResp, user_pwd: ''});
-    });
-
-    modifiedData.updated.forEach(user => {
-      putUser({...user});
-    });
-
-    modifiedData.deleted.forEach(user_id => {
-      deleteUser(user_id);
-    });
-
-    setModifiedData({ created: [], updated: [], deleted: [] });
-  };
-
-  const handleDialogSave = (updatedUser: GetUsersResp) => {
-    const id = updatedUser.user_id;
-    const newData = tableData.map((row) => {
-      if ((row.isNew ? row.tempId : row.user_id) === id) {
-        return { ...row, ...updatedUser };
-      }
-      return row;
-    });
-    setTableData(newData);
-
-    if (!modifiedData.updated.find((user) => user.user_id === id)) {
-      setModifiedData({
-        ...modifiedData,
-        updated: [...modifiedData.updated, updatedUser],
-      });
-    } else {
-      setModifiedData({
-        ...modifiedData,
-        updated: modifiedData.updated.map((user) =>
-          user.user_id === id ? updatedUser : user
-        ),
-      });
-    }
+  const openDeleteDialog = (user: GetUsersResp) => {
+    setUserToDelete(user);
+    setDelDialogOpen(true);
   };
 
   return (
@@ -169,29 +81,28 @@ export default function UserTable({ value: users }: UserTableProps) {
                 user_id: '',
                 user_name: '',
                 user_email: '',
-                user_birth: '',
+                user_birth: dayjs().format('YYYY-MM-DD'),
                 user_company_name: companyOptions[0],
                 user_department_name: departmentOptions[0],
                 lunar_yn: 'N',
                 user_work_time: '9 ~ 6',
                 user_role_type: 'USER',
             }}
-            onSave={handleAddBtn}
+            onSave={handleCreateUser}
             trigger={<Button className='text-sm h-8' size='sm'>추가</Button>}
           />
-          <Button className='text-sm h-8' variant='outline' onClick={handleSaveBtn} size='sm'>저장</Button>
         </div>
       </CardHeader>
       <CardContent>
-        {tableData && tableData.length > 0 ? (
+        {users && users.length > 0 ? (
           <div className='w-full overflow-auto'>
             <Table
               theme={theme}
               className='w-full !h-auto border overflow-hidden rounded-lg'
-              data={{nodes: tableData}}
+              data={{nodes: users}}
               layout={{ fixedHeader: true }}
             >
-              {(tableList: EditableUserData[]) => (
+              {(tableList: GetUsersResp[]) => (
                 <>
                   <Header>
                     <HeaderRow className='!bg-muted !text-foreground [&_th]:!p-2 [&_th]:!text-sm [&_th]:!h-10 [&_th]:!font-medium [&_div]:!pl-2'>
@@ -208,89 +119,86 @@ export default function UserTable({ value: users }: UserTableProps) {
                     </HeaderRow>
                   </Header>
                   <Body>
-                    {tableList.map((row: EditableUserData, i: number) => {
-                      const id = row.isNew ? row.tempId! : row.user_id;
-                      return (
-                        <Row
-                          item={row}
-                          className={cn(
-                            'hover:!bg-muted/50 !bg-background !text-foreground [&_td]:!p-2 [&_td]:!text-sm [&_td>div]:!py-1 [&_td>div]:!pl-2',
-                            i !== tableData?.length-1 ? '[&_td]:!border-b' : '[&_td]:!border-b-0'
-                          )}
-                          key={id}
-                        >
-                          <Cell>
-                            <div className='flex flex-row items-center'>
-                              <Avatar className='h-8 w-8 mr-1.5'>
-                                <AvatarFallback>
-                                  <UserRound className='w-5 h-5' />
-                                </AvatarFallback>
-                              </Avatar>
-                              {row.user_name}
-                            </div>
-                          </Cell>
-                          <Cell>{row.user_id}</Cell>
-                          <Cell>{row.user_email}</Cell>
-                          <Cell>{row.user_birth && `${row.user_birth.substr(0, 4)}년 ${row.user_birth.substr(4, 2)}월 ${row.user_birth.substr(6, 2)}일`}</Cell>
-                          <Cell>{row.user_company_name}</Cell>
-                          <Cell>{row.user_department_name}</Cell>
-                          <Cell>{row.lunar_yn}</Cell>
-                          <Cell>
-                            <Badge className={cn(
-                              {
-                                'bg-rose-500 dark:bg-rose-400': row.user_work_time === '8 ~ 5',
-                                'bg-sky-500 dark:bg-sky-400': row.user_work_time === '9 ~ 6',
-                                'bg-emerald-500 dark:bg-emerald-400': row.user_work_time === '10 ~ 7'
-                              }
-                            )}>{row.user_work_time}</Badge>
-                          </Cell>
-                          <Cell>
-                            <div className={cn(
-                              'flex flex-row items-center text-sm gap-1',
-                              {
-                                'text-rose-500 dark:text-rose-400': row.user_role_type === 'ADMIN',
-                                'text-sky-500 dark:text-sky-400': row.user_role_type === 'USER'
-                              }
-                            )}>
-                              {row.user_role_type === 'ADMIN' ? <UserRoundCog size={14}/> : <UserRound size={14}/>}{row.user_role_type}
-                            </div>
-                          </Cell>
-                          <Cell>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button
-                                  variant='ghost'
-                                  className='data-[state=open]:bg-muted text-muted-foreground flex size-8'
-                                  size='icon'
-                                >
-                                  <EllipsisVertical />
-                                  <span className='sr-only'>Open menu</span>
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align='end' className='w-32'>
-                                <UserEditDialog
-                                  user={row}
-                                  onSave={handleDialogSave}
-                                  trigger={<DropdownMenuItem onSelect={(e) => e.preventDefault()}>수정</DropdownMenuItem>}
-                                />
-                                <DropdownMenuItem
-                                  onClick={() => handleCopy(row)}
-                                >
-                                  복사
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem
-                                  className='text-destructive focus:text-destructive hover:!bg-destructive/20'
-                                  onClick={() => handleDelete(id)}
-                                >
-                                  삭제
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </Cell>
-                        </Row>
-                      )
-                    })}
+                    {tableList.map((row: GetUsersResp, i: number) => (
+                      <Row
+                        item={row}
+                        className={cn(
+                          'hover:!bg-muted/50 !bg-background !text-foreground [&_td]:!p-2 [&_td]:!text-sm [&_td>div]:!py-1 [&_td>div]:!pl-2',
+                          i !== users?.length-1 ? '[&_td]:!border-b' : '[&_td]:!border-b-0'
+                        )}
+                        key={row.user_id}
+                      >
+                        <Cell>
+                          <div className='flex flex-row items-center'>
+                            <Avatar className='h-8 w-8 mr-1.5'>
+                              <AvatarFallback>
+                                <UserRound className='w-5 h-5' />
+                              </AvatarFallback>
+                            </Avatar>
+                            {row.user_name}
+                          </div>
+                        </Cell>
+                        <Cell>{row.user_id}</Cell>
+                        <Cell>{row.user_email}</Cell>
+                        <Cell>{row.user_birth && `${row.user_birth.substr(0, 4)}년 ${row.user_birth.substr(4, 2)}월 ${row.user_birth.substr(6, 2)}일`}</Cell>
+                        <Cell>{row.user_company_name}</Cell>
+                        <Cell>{row.user_department_name}</Cell>
+                        <Cell>{row.lunar_yn}</Cell>
+                        <Cell>
+                          <Badge className={cn(
+                            {
+                              'bg-rose-500 dark:bg-rose-400': row.user_work_time === '8 ~ 5',
+                              'bg-sky-500 dark:bg-sky-400': row.user_work_time === '9 ~ 6',
+                              'bg-emerald-500 dark:bg-emerald-400': row.user_work_time === '10 ~ 7'
+                            }
+                          )}>{row.user_work_time}</Badge>
+                        </Cell>
+                        <Cell>
+                          <div className={cn(
+                            'flex flex-row items-center text-sm gap-1',
+                            {
+                              'text-rose-500 dark:text-rose-400': row.user_role_type === 'ADMIN',
+                              'text-sky-500 dark:text-sky-400': row.user_role_type === 'USER'
+                            }
+                          )}>
+                            {row.user_role_type === 'ADMIN' ? <UserRoundCog size={14}/> : <UserRound size={14}/>}{row.user_role_type}
+                          </div>
+                        </Cell>
+                        <Cell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant='ghost'
+                                className='data-[state=open]:bg-muted text-muted-foreground flex size-8'
+                                size='icon'
+                              >
+                                <EllipsisVertical />
+                                <span className='sr-only'>Open menu</span>
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align='end' className='w-32'>
+                              {/* <UserEditDialog
+                                user={row}
+                                onSave={handleUpdateUser}
+                                trigger={<DropdownMenuItem onSelect={(e) => e.preventDefault()}>수정</DropdownMenuItem>}
+                              />
+                              <UserEditDialog
+                                user={{...row, user_id: ''}}
+                                onSave={handleCreateUser}
+                                trigger={<DropdownMenuItem onSelect={(e) => e.preventDefault()}>복사</DropdownMenuItem>}
+                              /> */}
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                onSelect={() => openDeleteDialog(row)} // 수정된 부분
+                                className='text-destructive focus:text-destructive hover:!bg-destructive/20'
+                              >
+                                삭제
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </Cell>
+                      </Row>
+                    ))}
                   </Body>
                 </>
               )}
@@ -299,6 +207,30 @@ export default function UserTable({ value: users }: UserTableProps) {
         ) : (
           <Empty />
         )}
+        <Dialog open={delDialogOpen} onOpenChange={setDelDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>사용자 삭제</DialogTitle>
+              <DialogDescription>
+                정말 "{userToDelete?.user_name}" 사용자를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button 
+                variant='outline' 
+                onClick={() => {
+                  setDelDialogOpen(false);
+                  setUserToDelete(null);
+                }}
+              >
+                취소
+              </Button>
+              <Button variant='destructive' onClick={handleDeleteUser}>
+                삭제
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </CardContent>
     </Card>
   )

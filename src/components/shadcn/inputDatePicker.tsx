@@ -60,7 +60,7 @@ export function InputDatePicker({ value, onValueChange }: InputDatePickerProps) 
             }
           }}
         />
-        <Popover open={open} onOpenChange={setOpen}>
+        <Popover open={open} onOpenChange={setOpen} modal={true}>
           <PopoverTrigger asChild>
             <Button
               id="date-picker"
