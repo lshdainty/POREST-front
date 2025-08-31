@@ -1,14 +1,13 @@
-import { useState } from 'react';
 import { GetUsersResp, usePostUser, usePutUser, useDeleteUser } from '@/api/user';
 import { useTheme } from '@table-library/react-table-library/theme';
 import { Table, Header, HeaderRow, Body, Row, HeaderCell, Cell } from '@table-library/react-table-library/table';
 import UserEditDialog from '@/features/user/UserEditDialog';
+import UserDeleteDialog from '@/features/user/UserDeleteDialog';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Avatar, AvatarFallback } from '@/components/shadcn/avatar';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/shadcn/card';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/shadcn/dropdownMenu';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/shadcn/dialog';
 import { UserRoundCog, UserRound, EllipsisVertical } from 'lucide-react';
 import { Empty } from 'antd';
 import { cn } from '@/lib/utils';
@@ -22,8 +21,6 @@ export default function UserTable({ value: users }: UserTableProps) {
   const { mutate: postUser } = usePostUser();
   const { mutate: putUser } = usePutUser();
   const { mutate: deleteUser } = useDeleteUser();
-  const [delDialogOpen, setDelDialogOpen] = useState(false);
-  const [userToDelete, setUserToDelete] = useState<GetUsersResp | null>(null); // 추가
 
   const companyOptions = ['SK AX', 'DTOL', '인사이트온', '씨앤토트플러스', 'BigxData'];
   const departmentOptions = ['SKC', 'GMES', 'GSCM', 'CMP', 'OLIVE', 'MYDATA', 'TABLEAU', 'AOI'];
@@ -58,17 +55,8 @@ export default function UserTable({ value: users }: UserTableProps) {
     });
   };
 
-  const handleDeleteUser = () => {
-    if (userToDelete) {
-      // deleteUser(userToDelete.user_id); // 실제 삭제 로직
-      setDelDialogOpen(false);
-      setUserToDelete(null);
-    }
-  };
-
-  const openDeleteDialog = (user: GetUsersResp) => {
-    setUserToDelete(user);
-    setDelDialogOpen(true);
+  const handleDeleteUser = (id: string) => {
+    deleteUser(id);
   };
 
   return (
@@ -160,12 +148,11 @@ export default function UserTable({ value: users }: UserTableProps) {
                               'text-rose-500 dark:text-rose-400': row.user_role_type === 'ADMIN',
                               'text-sky-500 dark:text-sky-400': row.user_role_type === 'USER'
                             }
-                          )}>
-                            {row.user_role_type === 'ADMIN' ? <UserRoundCog size={14}/> : <UserRound size={14}/>}{row.user_role_type}
+                          )}>{row.user_role_type === 'ADMIN' ? <UserRoundCog size={14}/> : <UserRound size={14}/>}{row.user_role_type}
                           </div>
                         </Cell>
                         <Cell>
-                          <DropdownMenu>
+                          <DropdownMenu modal={false}>
                             <DropdownMenuTrigger asChild>
                               <Button
                                 variant='ghost'
@@ -177,7 +164,7 @@ export default function UserTable({ value: users }: UserTableProps) {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align='end' className='w-32'>
-                              {/* <UserEditDialog
+                              <UserEditDialog
                                 user={row}
                                 onSave={handleUpdateUser}
                                 trigger={<DropdownMenuItem onSelect={(e) => e.preventDefault()}>수정</DropdownMenuItem>}
@@ -186,14 +173,20 @@ export default function UserTable({ value: users }: UserTableProps) {
                                 user={{...row, user_id: ''}}
                                 onSave={handleCreateUser}
                                 trigger={<DropdownMenuItem onSelect={(e) => e.preventDefault()}>복사</DropdownMenuItem>}
-                              /> */}
+                              />
                               <DropdownMenuSeparator />
-                              <DropdownMenuItem
-                                onSelect={() => openDeleteDialog(row)} // 수정된 부분
-                                className='text-destructive focus:text-destructive hover:!bg-destructive/20'
-                              >
-                                삭제
-                              </DropdownMenuItem>
+                              <UserDeleteDialog
+                                user={row}
+                                onDelete={handleDeleteUser}
+                                trigger={
+                                  <DropdownMenuItem
+                                    onSelect={(e) => e.preventDefault()}
+                                    className='text-destructive focus:text-destructive hover:!bg-destructive/20'
+                                  >
+                                    삭제
+                                  </DropdownMenuItem>
+                                }
+                              />
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </Cell>
@@ -207,30 +200,6 @@ export default function UserTable({ value: users }: UserTableProps) {
         ) : (
           <Empty />
         )}
-        <Dialog open={delDialogOpen} onOpenChange={setDelDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>사용자 삭제</DialogTitle>
-              <DialogDescription>
-                정말 "{userToDelete?.user_name}" 사용자를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button 
-                variant='outline' 
-                onClick={() => {
-                  setDelDialogOpen(false);
-                  setUserToDelete(null);
-                }}
-              >
-                취소
-              </Button>
-              <Button variant='destructive' onClick={handleDeleteUser}>
-                삭제
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
       </CardContent>
     </Card>
   )
