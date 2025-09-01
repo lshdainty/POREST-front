@@ -12,6 +12,7 @@ import { UserRoundCog, UserRound, EllipsisVertical } from 'lucide-react';
 import { Empty } from 'antd';
 import { cn } from '@/lib/utils';
 import dayjs from 'dayjs';
+import { companyOptions, departmentOptions } from '@/lib/constants';
 
 interface UserTableProps {
   value: GetUsersResp[];
@@ -21,9 +22,6 @@ export default function UserTable({ value: users }: UserTableProps) {
   const { mutate: postUser } = usePostUser();
   const { mutate: putUser } = usePutUser();
   const { mutate: deleteUser } = useDeleteUser();
-
-  const companyOptions = ['SK AX', 'DTOL', '인사이트온', '씨앤토트플러스', 'BigxData'];
-  const departmentOptions = ['SKC', 'GMES', 'GSCM', 'CMP', 'OLIVE', 'MYDATA', 'TABLEAU', 'AOI'];
 
   const theme = useTheme([{
     Table: `--data-table-library_grid-template-columns: minmax(120px, 11%) minmax(100px, 11%) minmax(200px, 18%) minmax(150px, 14%) minmax(120px, 11%) minmax(120px, 11%) minmax(90px, 10%) minmax(100px, 11%) minmax(100px, 11%) minmax(60px, 4%) !important;`,
@@ -70,8 +68,10 @@ export default function UserTable({ value: users }: UserTableProps) {
                 user_name: '',
                 user_email: '',
                 user_birth: dayjs().format('YYYY-MM-DD'),
-                user_company_name: companyOptions[0],
-                user_department_name: departmentOptions[0],
+                user_company_name: companyOptions[0].company_name,
+                user_company_type: companyOptions[0].company_type,
+                user_department_name: departmentOptions[0].department_name,
+                user_department_type: departmentOptions[0].department_type,
                 lunar_yn: 'N',
                 user_work_time: '9 ~ 6',
                 user_role_type: 'USER',

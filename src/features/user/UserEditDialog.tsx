@@ -1,20 +1,20 @@
-
 import { useState } from 'react';
 import { GetUsersResp } from '@/api/user';
-import { Button } from '@/components/shadcn/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose, DialogTrigger } from '@/components/shadcn/dialog';
 import { Input } from '@/components/shadcn/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
+import { Button } from '@/components/shadcn/button';
 import { Separator } from '@/components/shadcn/separator';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
-import { User as UserIcon, Mail, Cake, Briefcase, Clock, Shield, Building2, UserRoundCog, UserRound } from 'lucide-react';
 import { InputDatePicker } from '@/components/shadcn/inputDatePicker';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/shadcn/form';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose, DialogTrigger } from '@/components/shadcn/dialog';
+import { User as UserIcon, Mail, Cake, Briefcase, Clock, Shield, Building2, UserRoundCog, UserRound, Moon } from 'lucide-react';
 import dayjs from 'dayjs';
 import { cn } from '@/lib/utils';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/shadcn/form';
+import { companyOptions, departmentOptions } from '@/lib/constants';
 
 const formSchema = z.object({
   user_name: z.string().min(1, { message: '이름을 입력해주세요.' }),
@@ -23,9 +23,12 @@ const formSchema = z.object({
   user_birth: z.string().min(1, { message: '생년월일을 입력해주세요.' }),
   user_company_type: z.string().min(1, { message: '회사를 선택해주세요.' }),
   user_department_type: z.string().min(1, { message: '부서를 선택해주세요.' }),
+  lunar_yn: z.string().min(1, { message: '음력여부를 선택해주세요.' }),
   user_work_time: z.string().min(1, { message: '유연근무시간을 선택해주세요.' }),
   user_role_type: z.string().min(1, { message: '권한을 선택해주세요.' }),
 });
+
+type UserFormValues = z.infer<typeof formSchema>;
 
 interface UserEditDialogProps {
   user: GetUsersResp;
@@ -36,34 +39,21 @@ interface UserEditDialogProps {
 export default function UserEditDialog({ user, trigger, onSave }: UserEditDialogProps) {
   const [open, setOpen] = useState(false);
 
-  const form = useForm<GetUsersResp>({
+  const form = useForm<UserFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: user,
+    defaultValues: {
+      ...user,
+      user_company_type: user.user_company_type || companyOptions[0].company_type,
+      user_department_type: user.user_department_type || departmentOptions[0].department_type,
+      lunar_yn: user.lunar_yn || 'N',
+    },
   });
 
-  const onSubmit = (values: GetUsersResp) => {
-    onSave(values);
+  const onSubmit = (values: UserFormValues) => {
+    onSave({ ...user, ...values });
     setOpen(false);
   };
 
-  const companyOptions = [
-    { "company_type": "SKAX", "company_name": "SK AX" },
-    { "company_type": "DTOL", "company_name": "디투엘" },
-    { "company_type": "INSIGHTON", "company_name": "인사이트온" },
-    { "company_type": "BIGXDATA", "company_name": "BigxData" },
-    { "company_type": "CNTHOTH", "company_name": "씨앤토트플러스" },
-    { "company_type": "AGS", "company_name": "AGS" }
-  ];
-  const departmentOptions = [
-    { "department_type": "SKC", "department_name": "SKC" },
-    { "department_type": "GMES", "department_name": "G-MES" },
-    { "department_type": "GSCM", "department_name": "G-SCM" },
-    { "department_type": "CMP", "department_name": "CMP MES" },
-    { "department_type": "OLIVE", "department_name": "OLIVE" },
-    { "department_type": "MYDATA", "department_name": "myDATA" },
-    { "department_type": "TABLEAU", "department_name": "Tableau" },
-    { "department_type": "AOI", "department_name": "AOI" }
-  ];
   const workTimeOptions = [
     { value: '8 ~ 5', className: 'text-rose-500 dark:text-rose-400' },
     { value: '9 ~ 6', className: 'text-sky-500 dark:text-sky-400' },
@@ -113,14 +103,14 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
                   render={({ field }) => (
                     <FormItem>
                       <div className='flex items-center'>
-                        <FormLabel className='font-semibold w-24 shrink-0'><UserIcon className='mr-3 h-4 w-4 text-muted-foreground inline-block' />아이디</FormLabel>
+                        <FormLabel className='font-semibold w-32 shrink-0'><UserIcon className='h-4 w-4 text-muted-foreground inline-block' />아이디</FormLabel>
                         <div className='flex-grow'>
                           <FormControl>
                             <Input {...field} disabled={user.user_id !== ''} className='w-full' />
                           </FormControl>
                         </div>
                       </div>
-                      <FormMessage className='ml-28' />
+                      <FormMessage className='ml-32' />
                     </FormItem>
                   )}
                 />
@@ -130,14 +120,14 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
                   render={({ field }) => (
                     <FormItem>
                       <div className='flex items-center'>
-                        <FormLabel className='font-semibold w-24 shrink-0'><Mail className='mr-3 h-4 w-4 text-muted-foreground inline-block' />이메일</FormLabel>
+                        <FormLabel className='font-semibold w-32 shrink-0'><Mail className='h-4 w-4 text-muted-foreground inline-block' />이메일</FormLabel>
                         <div className='flex-grow'>
                           <FormControl>
                             <Input {...field} className='w-full' />
                           </FormControl>
                         </div>
                       </div>
-                      <FormMessage className='ml-28' />
+                      <FormMessage className='ml-32' />
                     </FormItem>
                   )}
                 />
@@ -147,7 +137,7 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
                   render={({ field }) => (
                     <FormItem>
                       <div className='flex items-center'>
-                        <FormLabel className='font-semibold w-24 shrink-0'><Cake className='mr-3 h-4 w-4 text-muted-foreground inline-block' />생년월일</FormLabel>
+                        <FormLabel className='font-semibold w-32 shrink-0'><Cake className='h-4 w-4 text-muted-foreground inline-block' />생년월일</FormLabel>
                         <div className='flex-grow'>
                           <FormControl>
                             <div className='w-full'>
@@ -159,7 +149,7 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
                           </FormControl>
                         </div>
                       </div>
-                      <FormMessage className='ml-28' />
+                      <FormMessage className='ml-32' />
                     </FormItem>
                   )}
                 />
@@ -169,7 +159,7 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
                   render={({ field }) => (
                     <FormItem>
                       <div className='flex items-center'>
-                        <FormLabel className='font-semibold w-24 shrink-0'><Building2 className='mr-3 h-4 w-4 text-muted-foreground inline-block' />회사</FormLabel>
+                        <FormLabel className='font-semibold w-32 shrink-0'><Building2 className='h-4 w-4 text-muted-foreground inline-block' />회사</FormLabel>
                         <div className='flex-grow'>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
@@ -183,7 +173,7 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
                           </Select>
                         </div>
                       </div>
-                      <FormMessage className='ml-28' />
+                      <FormMessage className='ml-32' />
                     </FormItem>
                   )}
                 />
@@ -193,7 +183,7 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
                   render={({ field }) => (
                     <FormItem>
                       <div className='flex items-center'>
-                        <FormLabel className='font-semibold w-24 shrink-0'><Briefcase className='mr-3 h-4 w-4 text-muted-foreground inline-block' />부서</FormLabel>
+                        <FormLabel className='font-semibold w-32 shrink-0'><Briefcase className='h-4 w-4 text-muted-foreground inline-block' />부서</FormLabel>
                         <div className='flex-grow'>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
@@ -207,7 +197,32 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
                           </Select>
                         </div>
                       </div>
-                      <FormMessage className='ml-28' />
+                      <FormMessage className='ml-32' />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="lunar_yn"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className='flex items-center'>
+                        <FormLabel className='font-semibold w-32 shrink-0'><Moon className='h-4 w-4 text-muted-foreground inline-block' />음력여부</FormLabel>
+                        <div className='flex-grow'>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger className='w-full'>
+                                <SelectValue placeholder='음력여부 선택' />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value='Y'>Y</SelectItem>
+                              <SelectItem value='N'>N</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      <FormMessage className='ml-32' />
                     </FormItem>
                   )}
                 />
@@ -217,7 +232,7 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
                   render={({ field }) => (
                     <FormItem>
                       <div className='flex items-center'>
-                        <FormLabel className='font-semibold w-24 shrink-0'><Clock className='mr-3 h-4 w-4 text-muted-foreground inline-block' />유연근무시간</FormLabel>
+                        <FormLabel className='font-semibold w-32 shrink-0'><Clock className='h-4 w-4 text-muted-foreground inline-block' />유연근무시간</FormLabel>
                         <div className='flex-grow'>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
@@ -231,7 +246,7 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
                           </Select>
                         </div>
                       </div>
-                      <FormMessage className='ml-28' />
+                      <FormMessage className='ml-32' />
                     </FormItem>
                   )}
                 />
@@ -241,7 +256,7 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
                   render={({ field }) => (
                     <FormItem>
                       <div className='flex items-center'>
-                        <FormLabel className='font-semibold w-24 shrink-0'><Shield className='mr-3 h-4 w-4 text-muted-foreground inline-block' />권한</FormLabel>
+                        <FormLabel className='font-semibold w-32 shrink-0'><Shield className='h-4 w-4 text-muted-foreground inline-block' />권한</FormLabel>
                         <div className='flex-grow'>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
@@ -265,7 +280,7 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
                           </Select>
                         </div>
                       </div>
-                      <FormMessage className='ml-28' />
+                      <FormMessage className='ml-32' />
                     </FormItem>
                   )}
                 />
