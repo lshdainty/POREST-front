@@ -7,14 +7,14 @@ import {
   HeaderCell,
   Cell
 } from '@table-library/react-table-library/table';
-import { useTheme } from "@table-library/react-table-library/theme";
+import { useTheme } from '@table-library/react-table-library/theme';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/components/shadcn/card"
-import { Skeleton } from "@/components/shadcn/skeleton"
+} from '@/components/shadcn/card'
+import { Skeleton } from '@/components/shadcn/skeleton'
 import { cn } from '@/lib/utils';
 
 export default function DuesTableSkeleton() {
@@ -26,13 +26,13 @@ export default function DuesTableSkeleton() {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className='flex flex-row items-center justify-between'>
         <CardTitle>
-          <Skeleton className="h-6 w-32" />
+          <Skeleton className='h-6 w-32' />
         </CardTitle>
-        <div className="flex gap-2">
-          <Skeleton className="h-8 w-16" />
-          <Skeleton className="h-8 w-16" />
+        <div className='flex gap-2'>
+          <Skeleton className='h-8 w-16' />
+          <Skeleton className='h-8 w-16' />
         </div>
       </CardHeader>
       <CardContent>
@@ -67,13 +67,13 @@ export default function DuesTableSkeleton() {
                           i !== tableList.length - 1 ? '[&_td]:!border-b' : '[&_td]:!border-b-0'
                         )}
                       >
-                        <Cell><Skeleton className="h-5 w-full" /></Cell>
-                        <Cell><Skeleton className="h-5 w-full" /></Cell>
-                        <Cell><Skeleton className="h-5 w-full" /></Cell>
-                        <Cell><Skeleton className="h-5 w-full" /></Cell>
-                        <Cell><Skeleton className="h-5 w-full" /></Cell>
-                        <Cell><Skeleton className="h-5 w-full" /></Cell>
-                        <Cell><Skeleton className="h-8 w-8" /></Cell>
+                        <Cell><Skeleton className='h-5 w-full' /></Cell>
+                        <Cell><Skeleton className='h-5 w-full' /></Cell>
+                        <Cell><Skeleton className='h-5 w-full' /></Cell>
+                        <Cell><Skeleton className='h-5 w-full' /></Cell>
+                        <Cell><Skeleton className='h-5 w-full' /></Cell>
+                        <Cell><Skeleton className='h-5 w-full' /></Cell>
+                        <Cell><Skeleton className='h-8 w-8' /></Cell>
                       </Row>
                     ))}
                   </Body>
@@ -81,15 +81,15 @@ export default function DuesTableSkeleton() {
               )}
             </Table>
           </div>
-          <div className="flex items-center justify-between p-4">
-            <Skeleton className="h-5 w-20" />
-            <div className="flex items-center space-x-6 lg:space-x-8">
-              <Skeleton className="h-5 w-24" />
-              <div className="flex items-center space-x-2">
-                <Skeleton className="h-8 w-8" />
-                <Skeleton className="h-8 w-8" />
-                <Skeleton className="h-8 w-8" />
-                <Skeleton className="h-8 w-8" />
+          <div className='flex items-center justify-between p-4'>
+            <Skeleton className='h-5 w-20' />
+            <div className='flex items-center space-x-6 lg:space-x-8'>
+              <Skeleton className='h-5 w-24' />
+              <div className='flex items-center space-x-2'>
+                <Skeleton className='h-8 w-8' />
+                <Skeleton className='h-8 w-8' />
+                <Skeleton className='h-8 w-8' />
+                <Skeleton className='h-8 w-8' />
               </div>
             </div>
           </div>

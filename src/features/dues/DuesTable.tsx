@@ -8,10 +8,10 @@ import {
   HeaderCell,
   Cell
 } from '@table-library/react-table-library/table';
-import { useTheme } from "@table-library/react-table-library/theme";
+import { useTheme } from '@table-library/react-table-library/theme';
 import { useGetYearDues, usePostDues, usePutDues, useDeleteDues } from '@/api/dues';
 import { Button } from '@/components/shadcn/button';
-import { Badge } from "@/components/shadcn/badge";
+import { Badge } from '@/components/shadcn/badge';
 import { Input } from '@/components/shadcn/input';
 import { InputDatePicker } from '@/components/shadcn/inputDatePicker';
 import {
@@ -27,14 +27,14 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/shadcn/select";
+} from '@/components/shadcn/select';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/components/shadcn/card"
-import { EllipsisVertical, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+} from '@/components/shadcn/card'
+import { EllipsisVertical, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Pencil, Copy, Trash2, Save } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import dayjs from 'dayjs';
 
@@ -297,9 +297,9 @@ export default function DuesTable() {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className='flex flex-row items-center justify-between'>
         <CardTitle>입출금 내역</CardTitle>
-        <div className="flex gap-2">
+        <div className='flex gap-2'>
           <Button className='text-sm h-8' onClick={handleAdd}>추가</Button>
           <Button className='text-sm h-8' variant='outline' onClick={handleSave}>저장</Button>
         </div>
@@ -387,7 +387,7 @@ export default function DuesTable() {
                                 onValueChange={(value) => handleSelectChange(value, id, 'dues_calc')}
                               >
                                 <SelectTrigger>
-                                  <SelectValue placeholder="유형" />
+                                  <SelectValue placeholder='유형' />
                                 </SelectTrigger>
                                 <SelectContent>
                                   <SelectItem value='PLUS'>입금</SelectItem>
@@ -405,31 +405,37 @@ export default function DuesTable() {
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <Button
-                                  variant="ghost"
-                                  className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-                                  size="icon"
+                                  variant='ghost'
+                                  className='data-[state=open]:bg-muted text-muted-foreground flex size-8'
+                                  size='icon'
                                 >
                                   <EllipsisVertical />
-                                  <span className="sr-only">Open menu</span>
+                                  <span className='sr-only'>Open menu</span>
                                 </Button>
                               </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end" className="w-32">
+                              <DropdownMenuContent align='end' className='w-32'>
                                 {isEditing ? (
-                                  <DropdownMenuItem onClick={() => setEditingRow(null)}>Save</DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => setEditingRow(null)}>
+                                    <Save className='h-4 w-4' />
+                                    <span>저장</span>
+                                  </DropdownMenuItem>
                                 ) : (
-                                  <DropdownMenuItem onClick={() => handleEdit(id)}>Edit</DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleEdit(id)}>
+                                    <Pencil className='h-4 w-4' />
+                                    <span>수정</span>
+                                  </DropdownMenuItem>
                                 )}
-                                <DropdownMenuItem
-                                  onClick={() => handleCopy(row)}
-                                >
-                                  Copy
+                                <DropdownMenuItem onClick={() => handleCopy(row)}>
+                                  <Copy className='h-4 w-4' />
+                                  <span>복사</span>
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
-                                  className="text-destructive focus:text-destructive hover:!bg-destructive/20"
+                                  className='text-destructive focus:text-destructive hover:!bg-destructive/20'
                                   onClick={() => handleDelete(id)}
                                 >
-                                  Delete
+                                  <Trash2 className='h-4 w-4' />
+                                  <span>삭제</span>
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
@@ -442,52 +448,52 @@ export default function DuesTable() {
               )}
             </Table>
           </div>
-          <div className="flex items-center justify-between p-4">
-            <div className="text-sm text-muted-foreground">
+          <div className='flex items-center justify-between p-4'>
+            <div className='text-sm text-muted-foreground'>
               {tableData.length} row(s)
             </div>
-            <div className="flex items-center space-x-6 lg:space-x-8">
-              <div className="flex items-center space-x-2">
-                <p className="text-sm font-medium">
+            <div className='flex items-center space-x-6 lg:space-x-8'>
+              <div className='flex items-center space-x-2'>
+                <p className='text-sm font-medium'>
                   Page {currentPage} of {totalPages}
                 </p>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className='flex items-center space-x-2'>
                 <Button
-                  variant="outline"
-                  className="h-8 w-8 p-0"
+                  variant='outline'
+                  className='h-8 w-8 p-0'
                   onClick={() => setCurrentPage(1)}
                   disabled={currentPage <= 1}
                 >
-                  <span className="sr-only">Go to first page</span>
-                  <ChevronsLeft className="h-4 w-4" />
+                  <span className='sr-only'>Go to first page</span>
+                  <ChevronsLeft className='h-4 w-4' />
                 </Button>
                 <Button
-                  variant="outline"
-                  className="h-8 w-8 p-0"
+                  variant='outline'
+                  className='h-8 w-8 p-0'
                   onClick={() => setCurrentPage(currentPage - 1)}
                   disabled={currentPage <= 1}
                 >
-                  <span className="sr-only">Go to previous page</span>
-                  <ChevronLeft className="h-4 w-4" />
+                  <span className='sr-only'>Go to previous page</span>
+                  <ChevronLeft className='h-4 w-4' />
                 </Button>
                 <Button
-                  variant="outline"
-                  className="h-8 w-8 p-0"
+                  variant='outline'
+                  className='h-8 w-8 p-0'
                   onClick={() => setCurrentPage(currentPage + 1)}
                   disabled={currentPage >= totalPages}
                 >
-                  <span className="sr-only">Go to next page</span>
-                  <ChevronRight className="h-4 w-4" />
+                  <span className='sr-only'>Go to next page</span>
+                  <ChevronRight className='h-4 w-4' />
                 </Button>
                 <Button
-                  variant="outline"
-                  className="h-8 w-8 p-0"
+                  variant='outline'
+                  className='h-8 w-8 p-0'
                   onClick={() => setCurrentPage(totalPages)}
                   disabled={currentPage >= totalPages}
                 >
-                  <span className="sr-only">Go to last page</span>
-                  <ChevronsRight className="h-4 w-4" />
+                  <span className='sr-only'>Go to last page</span>
+                  <ChevronsRight className='h-4 w-4' />
                 </Button>
               </div>
             </div>

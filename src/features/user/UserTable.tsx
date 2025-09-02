@@ -8,7 +8,7 @@ import { Button } from '@/components/shadcn/button';
 import { Avatar, AvatarFallback } from '@/components/shadcn/avatar';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/shadcn/card';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/shadcn/dropdownMenu';
-import { UserRoundCog, UserRound, EllipsisVertical } from 'lucide-react';
+import { UserRoundCog, UserRound, EllipsisVertical, Pencil, Copy, Trash2 } from 'lucide-react';
 import { Empty } from 'antd';
 import { cn } from '@/lib/utils';
 import dayjs from 'dayjs';
@@ -167,12 +167,22 @@ export default function UserTable({ value: users }: UserTableProps) {
                               <UserEditDialog
                                 user={row}
                                 onSave={handleUpdateUser}
-                                trigger={<DropdownMenuItem onSelect={(e) => e.preventDefault()}>수정</DropdownMenuItem>}
+                                trigger={
+                                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                    <Pencil className="h-4 w-4" />
+                                    <span>수정</span>
+                                  </DropdownMenuItem>
+                                }
                               />
                               <UserEditDialog
                                 user={{...row, user_id: ''}}
                                 onSave={handleCreateUser}
-                                trigger={<DropdownMenuItem onSelect={(e) => e.preventDefault()}>복사</DropdownMenuItem>}
+                                trigger={
+                                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                    <Copy className="h-4 w-4" />
+                                    <span>복사</span>
+                                  </DropdownMenuItem>
+                                }
                               />
                               <DropdownMenuSeparator />
                               <UserDeleteDialog
@@ -183,7 +193,8 @@ export default function UserTable({ value: users }: UserTableProps) {
                                     onSelect={(e) => e.preventDefault()}
                                     className='text-destructive focus:text-destructive hover:!bg-destructive/20'
                                   >
-                                    삭제
+                                    <Trash2 className="h-4 w-4" />
+                                    <span>삭제</span>
                                   </DropdownMenuItem>
                                 }
                               />

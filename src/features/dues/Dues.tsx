@@ -19,11 +19,11 @@ export default function Dues() {
   const userBirthDuesCombinedLoading = usersBirthDuesLoading || usersLoading;
 
   return (
-    <div className="p-4 sm:p-6 md:p-8">
-      <div className="mb-6">
+    <div className='p-4 sm:p-6 md:p-8'>
+      <div className='mb-6'>
         {totalDuesCombinedLoading ? <TotalDuesSkeleton /> : <TotalDues />}
       </div>
-      <div className="mb-6">
+      <div className='mb-6'>
         {userBirthDuesCombinedLoading ? <UserBirthDuesSkeleton /> : <UserBirthDues />}
       </div>
       {yearDuesLoading ? <DuesTableSkeleton /> : <DuesTable />}
