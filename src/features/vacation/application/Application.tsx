@@ -1,7 +1,7 @@
-export default function Work() {
+export default function Application() {
   return (
     <div className='flex w-full h-full p-[10px]'>
-      <h1>work page</h1>
+      <h1>application page</h1>
     </div>
   );
 }

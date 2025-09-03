@@ -48,9 +48,9 @@ export function DynamicBreadcrumb({
   };
 
   const parentPathToDefaultChild: Record<string, string> = {
-    '/work': '/work/daily_report',
+    '/work': '/work/report',
     '/culture': '/culture/dues',
-    '/admin': '/admin/user',
+    '/admin': '/admin/users',
   };
 
   const generateBreadcrumbs = (): BreadcrumbSegment[] => {

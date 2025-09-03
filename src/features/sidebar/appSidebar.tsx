@@ -1,21 +1,20 @@
 import {
   Home,
   Briefcase,
-  Cake,
+  HeartHandshake,
   ShieldUser,
   LayoutDashboard,
   CalendarDays,
   CircleDollarSign,
   Scale,
   Users,
-  Plane,
   ShieldCheck,
   CalendarCog,
   TreePalm,
   MessageSquarePlus,
   ChartNoAxesCombined,
   NotebookPen,
-  ChartGantt
+  ChartGantt,
 } from 'lucide-react';
 
 import {
@@ -65,7 +64,7 @@ const navDatas = [
   {
     title: 'Culture',
     url: '/culture',
-    icon: Cake,
+    icon:   HeartHandshake,
     items: [
       { title: 'Dues', url: '/culture/dues', icon: CircleDollarSign },
       { title: 'Rule', url: '/culture/rule', icon: Scale },
@@ -76,8 +75,8 @@ const navDatas = [
     url: '/admin',
     icon: ShieldUser,
     items: [
-      { title: 'User', url: '/admin/user', icon: Users },
-      { title: 'Vacation', url: '/admin/vacation', icon: Plane },
+      { title: 'Users', url: '/admin/users', icon: Users },
+      { title: 'Vacation', url: '/admin/vacation', icon: TreePalm },
       { title: 'Authority', url: '/admin/authority', icon: ShieldCheck },
       { title: 'Holiday', url: '/admin/holiday', icon: CalendarCog },
     ],

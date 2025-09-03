@@ -4,15 +4,23 @@ import { useToken } from '@/hooks/useToken';
 
 import Login from '@/features/login/login';
 import Layout from '@/features/layout/layout';
-import Dashboard from '@/features/dashboard/Dashboard';
-import Calendar from '@/features/calendar/Calendar';
-import Work from '@/features/work/Work';
-import Dues from '@/features/dues/Dues';
-import Rule from '@/features/rule/Rule';
-import User from '@/features/user/User';
-import Vacation from '@/features/vacation/Vacation';
-import Authority from '@/features/authority/Authority';
-import Holiday from '@/features/holiday/Holiday';
+
+import Dashboard from '@/features/home/dashboard/Dashboard';
+import Calendar from '@/features/home/calendar/Calendar';
+
+import History from '@/features/vacation/history/History';
+import Application from '@/features/vacation/application/Application';
+
+import Dues from '@/features/culture/dues/Dues';
+import Rule from '@/features/culture/rule/Rule';
+
+import Report from '@/features/work/report/Report';
+import Schedule from '@/features/work/schedule/Schedule';
+
+import Users from '@/features/admin/users/Users';
+import Vacation from '@/features/admin/vacation/Vacation';
+import Authority from '@/features/admin/authority/Authority';
+import Holiday from '@/features/admin/holiday/Holiday';
 
 import NotFound from '@/components/notFound/NotFound';
 
@@ -39,13 +47,13 @@ const Router = () => {
         </Route>
         {/* 휴가 page */}
         <Route path='vacation'>
-          <Route path='history' element={<></>} />
-          <Route path='application' element={<></>} />
+          <Route path='history' element={<History/>} />
+          <Route path='application' element={<Application/>} />
         </Route>
-        {/* 작업 일지 page */}
+        {/* 업무 page */}
         <Route path='work'>
-          <Route path='report' element={<Work/>} />
-          <Route path='schedule' element={<></>} />
+          <Route path='report' element={<Report/>} />
+          <Route path='schedule' element={<Schedule/>} />
         </Route>
         {/* 조직 문화 page */}
         <Route path='culture'>
@@ -54,7 +62,7 @@ const Router = () => {
         </Route>
         {/* 관리자 page */}
         <Route path='admin'>
-          <Route path='user' element={<User/>} />
+          <Route path='users' element={<Users/>} />
           <Route path='vacation' element={<Vacation/>} />
           <Route path='authority' element={<Authority/>} />
           <Route path='holiday' element={<Holiday/>} />

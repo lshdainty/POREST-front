@@ -1,10 +1,10 @@
 import { useGetUsers } from '@/api/user';
-import UserTable from '@/features/user/UserTable';
-import UserTableSkeleton from '@/features/user/UserTableSkeleton';
-import UserCompanyCard from '@/features/user/UserCompanyCard';
-import UserCompanyCardSkeleton from '@/features/user/UserCompanyCardSkeleton';
+import UserTable from '@/features/admin/users/UserTable';
+import UserTableSkeleton from '@/features/admin/users/UserTableSkeleton';
+import UserCompanyCard from '@/features/admin/users/UserCompanyCard';
+import UserCompanyCardSkeleton from '@/features/admin/users/UserCompanyCardSkeleton';
 
-export default function User() {
+export default function Users() {
   const { data: users, isLoading: usersLoading } = useGetUsers();
 
   if (usersLoading) {

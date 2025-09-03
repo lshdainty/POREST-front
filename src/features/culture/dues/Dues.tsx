@@ -1,8 +1,8 @@
 import { useGetYearOperationDues, useGetMonthBirthDues, useGetUsersMonthBirthDues, useGetYearDues } from '@/api/dues';
 import { useGetUsers } from '@/api/user';
-import TotalDues from '@/features/dues/TotalDues';
-import UserBirthDues from '@/features/dues/UserBirthDues';
-import DuesTable from '@/features/dues/DuesTable';
+import TotalDues from '@/features/culture/dues/TotalDues';
+import UserBirthDues from '@/features/culture/dues/UserBirthDues';
+import DuesTable from '@/features/culture/dues/DuesTable';
 import TotalDuesSkeleton from './TotalDuesSkeleton';
 import UserBirthDuesSkeleton from './UserBirthDuesSkeleton';
 import DuesTableSkeleton from './DuesTableSkeleton';
