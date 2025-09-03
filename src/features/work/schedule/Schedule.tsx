@@ -1,133 +1,196 @@
+import React, { useState } from 'react';
 import {
   GanttProvider,
+  GanttSidebar,
+  GanttSidebarItem,
+  GanttSidebarGroup,
   GanttTimeline,
   GanttHeader,
-  GanttSidebar,
   GanttFeatureList,
-  GanttSidebarGroup,
-  GanttFeature,
-  GanttStatus,
+  GanttFeatureListGroup,
   GanttFeatureRow,
+  GanttToday,
+  GanttMarker,
+  type GanttFeature,
+  type GanttStatus,
+  type GanttMarkerProps,
 } from '@/components/shadcn-io/gantt';
-import groupBy from 'lodash.groupby';
 
-// Mock Data
-const statuses: GanttStatus[] = [
-  { id: '1', name: 'Working', color: '#10B981' },
-  { id: '2', name: 'On Vacation', color: '#F59E0B' },
-  { id: '3', name: 'Sick Leave', color: '#EF4444' },
+// 목업 데이터
+const mockStatuses: GanttStatus[] = [
+  { id: 'planning', name: '계획', color: '#3b82f6' },
+  { id: 'in-progress', name: '진행중', color: '#f59e0b' },
+  { id: 'completed', name: '완료', color: '#10b981' },
+  { id: 'blocked', name: '차단됨', color: '#ef4444' },
 ];
 
-const users = [
-  { id: 'user-1', name: 'John Doe' },
-  { id: 'user-2', name: 'Jane Smith' },
-  { id: 'user-3', name: 'Peter Jones' },
-  { id: 'user-4', name: 'Mary Williams' },
-];
-
-const workSchedules: GanttFeature[] = [
-  // John Doe
+const today = new Date();
+const mockFeatures: GanttFeature[] = [
   {
-    id: 'schedule-1',
-    name: 'Morning Shift',
-    startAt: new Date('2025-09-03T09:00:00'),
-    endAt: new Date('2025-09-03T12:00:00'),
-    status: statuses[0],
-    lane: 'John Doe',
+    id: 'morning-standup',
+    name: '데일리 스탠드업',
+    startAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 9, 0),
+    endAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 9, 30),
+    status: mockStatuses[1],
+    lane: 'team-meetings',
   },
   {
-    id: 'schedule-2',
-    name: 'Afternoon Shift',
-    startAt: new Date('2025-09-03T13:00:00'),
-    endAt: new Date('2025-09-03T18:00:00'),
-    status: statuses[0],
-    lane: 'John Doe',
+    id: 'code-review',
+    name: '코드 리뷰',
+    startAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 10, 0),
+    endAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 11, 30),
+    status: mockStatuses[0],
+    lane: 'development',
   },
   {
-    id: 'schedule-9',
-    name: 'Morning Shift',
-    startAt: new Date('2025-09-04T09:00:00'),
-    endAt: new Date('2025-09-04T12:00:00'),
-    status: statuses[0],
-    lane: 'John Doe',
-  },
-  // Jane Smith
-  {
-    id: 'schedule-3',
-    name: 'Full Day Shift',
-    startAt: new Date('2025-09-03T09:00:00'),
-    endAt: new Date('2025-09-03T17:00:00'),
-    status: statuses[0],
-    lane: 'Jane Smith',
+    id: 'lunch-break',
+    name: '점심시간',
+    startAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 12, 0),
+    endAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 13, 0),
+    status: mockStatuses[2],
+    lane: 'break',
   },
   {
-    id: 'schedule-4',
-    name: 'Vacation',
-    startAt: new Date('2025-09-04T00:00:00'),
-    endAt: new Date('2025-09-05T23:59:59'),
-    status: statuses[1],
-    lane: 'Jane Smith',
-  },
-  // Peter Jones
-  {
-    id: 'schedule-5',
-    name: 'Morning Shift',
-    startAt: new Date('2025-09-03T08:00:00'),
-    endAt: new Date('2025-09-03T12:00:00'),
-    status: statuses[0],
-    lane: 'Peter Jones',
-  },
-  {
-    id: 'schedule-6',
-    name: 'Sick Leave',
-    startAt: new Date('2025-09-04T00:00:00'),
-    endAt: new Date('2025-09-04T23:59:59'),
-    status: statuses[2],
-    lane: 'Peter Jones',
-  },
-  // Mary Williams
-  {
-    id: 'schedule-7',
-    name: 'Night Shift',
-    startAt: new Date('2025-09-03T22:00:00'),
-    endAt: new Date('2025-09-04T06:00:00'),
-    status: statuses[0],
-    lane: 'Mary Williams',
-  },
-  {
-    id: 'schedule-8',
-    name: 'Night Shift',
-    startAt: new Date('2025-09-04T22:00:00'),
-    endAt: new Date('2025-09-05T06:00:00'),
-    status: statuses[0],
-    lane: 'Mary Williams',
+    id: 'feature-development',
+    name: '신규 기능 개발',
+    startAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 14, 0),
+    endAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 17, 0),
+    status: mockStatuses[1],
+    lane: 'development',
   },
 ];
 
-export default function Schedule() {
-  const groupedSchedules = groupBy(workSchedules, 'lane');
+const mockMarkers: GanttMarkerProps[] = [
+  {
+    id: 'work-start',
+    date: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 9, 0),
+    label: '업무 시작',
+  },
+  {
+    id: 'lunch-time',
+    date: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 12, 0),
+    label: '점심시간',
+  },
+];
+
+const Schedule: React.FC = () => {
+  const [features, setFeatures] = useState<GanttFeature[]>(mockFeatures);
+  const [markers, setMarkers] = useState<GanttMarkerProps[]>(mockMarkers);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  const groupedFeatures = features.reduce((acc, feature) => {
+    const lane = feature.lane || 'default';
+    if (!acc[lane]) acc[lane] = [];
+    acc[lane].push(feature);
+    return acc;
+  }, {} as Record<string, GanttFeature[]>);
+
+  const handleFeatureMove = (id: string, startAt: Date, endAt: Date | null) => {
+    setFeatures(prev => prev.map(feature => 
+      feature.id === id 
+        ? { ...feature, startAt, endAt: endAt || feature.endAt }
+        : feature
+    ));
+  };
+
+  const handleAddItem = (date: Date) => {
+    const newFeature: GanttFeature = {
+      id: `new-task-${Date.now()}`,
+      name: '새 작업',
+      startAt: date,
+      endAt: new Date(date.getTime() + 60 * 60 * 1000),
+      status: mockStatuses[0],
+      lane: 'development',
+    };
+    setFeatures(prev => [...prev, newFeature]);
+  };
+
+  const handleRemoveMarker = (id: string) => {
+    setMarkers(prev => prev.filter(marker => marker.id !== id));
+  };
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Work Schedule</h1>
-      <GanttProvider range="daily" zoom={100}>
-        <GanttSidebar>
-          {users.map(user => (
-            <GanttSidebarGroup key={user.id} name={user.name} />
-          ))}
-        </GanttSidebar>
-        <GanttTimeline>
-          <GanttHeader />
-          <GanttFeatureList>
-            {users.map(user => (
-              <GanttFeatureRow
-                features={groupedSchedules[user.name] || []}
-                key={user.id}
+    // Layout 구조에 맞게 높이 계산: 100vh - 헤더 높이
+    <div 
+      className="flex flex-col w-full overflow-hidden"
+      style={{
+        height: 'calc(100vh - var(--header-height))', // 헤더 높이 제외
+        maxHeight: 'calc(100vh - var(--header-height))',
+      }}
+    >
+      {/* 페이지 헤더 */}
+      <div className="flex-shrink-0 p-4 bg-muted/50 border-b">
+        <h1 className="text-xl font-bold">시간별 Gantt Chart</h1>
+        <p className="text-sm text-muted-foreground">
+          {selectedDate.toLocaleDateString('ko-KR')} - 00:00 ~ 23:59
+        </p>
+      </div>
+      
+      {/* Gantt Chart 컨테이너 - 나머지 공간 모두 사용 */}
+      <div className="flex-1 w-full overflow-hidden relative min-h-0">
+        <GanttProvider 
+          range="timely" 
+          zoom={100}
+          selectedDate={selectedDate}
+          onAddItem={handleAddItem}
+        >
+          <GanttSidebar>
+            {Object.entries(groupedFeatures).map(([lane, laneFeatures]) => (
+              <GanttSidebarGroup key={lane} name={lane}>
+                {laneFeatures.map(feature => (
+                  <GanttSidebarItem
+                    key={feature.id}
+                    feature={feature}
+                  />
+                ))}
+              </GanttSidebarGroup>
+            ))}
+          </GanttSidebar>
+
+          <GanttTimeline>
+            <GanttHeader />
+            <GanttToday />
+            
+            {markers.map(marker => (
+              <GanttMarker
+                key={marker.id}
+                {...marker}
+                onRemove={handleRemoveMarker}
               />
             ))}
-          </GanttFeatureList>
-        </GanttTimeline>
-      </GanttProvider>
+            
+            <GanttFeatureList>
+              <GanttFeatureListGroup>
+                {Object.entries(groupedFeatures).map(([lane, laneFeatures]) => (
+                  <GanttFeatureRow
+                    key={lane}
+                    features={laneFeatures}
+                    onMove={handleFeatureMove}
+                  >
+                    {(feature) => (
+                      <div className="flex items-center gap-2 w-full">
+                        <div
+                          className="w-2 h-2 rounded-full flex-shrink-0"
+                          style={{ backgroundColor: feature.status.color }}
+                        />
+                        <span className="text-xs font-medium truncate flex-1">
+                          {feature.name}
+                        </span>
+                        <span className="text-xs text-muted-foreground flex-shrink-0">
+                          {feature.startAt.getHours().toString().padStart(2, '0')}:
+                          {feature.startAt.getMinutes().toString().padStart(2, '0')}
+                        </span>
+                      </div>
+                    )}
+                  </GanttFeatureRow>
+                ))}
+              </GanttFeatureListGroup>
+            </GanttFeatureList>
+          </GanttTimeline>
+        </GanttProvider>
+      </div>
     </div>
   );
-}
+};
+
+export default Schedule;
