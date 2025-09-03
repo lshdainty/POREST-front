@@ -5,13 +5,17 @@ import {
   ShieldUser,
   LayoutDashboard,
   CalendarDays,
-  FileText,
   CircleDollarSign,
   Scale,
   Users,
   Plane,
   ShieldCheck,
   CalendarCog,
+  TreePalm,
+  MessageSquarePlus,
+  ChartNoAxesCombined,
+  NotebookPen,
+  ChartGantt
 } from 'lucide-react';
 
 import {
@@ -41,11 +45,21 @@ const navDatas = [
     ],
   },
   {
+    title: 'Vacation',
+    url: '/vacation',
+    icon: TreePalm,
+    items: [
+      { title: 'History', url: '/vacation/history', icon: ChartNoAxesCombined },
+      { title: 'Application', url: '/vacation/application', icon: MessageSquarePlus },
+    ],
+  },
+  {
     title: 'Work',
     url: '/work',
     icon: Briefcase,
     items: [
-      { title: 'Report', url: '/work/report', icon: FileText },
+      { title: 'Report', url: '/work/report', icon: NotebookPen },
+      { title: 'Schedule', url: '/work/schedule', icon: ChartGantt },
     ],
   },
   {

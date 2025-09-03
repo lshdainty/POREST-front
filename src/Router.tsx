@@ -32,15 +32,33 @@ const Router = () => {
     <Routes>
       <Route path='/login' element={!home ? <Login/> : <Navigate replace to ='/dashboard' />} />
       <Route element={<Layout/>}>
-        <Route path='/dashboard' element={<Dashboard/>} />
-        <Route path='/calendar' element={<Calendar/>} />
-        <Route path='/work/report' element={<Work/>} />
-        <Route path='/culture/dues' element={<Dues/>} />
-        <Route path='/culture/rule' element={<Rule/>} />
-        <Route path='/admin/user' element={<User/>} />
-        <Route path='/admin/vacation' element={<Vacation/>} />
-        <Route path='/admin/authority' element={<Authority/>} />
-        <Route path='/admin/holiday' element={<Holiday/>} />
+        {/* 메인 page */}
+        <Route path=''>
+          <Route path='dashboard' element={<Dashboard/>} />
+          <Route path='calendar' element={<Calendar/>} />
+        </Route>
+        {/* 휴가 page */}
+        <Route path='vacation'>
+          <Route path='history' element={<></>} />
+          <Route path='application' element={<></>} />
+        </Route>
+        {/* 작업 일지 page */}
+        <Route path='work'>
+          <Route path='report' element={<Work/>} />
+          <Route path='schedule' element={<></>} />
+        </Route>
+        {/* 조직 문화 page */}
+        <Route path='culture'>
+          <Route path='dues' element={<Dues/>} />
+          <Route path='rule' element={<Rule/>} />
+        </Route>
+        {/* 관리자 page */}
+        <Route path='admin'>
+          <Route path='user' element={<User/>} />
+          <Route path='vacation' element={<Vacation/>} />
+          <Route path='authority' element={<Authority/>} />
+          <Route path='holiday' element={<Holiday/>} />
+        </Route>
       </Route>
       <Route path='/*' element={<NotFound/>} />
     </Routes>
