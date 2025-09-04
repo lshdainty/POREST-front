@@ -18,52 +18,51 @@ import {
 
 // 목업 데이터
 const mockStatuses: GanttStatus[] = [
-  { id: 'planning', name: '계획', color: '#3b82f6' },
-  { id: 'in-progress', name: '진행중', color: '#f59e0b' },
-  { id: 'completed', name: '완료', color: '#10b981' },
-  { id: 'blocked', name: '차단됨', color: '#ef4444' },
+  { id: '96', name: '9 ~ 6', color: '#3b82f6' },
+  { id: '85', name: '8 ~ 5', color: '#10b981' },
+  { id: '107', name: '10 ~ 7', color: '#ef4444' },
 ];
 
 const today = new Date();
 const mockFeatures: GanttFeature[] = [
   {
-    id: 'morning-standup',
-    name: '데일리 스탠드업',
+    id: '이서준',
+    name: '이서준',
     startAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 9, 0),
-    endAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 9, 30),
-    status: mockStatuses[1],
-    lane: 'team-meetings',
-  },
-  {
-    id: 'code-review',
-    name: '코드 리뷰',
-    startAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 10, 0),
-    endAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 11, 30),
+    endAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 0),
     status: mockStatuses[0],
-    lane: 'development',
+    // lane: 'team-meetings',
   },
   {
-    id: 'lunch-break',
-    name: '점심시간',
-    startAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 12, 0),
-    endAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 13, 0),
+    id: '이민정',
+    name: '이민정',
+    startAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 10, 0),
+    endAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 19, 0),
     status: mockStatuses[2],
-    lane: 'break',
+    // lane: 'development',
   },
   {
-    id: 'feature-development',
-    name: '신규 기능 개발',
-    startAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 14, 0),
+    id: '강동원',
+    name: '강동원',
+    startAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 8, 0),
     endAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 17, 0),
     status: mockStatuses[1],
-    lane: 'development',
+    // lane: 'break',
+  },
+  {
+    id: '심규선',
+    name: '심규선',
+    startAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 9, 0),
+    endAt: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 18, 0),
+    status: mockStatuses[0],
+    // lane: 'development',
   },
 ];
 
 const mockMarkers: GanttMarkerProps[] = [
   {
     id: 'work-start',
-    date: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 9, 0),
+    date: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 7, 0),
     label: '업무 시작',
   },
   {
@@ -71,6 +70,11 @@ const mockMarkers: GanttMarkerProps[] = [
     date: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 12, 0),
     label: '점심시간',
   },
+  {
+    id: 'work-end',
+    date: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 19, 0),
+    label: '업무 종료',
+  }
 ];
 
 const Schedule: React.FC = () => {

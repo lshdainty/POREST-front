@@ -99,13 +99,6 @@ export const useCalendarType = () => {
       isDate: true
     },
     {
-      id: 'HEALTHCHECK',
-      name: '건강검진',
-      colorCode: '#707bf5',
-      type: 'schedule',
-      isDate: true
-    },
-    {
       id: 'HEALTHCHECKHALF',
       name: '건강검진(반차)',
       colorCode: '#707bf5',
@@ -178,9 +171,6 @@ export const convertColorCode = (scheduleType: string) => {
       break
     case 'DEFENSEHALF':
       colorCode = '#a06549';
-      break
-    case 'HEALTHCHECK':
-      colorCode = '#707bf5';
       break
     case 'HEALTHCHECKHALF':
       colorCode = '#707bf5';
