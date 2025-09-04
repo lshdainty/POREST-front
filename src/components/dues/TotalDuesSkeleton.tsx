@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card'
 import { Skeleton } from '@/components/shadcn/skeleton'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card'
 import { DollarSign, Users, BanknoteArrowDown, BanknoteArrowUp } from 'lucide-react';
 
 export default function TotalDuesSkeleton() {

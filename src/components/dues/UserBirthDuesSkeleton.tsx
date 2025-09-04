@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card'
 import { Skeleton } from '@/components/shadcn/skeleton'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card'
 
 export default function UserBirthDuesSkeleton() {
   return (

@@ -1,20 +1,7 @@
-import {
-  Table,
-  Header,
-  HeaderRow,
-  Body,
-  Row,
-  HeaderCell,
-  Cell
-} from '@table-library/react-table-library/table';
+import { Table, Header, HeaderRow, Body, Row, HeaderCell, Cell } from '@table-library/react-table-library/table';
 import { useTheme } from '@table-library/react-table-library/theme';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/shadcn/card'
 import { Skeleton } from '@/components/shadcn/skeleton'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card'
 import { cn } from '@/lib/utils';
 
 export default function DuesTableSkeleton() {

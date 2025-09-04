@@ -14,10 +14,11 @@ import { cn } from '@/lib/utils';
 import dayjs from 'dayjs';
 
 type EditableDuesData = GetYearDuesResp & { id: string; isNew?: boolean; tempId?: string };
+type UpdateDuesData = GetYearDuesResp & { id: string };
 
 interface ModifiedData {
   created: EditableDuesData[];
-  updated: GetYearDuesResp[];
+  updated: UpdateDuesData[];
   deleted: number[];
 }
 

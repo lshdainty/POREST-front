@@ -1,11 +1,11 @@
 import { useGetYearOperationDues, useGetMonthBirthDues, useGetUsersMonthBirthDues, useGetYearDues } from '@/api/dues';
 import { useGetUsers } from '@/api/user';
-import TotalDues from '@/features/culture/dues/TotalDues';
-import UserBirthDues from '@/features/culture/dues/UserBirthDues';
-import DuesTable from '@/features/culture/dues/DuesTable';
-import TotalDuesSkeleton from './TotalDuesSkeleton';
-import UserBirthDuesSkeleton from './UserBirthDuesSkeleton';
-import DuesTableSkeleton from './DuesTableSkeleton';
+import TotalDues from '@/components/dues/TotalDues';
+import UserBirthDues from '@/components/dues/UserBirthDues';
+import DuesTable from '@/components/dues/DuesTable';
+import TotalDuesSkeleton from '@/components/dues/TotalDuesSkeleton';
+import UserBirthDuesSkeleton from '@/components/dues/UserBirthDuesSkeleton';
+import DuesTableSkeleton from '@/components/dues/DuesTableSkeleton';
 import dayjs from 'dayjs';
 
 export default function Dues() {

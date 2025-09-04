@@ -1,11 +1,11 @@
-import { useGetUsersMonthBirthDuesResp } from '@/api/dues';
+import { GetUsersMonthBirthDuesResp } from '@/api/dues';
 import { GetUsersResp } from '@/api/user';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card'
 import { Gift } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface UserBirthDuesProps {
-  usersBirthDues?: useGetUsersMonthBirthDuesResp[];
+  usersBirthDues?: GetUsersMonthBirthDuesResp[];
   users?: GetUsersResp[];
 }
 
