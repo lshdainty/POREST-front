@@ -6,16 +6,16 @@ import {
   useGetUserPeriodVacationUseHistories,
   useGetUserVacationUseStats
 } from '@/api/vacation';
-import UserInfoCard from '@/features/admin/vacation/UserInfoCard';
-import UserInfoCardSkeleton from '@/features/admin/vacation/UserInfoCardSkeleton';
-import VacationStatsCard from '@/features/admin/vacation/VacationStatsCard';
-import VacationStatsCardSkeleton from '@/features/admin/vacation/VacationStatsCardSkeleton';
-import MonthVacationStatsCard from '@/features/admin/vacation/MonthVacationStatsCard';
-import MonthVacationStatsCardSkeleton from '@/features/admin/vacation/MonthVacationStatsCardSkeleton';
-import VacationTypeStatsCard from '@/features/admin/vacation/VacationTypeStatsCard';
-import VacationTypeStatsCardSkeleton from '@/features/admin/vacation/VacationTypeStatsCardSkeleton';
-import VacationHistoryTable from '@/features/admin/vacation/VacationHistoryTable';
-import VacationHistoryTableSkeleton from '@/features/admin/vacation/VacationHistoryTableSkeleton';
+import UserInfoCard from '@/components/user/UserInfoCard';
+import UserInfoCardSkeleton from '@/components/user/UserInfoCardSkeleton';
+import VacationStatsCard from '@/components/vacation/VacationStatsCard';
+import VacationStatsCardSkeleton from '@/components/vacation/VacationStatsCardSkeleton';
+import MonthVacationStatsCard from '@/components/vacation/MonthVacationStatsCard';
+import MonthVacationStatsCardSkeleton from '@/components/vacation/MonthVacationStatsCardSkeleton';
+import VacationTypeStatsCard from '@/components/vacation/VacationTypeStatsCard';
+import VacationTypeStatsCardSkeleton from '@/components/vacation/VacationTypeStatsCardSkeleton';
+import VacationHistoryTable from '@/components/vacation/VacationHistoryTable';
+import VacationHistoryTableSkeleton from '@/components/vacation/VacationHistoryTableSkeleton';
 import dayjs from 'dayjs';
 
 export default function Vacation() {
