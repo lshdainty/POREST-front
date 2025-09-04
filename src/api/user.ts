@@ -10,11 +10,47 @@ interface ApiResponse<T = any> {
 }
 
 const enum UserQueryKey {
+  GET_USER = 'getUser',
   GET_USERS = 'getUsers',
   POST_USER = 'postUser',
   PUT_USER = 'putUser',
   DELETE_USER = 'deleteUser'
 }
+
+interface GetUserReq {
+  user_id: string
+}
+
+interface GetUserResp {
+  user_id: string
+  user_name: string
+  user_email: string
+  user_birth: string
+  user_role_type: string
+  user_role_name: string
+  user_company_type: string
+  user_company_name: string
+  user_department_type: string
+  user_department_name: string
+  user_work_time: string
+  lunar_yn: string
+}
+
+const useGetUser = (reqData: GetUserReq) => {
+  return useQuery({
+    queryKey: [UserQueryKey.GET_USER, reqData.user_id],
+    queryFn: async (): Promise<GetUserResp> => {
+      const resp: ApiResponse = await api.request({
+        method: 'get',
+        url: `/user/${reqData.user_id}`
+      });
+
+      if (resp.code !== 200) throw new Error(resp.data.data.message);
+
+      return resp.data;
+    }
+  });
+};
 
 interface GetUsersResp {
   user_id: string
@@ -149,6 +185,7 @@ export {
   UserQueryKey,
 
   // API Hook
+  useGetUser,
   useGetUsers,
   usePostUser,
   usePutUser,
@@ -157,6 +194,7 @@ export {
 
 export type {
   // Interface
+  GetUserResp,
   GetUsersResp,
   PostUserReq,
   PutUserReq
