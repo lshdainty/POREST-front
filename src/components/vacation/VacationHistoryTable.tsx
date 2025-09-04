@@ -61,7 +61,7 @@ export default function VacationHistoryTable({ value: data }: VacationHistoryTab
   return (
     <Card className='h-full'>
       <CardHeader className='flex flex-row items-center justify-between'>
-        <CardTitle>휴가 내역</CardTitle>
+        <CardTitle>휴가 이력</CardTitle>
         <Button size='sm'>추가</Button>
       </CardHeader>
       <CardContent className='flex flex-col h-full justify-between'>

@@ -44,7 +44,7 @@ export default function History() {
   if (userLoading || vacationTypesLoading || monthStatsLoading || historiesLoading || vacationStatsLoading) {
       return (
         <div className='p-4 sm:p-6 md:p-8'>
-          <h1 className='text-3xl font-bold mb-6'>휴가 내역</h1>
+          <h1 className='text-3xl font-bold mb-6'>휴가 내역 통계</h1>
           <div className='flex flex-col lg:flex-row gap-6'>
             <UserInfoCardSkeleton />
             <div className='flex flex-col gap-6 flex-1'>
@@ -66,7 +66,7 @@ export default function History() {
 
   return (
     <div className='p-4 sm:p-6 md:p-8'>
-      <h1 className='text-3xl font-bold mb-6'>휴가 내역</h1>
+      <h1 className='text-3xl font-bold mb-6'>휴가 내역 통계</h1>
       <div className='flex flex-col lg:flex-row gap-6'>
         {user && <UserInfoCard value={[user]} />}
         <div className='flex flex-col gap-6 flex-1'>
