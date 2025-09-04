@@ -19,11 +19,11 @@ const enum DuesQueryKey {
   DELETE_DUES = 'deleteDues'
 }
 
-interface getYearDuesReq {
+interface GetYearDuesReq {
   year: string
 }
 
-interface getYearDuesResp {
+interface GetYearDuesResp {
   dues_seq: number
   dues_user_name: string
   dues_amount: number
@@ -34,10 +34,10 @@ interface getYearDuesResp {
   total_dues: number
 }
 
-const useGetYearDues = (reqData: getYearDuesReq) => {
+const useGetYearDues = (reqData: GetYearDuesReq) => {
   return useQuery({
     queryKey: [DuesQueryKey.GET_YEAR_DUES, reqData],
-    queryFn: async (): Promise<getYearDuesResp[]> => {
+    queryFn: async (): Promise<GetYearDuesResp[]> => {
       const resp: ApiResponse = await api.request({
         method: 'get',
         url: `/dues?year=${reqData.year}`
@@ -50,20 +50,20 @@ const useGetYearDues = (reqData: getYearDuesReq) => {
   });
 }
 
-interface getYearOperationDuesReq {
+interface GetYearOperationDuesReq {
   year: string
 }
 
-interface getYearOperationDuesResp {
+interface GetYearOperationDuesResp {
   total_dues: number
   total_deposit: number
   total_withdrawal: number
 }
 
-const useGetYearOperationDues = (reqData: getYearOperationDuesReq) => {
+const useGetYearOperationDues = (reqData: GetYearOperationDuesReq) => {
   return useQuery({
     queryKey: [DuesQueryKey.GET_YEAR_OPERATION_DUES, reqData],
-    queryFn: async (): Promise<getYearOperationDuesResp> => {
+    queryFn: async (): Promise<GetYearOperationDuesResp> => {
       const resp: ApiResponse = await api.request({
         method: 'get',
         url: `/dues/operation?year=${reqData.year}`
@@ -76,19 +76,19 @@ const useGetYearOperationDues = (reqData: getYearOperationDuesReq) => {
   });
 }
 
-interface useGetMonthBirthDuesReq {
+interface GetMonthBirthDuesReq {
   year: string
   month: string
 }
 
-interface useGetMonthBirthDuesResp {
+interface GetMonthBirthDuesResp {
   birth_month_dues: number
 }
 
-const useGetMonthBirthDues = (reqData: useGetMonthBirthDuesReq) => {
+const useGetMonthBirthDues = (reqData: GetMonthBirthDuesReq) => {
   return useQuery({
     queryKey: [DuesQueryKey.GET_MONTH_BIRTH_DUES, reqData],
-    queryFn: async (): Promise<useGetMonthBirthDuesResp> => {
+    queryFn: async (): Promise<GetMonthBirthDuesResp> => {
       const resp: ApiResponse = await api.request({
         method: 'get',
         url: `/dues/birth/month?year=${reqData.year}&month=${reqData.month}`
@@ -101,19 +101,19 @@ const useGetMonthBirthDues = (reqData: useGetMonthBirthDuesReq) => {
   });
 }
 
-interface useGetUsersMonthBirthDuesReq {
+interface GetUsersMonthBirthDuesReq {
   year: string
 }
 
-interface useGetUsersMonthBirthDuesResp {
+interface GetUsersMonthBirthDuesResp {
   dues_user_name: string
   month_birth_dues: Array<number>
 }
 
-const useGetUsersMonthBirthDues = (reqData: useGetUsersMonthBirthDuesReq) => {
+const useGetUsersMonthBirthDues = (reqData: GetUsersMonthBirthDuesReq) => {
   return useQuery({
     queryKey: [DuesQueryKey.GET_USERS_MONTH_BIRTH_DUES, reqData],
-    queryFn: async (): Promise<useGetUsersMonthBirthDuesResp[]> => {
+    queryFn: async (): Promise<GetUsersMonthBirthDuesResp[]> => {
       const resp: ApiResponse = await api.request({
         method: 'get',
         url: `/dues/users/birth/month?year=${reqData.year}`
@@ -231,4 +231,11 @@ export {
   usePostDues,
   usePutDues,
   useDeleteDues
+}
+
+export type {
+  GetYearDuesResp,
+  GetYearOperationDuesResp,
+  GetMonthBirthDuesResp,
+  GetUsersMonthBirthDuesResp,
 }

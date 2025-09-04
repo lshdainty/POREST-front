@@ -1,18 +1,15 @@
+import { useGetUsersMonthBirthDuesResp } from '@/api/dues';
+import { GetUsersResp } from '@/api/user';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card'
-import { useGetUsersMonthBirthDues } from '@/api/dues';
-import { useGetUsers } from '@/api/user';
 import { Gift } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import dayjs from 'dayjs';
 
-export default function UserBirthDues() {
-  const { data: usersBirthDues, isLoading: usersBirthDuesLoading} = useGetUsersMonthBirthDues({year: dayjs().format('YYYY')});
-  const { data: users, isLoading: usersLoading} = useGetUsers();
+interface UserBirthDuesProps {
+  usersBirthDues?: useGetUsersMonthBirthDuesResp[];
+  users?: GetUsersResp[];
+}
 
-  if(usersBirthDuesLoading || usersLoading) {
-    return <div>loading</div>
-  }
-
+export default function UserBirthDues({ usersBirthDues, users }: UserBirthDuesProps) {
   return (
     <div>
       <Card>

@@ -1,64 +1,31 @@
 import { useEffect, useState } from 'react';
-import {
-  Table,
-  Header,
-  HeaderRow,
-  Body,
-  Row,
-  HeaderCell,
-  Cell
-} from '@table-library/react-table-library/table';
+import { Table, Header, HeaderRow, Body, Row, HeaderCell, Cell } from '@table-library/react-table-library/table';
 import { useTheme } from '@table-library/react-table-library/theme';
-import { useGetYearDues, usePostDues, usePutDues, useDeleteDues } from '@/api/dues';
-import { Button } from '@/components/shadcn/button';
+import { usePostDues, usePutDues, useDeleteDues, GetYearDuesResp } from '@/api/dues';
 import { Badge } from '@/components/shadcn/badge';
 import { Input } from '@/components/shadcn/input';
+import { Button } from '@/components/shadcn/button';
 import { InputDatePicker } from '@/components/shadcn/inputDatePicker';
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator
-} from '@/components/shadcn/dropdownMenu';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/shadcn/select';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/shadcn/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/shadcn/dropdownMenu';
 import { EllipsisVertical, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Pencil, Copy, Trash2, Save } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import dayjs from 'dayjs';
 
-interface DuesData {
-  dues_seq: number;
-  dues_date: string;
-  dues_user_name: string;
-  dues_type: 'OPERATION' | 'BIRTH' | 'FINE';
-  dues_detail: string;
-  dues_amount: number;
-  dues_calc: 'PLUS' | 'MINUS';
-  total_dues: number;
-}
-
-type EditableDuesData = DuesData & { isNew?: boolean; tempId?: string };
+type EditableDuesData = GetYearDuesResp & { id: string; isNew?: boolean; tempId?: string };
 
 interface ModifiedData {
   created: EditableDuesData[];
-  updated: DuesData[];
+  updated: GetYearDuesResp[];
   deleted: number[];
 }
 
-export default function DuesTable() {
-  const { data: yearDues, isLoading: yearDuesLoading } = useGetYearDues({year: dayjs().format('YYYY')});
+interface DuesTableProps {
+  yearDues?: GetYearDuesResp[];
+}
+
+export default function DuesTable({ yearDues = [] }: DuesTableProps) {
   const { mutate: postDues } = usePostDues();
   const { mutate: putDues } = usePutDues();
   const { mutate: deleteDues } = useDeleteDues();
@@ -74,8 +41,9 @@ export default function DuesTable() {
 
   useEffect(() => {
     if (yearDues) {
-      const formattedDues = yearDues.map((dues: any) => ({
+      const formattedDues = yearDues.map((dues) => ({
         ...dues,
+        id: dues.dues_seq.toString(),
       }));
       setTableData(formattedDues);
     }
@@ -93,31 +61,30 @@ export default function DuesTable() {
   }]);
 
   const handleDelete = (id: string) => {
-    if (!tableData) return;
-    const rowToDelete = tableData.find(row => (row.isNew ? row.tempId : row.dues_seq.toString()) === id);
+    const rowToDelete = tableData.find(row => row.id === id);
     if (!rowToDelete) return;
 
     if (rowToDelete.isNew) {
       setModifiedData({
         ...modifiedData,
-        created: modifiedData.created.filter((dues) => dues.tempId !== id),
+        created: modifiedData.created.filter((dues) => dues.id !== id),
       });
     } else {
       setModifiedData({
         ...modifiedData,
-        updated: modifiedData.updated.filter((dues) => dues.dues_seq.toString() !== id),
+        updated: modifiedData.updated.filter((dues) => dues.id !== id),
         deleted: [...modifiedData.deleted, parseInt(id)],
       });
     }
 
-    setTableData(tableData.filter((dues) => (dues.isNew ? dues.tempId : dues.dues_seq.toString()) !== id));
+    setTableData(tableData.filter((dues) => dues.id !== id));
   };
 
   const handleCopy = (row: EditableDuesData) => {
-    if (!tableData) return;
     const tempId = `new_${Date.now()}`;
     const newRow: EditableDuesData = {
       ...row,
+      id: tempId,
       dues_seq: 0,
       isNew: true,
       tempId: tempId,
@@ -133,9 +100,9 @@ export default function DuesTable() {
   };
 
   const handleAdd = () => {
-    if (!tableData) return;
     const tempId = `new_${Date.now()}`;
     const newRow: EditableDuesData = {
+      id: tempId,
       dues_seq: 0,
       dues_date: dayjs().format('YYYYMMDD'),
       dues_user_name: '',
@@ -164,7 +131,7 @@ export default function DuesTable() {
 
   const handleSave = () => {
     modifiedData.created.forEach(dues => {
-      const { isNew, tempId, ...duesData } = dues;
+      const { isNew, tempId, id, ...duesData } = dues;
       postDues(duesData);
     });
 
@@ -179,27 +146,26 @@ export default function DuesTable() {
     setModifiedData({ created: [], updated: [], deleted: [] });
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, id: string, field: keyof DuesData) => {
-    if (!tableData) return;
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, id: string, field: keyof GetYearDuesResp) => {
     const newData = tableData.map((row) => {
-      if ((row.isNew ? row.tempId : row.dues_seq.toString()) === id) {
+      if (row.id === id) {
         return { ...row, [field]: e.target.value };
       }
       return row;
     });
     setTableData(newData);
 
-    const updatedDues = newData.find(dues => (dues.isNew ? dues.tempId : dues.dues_seq.toString()) === id);
+    const updatedDues = newData.find(dues => dues.id === id);
     if (!updatedDues) return;
 
     if (updatedDues.isNew) {
       setModifiedData({
         ...modifiedData,
         created: modifiedData.created.map((dues) =>
-          dues.tempId === id ? updatedDues : dues
+          dues.id === id ? updatedDues : dues
         ),
       });
-    } else if (!modifiedData.updated.find((dues) => dues.dues_seq.toString() === id)) {
+    } else if (!modifiedData.updated.find((dues) => dues.id === id)) {
       setModifiedData({
         ...modifiedData,
         updated: [...modifiedData.updated, updatedDues],
@@ -208,33 +174,32 @@ export default function DuesTable() {
       setModifiedData({
         ...modifiedData,
         updated: modifiedData.updated.map((dues) =>
-          dues.dues_seq.toString() === id ? updatedDues : dues
+          dues.id === id ? updatedDues : dues
         ),
       });
     }
   };
 
-  const handleSelectChange = (value: string, id: string, field: keyof DuesData) => {
-    if (!tableData) return;
+  const handleSelectChange = (value: string, id: string, field: keyof GetYearDuesResp) => {
     const newData = tableData.map((row) => {
-      if ((row.isNew ? row.tempId : row.dues_seq.toString()) === id) {
+      if (row.id === id) {
         return { ...row, [field]: value };
       }
       return row;
     });
     setTableData(newData);
 
-    const updatedDues = newData.find(dues => (dues.isNew ? dues.tempId : dues.dues_seq.toString()) === id);
+    const updatedDues = newData.find(dues => dues.id === id);
     if (!updatedDues) return;
 
     if (updatedDues.isNew) {
       setModifiedData({
         ...modifiedData,
         created: modifiedData.created.map((dues) =>
-          dues.tempId === id ? updatedDues : dues
+          dues.id === id ? updatedDues : dues
         ),
       });
-    } else if (!modifiedData.updated.find((dues) => dues.dues_seq.toString() === id)) {
+    } else if (!modifiedData.updated.find((dues) => dues.id === id)) {
       setModifiedData({
         ...modifiedData,
         updated: [...modifiedData.updated, updatedDues],
@@ -243,34 +208,34 @@ export default function DuesTable() {
       setModifiedData({
         ...modifiedData,
         updated: modifiedData.updated.map((dues) =>
-          dues.dues_seq.toString() === id ? updatedDues : dues
+          dues.id === id ? updatedDues : dues
         ),
       });
     }
   };
 
   const handleDateChange = (value: string | undefined, id: string) => {
-    if (!tableData || !value) return;
+    if (!value) return;
     const formattedDate = dayjs(value).format('YYYYMMDD');
     const newData = tableData.map((row) => {
-      if ((row.isNew ? row.tempId : row.dues_seq.toString()) === id) {
+      if (row.id === id) {
         return { ...row, dues_date: formattedDate };
       }
       return row;
     });
     setTableData(newData);
 
-    const updatedDues = newData.find(dues => (dues.isNew ? dues.tempId : dues.dues_seq.toString()) === id);
+    const updatedDues = newData.find(dues => dues.id === id);
     if (!updatedDues) return;
 
     if (updatedDues.isNew) {
       setModifiedData({
         ...modifiedData,
         created: modifiedData.created.map((dues) =>
-          dues.tempId === id ? updatedDues : dues
+          dues.id === id ? updatedDues : dues
         ),
       });
-    } else if (!modifiedData.updated.find((dues) => dues.dues_seq.toString() === id)) {
+    } else if (!modifiedData.updated.find((dues) => dues.id === id)) {
       setModifiedData({
         ...modifiedData,
         updated: [...modifiedData.updated, updatedDues],
@@ -279,15 +244,11 @@ export default function DuesTable() {
       setModifiedData({
         ...modifiedData,
         updated: modifiedData.updated.map((dues) =>
-          dues.dues_seq.toString() === id ? updatedDues : dues
+          dues.id === id ? updatedDues : dues
         ),
       });
     }
   };
-
-  if(yearDuesLoading) {
-    return <div>loading</div>
-  }
 
   const totalPages = tableData.length > 0 ? Math.ceil(tableData.length / rowsPerPage) : 1;
   const paginatedData = tableData.slice(
@@ -328,11 +289,10 @@ export default function DuesTable() {
                   </Header>
                   <Body>
                     {tableList.map((row, i) => {
-                      const id = row.isNew ? row.tempId! : row.dues_seq.toString();
-                      const isEditing = editingRow === id;
+                      const isEditing = editingRow === row.id;
                       return (
                         <Row
-                          key={id}
+                          key={row.id}
                           item={row}
                           className={cn(
                             'hover:!bg-muted/50 !bg-background !text-foreground [&_td]:!p-2 [&_td]:!text-sm [&_td>div]:!py-1 [&_td>div]:!pl-2',
@@ -343,7 +303,7 @@ export default function DuesTable() {
                             {isEditing ? (
                               <InputDatePicker
                                 value={dayjs(row.dues_date).format('YYYY-MM-DD')}
-                                onValueChange={(value) => handleDateChange(value, id)}
+                                onValueChange={(value) => handleDateChange(value, row.id)}
                               />
                             ) : (
                               dayjs(row.dues_date).format('YYYY-MM-DD')
@@ -353,7 +313,7 @@ export default function DuesTable() {
                             {isEditing ? (
                               <Input
                                 value={row.dues_user_name}
-                                onChange={(e) => handleInputChange(e, id, 'dues_user_name')}
+                                onChange={(e) => handleInputChange(e, row.id, 'dues_user_name')}
                               />
                             ) : (
                               row.dues_user_name
@@ -363,7 +323,7 @@ export default function DuesTable() {
                             {isEditing ? (
                               <Input
                                 value={row.dues_detail}
-                                onChange={(e) => handleInputChange(e, id, 'dues_detail')}
+                                onChange={(e) => handleInputChange(e, row.id, 'dues_detail')}
                               />
                             ) : (
                               row.dues_detail
@@ -374,7 +334,7 @@ export default function DuesTable() {
                               <Input
                                 type='number'
                                 value={row.dues_amount}
-                                onChange={(e) => handleInputChange(e, id, 'dues_amount')}
+                                onChange={(e) => handleInputChange(e, row.id, 'dues_amount')}
                               />
                             ) : (
                               `${Math.abs(row.dues_amount).toLocaleString('ko-KR')}원`
@@ -384,7 +344,7 @@ export default function DuesTable() {
                             {isEditing ? (
                               <Select
                                 value={row.dues_calc}
-                                onValueChange={(value) => handleSelectChange(value, id, 'dues_calc')}
+                                onValueChange={(value) => handleSelectChange(value, row.id, 'dues_calc')}
                               >
                                 <SelectTrigger>
                                   <SelectValue placeholder='유형' />
@@ -420,7 +380,7 @@ export default function DuesTable() {
                                     <span>저장</span>
                                   </DropdownMenuItem>
                                 ) : (
-                                  <DropdownMenuItem onClick={() => handleEdit(id)}>
+                                  <DropdownMenuItem onClick={() => handleEdit(row.id)}>
                                     <Pencil className='h-4 w-4' />
                                     <span>수정</span>
                                   </DropdownMenuItem>
@@ -432,7 +392,7 @@ export default function DuesTable() {
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
                                   className='text-destructive focus:text-destructive hover:!bg-destructive/20'
-                                  onClick={() => handleDelete(id)}
+                                  onClick={() => handleDelete(row.id)}
                                 >
                                   <Trash2 className='h-4 w-4' />
                                   <span>삭제</span>

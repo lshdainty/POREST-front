@@ -9,24 +9,47 @@ import DuesTableSkeleton from './DuesTableSkeleton';
 import dayjs from 'dayjs';
 
 export default function Dues() {
-  const { isLoading: totalDuesLoading } = useGetYearOperationDues({ year: dayjs().format('YYYY') });
-  const { isLoading: birthDuesLoading } = useGetMonthBirthDues({ year: dayjs().format('YYYY'), month: dayjs().format('MM') });
-  const { isLoading: usersBirthDuesLoading } = useGetUsersMonthBirthDues({ year: dayjs().format('YYYY') });
-  const { isLoading: usersLoading } = useGetUsers();
-  const { isLoading: yearDuesLoading } = useGetYearDues({ year: dayjs().format('YYYY') });
+  const year = dayjs().format('YYYY');
+  const month = dayjs().format('MM');
+
+  const { data: totalDues, isLoading: totalDuesLoading } = useGetYearOperationDues({ year });
+  const { data: birthDues, isLoading: birthDuesLoading } = useGetMonthBirthDues({ year, month });
+  const { data: usersBirthDues, isLoading: usersBirthDuesLoading } = useGetUsersMonthBirthDues({ year });
+  const { data: users, isLoading: usersLoading } = useGetUsers();
+  const { data: yearDues, isLoading: yearDuesLoading } = useGetYearDues({ year });
 
   const totalDuesCombinedLoading = totalDuesLoading || birthDuesLoading;
   const userBirthDuesCombinedLoading = usersBirthDuesLoading || usersLoading;
 
+  if (totalDuesCombinedLoading || userBirthDuesCombinedLoading || yearDuesLoading) {
+    return (
+      <div className='p-4 sm:p-6 md:p-8'>
+        <div className='mb-6'>
+          <TotalDuesSkeleton />
+        </div>
+        <div className='mb-6'>
+          <UserBirthDuesSkeleton />
+        </div>
+        <DuesTableSkeleton />
+      </div>
+    );
+  }
+
   return (
     <div className='p-4 sm:p-6 md:p-8'>
       <div className='mb-6'>
-        {totalDuesCombinedLoading ? <TotalDuesSkeleton /> : <TotalDues />}
+        <TotalDues
+          totalDues={totalDues}
+          birthDues={birthDues}
+        />
       </div>
       <div className='mb-6'>
-        {userBirthDuesCombinedLoading ? <UserBirthDuesSkeleton /> : <UserBirthDues />}
+        <UserBirthDues
+          usersBirthDues={usersBirthDues}
+          users={users}
+        />
       </div>
-      {yearDuesLoading ? <DuesTableSkeleton /> : <DuesTable />}
+      <DuesTable yearDues={yearDues} />
     </div>
   );
 }

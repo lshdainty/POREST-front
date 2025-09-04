@@ -1,20 +1,15 @@
-import {
-  useGetYearOperationDues,
-  useGetMonthBirthDues
-} from '@/api/dues';
+import { GetYearOperationDuesResp, GetMonthBirthDuesResp } from '@/api/dues';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card'
 import { DollarSign, Users, BanknoteArrowDown, BanknoteArrowUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import dayjs from 'dayjs';
 
-export default function TotalDues() {
-  const { data: totalDues, isLoading: totalDuesLoading} = useGetYearOperationDues({year: dayjs().format('YYYY')});
-  const { data: birthDues, isLoading: birthDuesLoading} = useGetMonthBirthDues({year: dayjs().format('YYYY'), month: dayjs().format('MM')});
+interface TotalDuesProps {
+  totalDues?: GetYearOperationDuesResp;
+  birthDues?: GetMonthBirthDuesResp;
+}
 
-  if(totalDuesLoading || birthDuesLoading) {
-    return <div>loading</div>
-  }
-
+export default function TotalDues({ totalDues, birthDues }: TotalDuesProps) {
   return (
     <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
       <Card key='total'>
