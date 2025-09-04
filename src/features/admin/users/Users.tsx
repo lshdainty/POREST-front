@@ -1,8 +1,8 @@
 import { useGetUsers } from '@/api/user';
-import UserTable from '@/features/admin/users/UserTable';
-import UserTableSkeleton from '@/features/admin/users/UserTableSkeleton';
-import UserCompanyCard from '@/features/admin/users/UserCompanyCard';
-import UserCompanyCardSkeleton from '@/features/admin/users/UserCompanyCardSkeleton';
+import UserTable from '@/components/user/UserTable';
+import UserTableSkeleton from '@/components/user/UserTableSkeleton';
+import UserCompanyCard from '@/components/user/UserCompanyCard';
+import UserCompanyCardSkeleton from '@/components/user/UserCompanyCardSkeleton';
 
 export default function Users() {
   const { data: users, isLoading: usersLoading } = useGetUsers();

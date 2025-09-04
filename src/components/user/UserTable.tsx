@@ -1,8 +1,8 @@
+import UserEditDialog from '@/components/user/UserEditDialog';
+import UserDeleteDialog from '@/components/user/UserDeleteDialog';
 import { GetUsersResp, usePostUser, usePutUser, useDeleteUser } from '@/api/user';
 import { useTheme } from '@table-library/react-table-library/theme';
 import { Table, Header, HeaderRow, Body, Row, HeaderCell, Cell } from '@table-library/react-table-library/table';
-import UserEditDialog from '@/features/admin/users/UserEditDialog';
-import UserDeleteDialog from '@/features/admin/users/UserDeleteDialog';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Avatar, AvatarFallback } from '@/components/shadcn/avatar';
