@@ -106,6 +106,7 @@ export default function Vacation() {
         <div className='xl:col-span-2 flex flex-col'>
           <VacationHistoryTable
             value={histories || []}
+            canAdd={true}
           />
         </div>
       </div>

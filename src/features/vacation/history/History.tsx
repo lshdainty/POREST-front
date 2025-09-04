@@ -89,6 +89,7 @@ export default function History() {
         <div className='xl:col-span-2 flex flex-col'>
           <VacationHistoryTable
             value={histories || []}
+            canAdd={false}
           />
         </div>
       </div>

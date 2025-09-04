@@ -9,7 +9,8 @@ import { EllipsisVertical, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRigh
 import { cn } from '@/lib/utils';
 
 interface VacationHistoryTableProps {
-  value: GetUserPeriodVacationUseHistoriesResp[]
+  value: GetUserPeriodVacationUseHistoriesResp[];
+  canAdd?: boolean;
 }
 
 const formatDateTime = (dateTimeString: string) => {
@@ -28,7 +29,7 @@ const formatDateTime = (dateTimeString: string) => {
   return `${year}.${month}.${day} ${hours}:${minutes}`;
 };
 
-export default function VacationHistoryTable({ value: data }: VacationHistoryTableProps) {
+export default function VacationHistoryTable({ value: data, canAdd = false }: VacationHistoryTableProps) {
   const handleEdit = (id: string) => {
     // For now, we just log the action. A modal or inline editing would be needed for a real app.
     console.log(`Edit item with id: ${id}`);
@@ -62,7 +63,7 @@ export default function VacationHistoryTable({ value: data }: VacationHistoryTab
     <Card className='h-full'>
       <CardHeader className='flex flex-row items-center justify-between'>
         <CardTitle>휴가 이력</CardTitle>
-        <Button size='sm'>추가</Button>
+        {canAdd && <Button size='sm'>추가</Button>}
       </CardHeader>
       <CardContent className='flex flex-col h-full justify-between'>
         <div className='w-full overflow-auto'>

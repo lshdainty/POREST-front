@@ -5,10 +5,10 @@ export default function Rule() {
     <div className='container mx-auto py-12 px-4 md:px-0 max-w-4xl'>
       <div className='text-center mb-12'>
         <h1 className='text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-card-foreground leading-tight mb-4'>
-          생산운영 팀문화
+          💁 POREST 🌲
         </h1>
         <p className='text-lg md:text-xl text-gray-600 dark:text-card-foreground'>
-          생산운영팀은 팀원분들의 복지를 개선하기 위해 항상 노력하고 있어요
+          POREST팀은 이용자분들의 복지를 개선하기 위해 항상 노력하고 있어요
         </p>
       </div>
       <div className='mb-12'>
