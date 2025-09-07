@@ -1,5 +1,5 @@
 import { GetYearOperationDuesResp, GetMonthBirthDuesResp } from '@/api/dues';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card'
+import { Card, CardContent, CardHeader } from '@/components/shadcn/card'
 import { DollarSign, Users, BanknoteArrowDown, BanknoteArrowUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import dayjs from 'dayjs';
@@ -9,45 +9,77 @@ interface TotalDuesProps {
   birthDues?: GetMonthBirthDuesResp;
 }
 
-export default function TotalDues({ totalDues, birthDues }: TotalDuesProps) {
+const BigNumberCard = ({
+  title,
+  icon: Icon,
+  amount,
+  description,
+  colorClass
+}: {
+  title: string;
+  icon: React.ComponentType<{ className?: string }>;
+  amount: number;
+  description: string;
+  colorClass: string;
+}) => {
   return (
-    <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
-      <Card key='total'>
-        <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-          <CardTitle className='text-sm font-medium'>전체 운영비</CardTitle>
-          <DollarSign className='h-4 w-4 text-muted-foreground' />
-        </CardHeader>
-        <CardContent>
-          <div className={cn('text-2xl font-bold')}>₩{(totalDues?.total_dues ?? 0).toLocaleString('ko-KR')}</div>
-        </CardContent>
-      </Card>
-      <Card key='deposit'>
-        <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-          <CardTitle className='text-sm font-medium'>운영비 입금</CardTitle>
-          <BanknoteArrowUp className='h-4 w-4 text-muted-foreground' />
-        </CardHeader>
-        <CardContent>
-          <div className={cn('text-2xl font-bold text-blue-500')}>₩{(totalDues?.total_deposit ?? 0).toLocaleString('ko-KR')}</div>
-        </CardContent>
-      </Card>
-      <Card key='withdrawal'>
-        <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-          <CardTitle className='text-sm font-medium'>운영비 출금</CardTitle>
-          <BanknoteArrowDown className='h-4 w-4 text-muted-foreground' />
-        </CardHeader>
-        <CardContent>
-          <div className={cn('text-2xl font-bold text-red-500')}>₩{Math.abs(totalDues?.total_withdrawal ?? 0).toLocaleString('ko-KR')}</div>
-        </CardContent>
-      </Card>
-      <Card key='birth'>
-        <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-          <CardTitle className='text-sm font-medium'>{dayjs().format('MM')}월 생일비</CardTitle>
-          <Users className='h-4 w-4 text-muted-foreground' />
-        </CardHeader>
-        <CardContent>
-          <div className={cn('text-2xl font-bold')}>₩{(birthDues?.birth_month_dues ?? 0).toLocaleString('ko-KR')}</div>
-        </CardContent>
-      </Card>
+    <Card className='relative overflow-hidden'>
+      <CardHeader className='pb-2'>
+        <div className='flex items-center gap-2'>
+          <Icon className={cn('w-5 h-5', colorClass)} />
+          <h3 className='text-sm font-medium text-gray-600'>{title}</h3>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className='flex items-baseline gap-1 mb-2'>
+          <span className={cn('text-3xl font-bold', colorClass)}>
+            {amount.toLocaleString('ko-KR')}
+          </span>
+          <span className='text-lg text-gray-400'>원</span>
+        </div>
+        <p className='text-xs text-gray-500'>{description}</p>
+      </CardContent>
+      <div className={cn('absolute bottom-0 right-0 w-16 h-16 opacity-10', 
+        colorClass.replace('text-', 'bg-').replace('-600', '-200'))}>
+        <Icon className='w-full h-full p-3' />
+      </div>
+    </Card>
+  );
+};
+
+export default function TotalDuesBigNumber({ totalDues, birthDues }: TotalDuesProps) {
+  const currentMonth = dayjs().format('MM');
+
+  return (
+    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
+      <BigNumberCard
+        title='전체 운영비'
+        icon={DollarSign}
+        amount={totalDues?.total_dues ?? 0}
+        description='현재 보유한 총 운영비'
+        colorClass='text-blue-600'
+      />
+      <BigNumberCard
+        title='운영비 입금'
+        icon={BanknoteArrowUp}
+        amount={totalDues?.total_deposit ?? 0}
+        description='올해 총 입금액'
+        colorClass='text-green-600'
+      />
+      <BigNumberCard
+        title='운영비 출금'
+        icon={BanknoteArrowDown}
+        amount={Math.abs(totalDues?.total_withdrawal ?? 0)}
+        description='올해 총 출금액'
+        colorClass='text-red-600'
+      />
+      <BigNumberCard
+        title={`${currentMonth}월 생일비`}
+        icon={Users}
+        amount={birthDues?.birth_month_dues ?? 0}
+        description='이번 달 생일비'
+        colorClass='text-purple-600'
+      />
     </div>
   );
 }
