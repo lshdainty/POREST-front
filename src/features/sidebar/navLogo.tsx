@@ -1,6 +1,5 @@
-import Logo from '@/assets/img/logo.svg';
-import LogoDark from '@/assets/img/logo_dark.svg';
-import Porest from '@/assets/img/porest.svg';
+import Logo from '@/assets/img/porest.svg';
+import LogoDark from '@/assets/img/porest_dark.svg';
 import { useTheme } from '@/components/shadcn/themeProvider';
 import {
   SidebarMenu,
@@ -18,8 +17,7 @@ export function NavLogo() {
           asChild
           className='data-[slot=sidebar-menu-button]:!p-0'
         >
-          {/* <img src={ theme == 'light' ? Logo : LogoDark } alt='logo' className='h-10'></img> */}
-          <img src={ theme == 'light' ? Porest : Porest } alt='logo' className='h-10'></img>
+          <img src={ theme == 'light' ? Logo : LogoDark } alt='logo' className='h-10'></img>
         </SidebarMenuButton>
       </SidebarMenuItem>
     </SidebarMenu>

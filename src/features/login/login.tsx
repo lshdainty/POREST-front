@@ -6,8 +6,8 @@ import { Input } from '@/components/shadcn/input';
 import { Label } from '@/components/shadcn/label';
 import { useTheme } from '@/components/shadcn/themeProvider';
 import loginBG from '@/assets/img/login_bg.jpg';
-import Logo from '@/assets/img/logo.svg';
-import LogoDark from '@/assets/img/logo_dark.svg';
+import Logo from '@/assets/img/porest.svg';
+import LogoDark from '@/assets/img/porest_dark.svg';
 
 export default function Login({
   className,
