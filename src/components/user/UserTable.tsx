@@ -12,7 +12,6 @@ import { Empty } from 'antd';
 import { cn } from '@/lib/utils';
 import dayjs from 'dayjs';
 import { companyOptions, departmentOptions } from '@/lib/constants';
-import { useState, useEffect, useRef } from 'react';
 
 interface UserTableProps {
   value: GetUsersResp[];
@@ -22,32 +21,6 @@ export default function UserTable({ value: users }: UserTableProps) {
   const { mutate: postUser } = usePostUser();
   const { mutate: putUser } = usePutUser();
   const { mutate: deleteUser } = useDeleteUser();
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  // 가로 스크롤 감지
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const checkScroll = () => {
-      setIsScrolled(container.scrollLeft > 0);
-    };
-
-    // 초기 체크
-    checkScroll();
-
-    // 스크롤 이벤트 리스너
-    container.addEventListener('scroll', checkScroll);
-    
-    // 리사이즈 이벤트도 감지 (창 크기 변경 시 스크롤 상태 변경될 수 있음)
-    window.addEventListener('resize', checkScroll);
-
-    return () => {
-      container.removeEventListener('scroll', checkScroll);
-      window.removeEventListener('resize', checkScroll);
-    };
-  }, []);
 
   const handleCreateUser = (user: GetUsersResp) => {
     postUser({
@@ -107,20 +80,15 @@ export default function UserTable({ value: users }: UserTableProps) {
       </CardHeader>
       <CardContent>
         {users && users.length > 0 ? (
-          <div className='overflow-x-auto relative' ref={scrollContainerRef}>
+          <div className='overflow-x-auto relative'>
             <Table className='min-w-[1200px]'>
               <TableHeader>
                 <TableRow>
                   <TableHead 
                     className={cn(
                       'min-w-[180px] w-[180px] pl-4',
-                      'sticky left-0 z-10'
+                      'sticky left-0 z-5 bg-card'
                     )}
-                    style={{
-                      backgroundColor: isScrolled 
-                        ? 'hsl(var(--card))' 
-                        : 'transparent'
-                    }}
                   >
                     이름
                   </TableHead>
@@ -147,13 +115,8 @@ export default function UserTable({ value: users }: UserTableProps) {
                     <TableCell 
                       className={cn(
                         'pl-4 w-[180px]',
-                        'sticky left-0 z-10'
+                        'sticky left-0 z-5 bg-card'
                       )}
-                      style={{
-                        backgroundColor: isScrolled 
-                          ? 'hsl(var(--card))' 
-                          : 'transparent'
-                      }}
                     >
                       <div className='flex items-center gap-3'>
                         <Avatar className='w-8 h-8 flex-shrink-0'>
