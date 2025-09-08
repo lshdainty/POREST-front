@@ -1,14 +1,13 @@
 import UserEditDialog from '@/components/user/UserEditDialog';
 import UserDeleteDialog from '@/components/user/UserDeleteDialog';
 import { GetUsersResp, usePostUser, usePutUser, useDeleteUser } from '@/api/user';
-import { useTheme } from '@table-library/react-table-library/theme';
-import { Table, Header, HeaderRow, Body, Row, HeaderCell, Cell } from '@table-library/react-table-library/table';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Avatar, AvatarFallback } from '@/components/shadcn/avatar';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/shadcn/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/shadcn/dropdownMenu';
-import { UserRoundCog, UserRound, EllipsisVertical, Pencil, Copy, Trash2 } from 'lucide-react';
+import { UserRoundCog, UserRound, EllipsisVertical, Pencil, Copy, Trash2, Sun, Moon } from 'lucide-react';
 import { Empty } from 'antd';
 import { cn } from '@/lib/utils';
 import dayjs from 'dayjs';
@@ -22,10 +21,6 @@ export default function UserTable({ value: users }: UserTableProps) {
   const { mutate: postUser } = usePostUser();
   const { mutate: putUser } = usePutUser();
   const { mutate: deleteUser } = useDeleteUser();
-
-  const theme = useTheme([{
-    Table: `--data-table-library_grid-template-columns: minmax(120px, 11%) minmax(100px, 11%) minmax(200px, 18%) minmax(150px, 14%) minmax(120px, 11%) minmax(120px, 11%) minmax(90px, 10%) minmax(100px, 11%) minmax(100px, 11%) minmax(60px, 4%) !important;`,
-  }]);
 
   const handleCreateUser = (user: GetUsersResp) => {
     postUser({
@@ -83,129 +78,140 @@ export default function UserTable({ value: users }: UserTableProps) {
       </CardHeader>
       <CardContent>
         {users && users.length > 0 ? (
-          <div className='w-full overflow-auto'>
-            <Table
-              theme={theme}
-              className='w-full !h-auto border overflow-hidden rounded-lg'
-              data={{nodes: users}}
-              layout={{ fixedHeader: true }}
-            >
-              {(tableList: GetUsersResp[]) => (
-                <>
-                  <Header>
-                    <HeaderRow className='!bg-muted !text-foreground [&_th]:!p-2 [&_th]:!text-sm [&_th]:!h-10 [&_th]:!font-medium [&_div]:!pl-2'>
-                      <HeaderCell>이름</HeaderCell>
-                      <HeaderCell>ID</HeaderCell>
-                      <HeaderCell>Email</HeaderCell>
-                      <HeaderCell>생년월일</HeaderCell>
-                      <HeaderCell>회사</HeaderCell>
-                      <HeaderCell>부서</HeaderCell>
-                      <HeaderCell>음력여부</HeaderCell>
-                      <HeaderCell>유연근무제</HeaderCell>
-                      <HeaderCell>권한</HeaderCell>
-                      <HeaderCell></HeaderCell>
-                    </HeaderRow>
-                  </Header>
-                  <Body>
-                    {tableList.map((row: GetUsersResp, i: number) => (
-                      <Row
-                        item={row}
-                        className={cn(
-                          'hover:!bg-muted/50 !bg-background !text-foreground [&_td]:!p-2 [&_td]:!text-sm [&_td>div]:!py-1 [&_td>div]:!pl-2',
-                          i !== users?.length-1 ? '[&_td]:!border-b' : '[&_td]:!border-b-0'
-                        )}
-                        key={row.user_id}
-                      >
-                        <Cell>
-                          <div className='flex flex-row items-center'>
-                            <Avatar className='h-8 w-8 mr-1.5'>
-                              <AvatarFallback>
-                                <UserRound className='w-5 h-5' />
-                              </AvatarFallback>
-                            </Avatar>
-                            {row.user_name}
-                          </div>
-                        </Cell>
-                        <Cell>{row.user_id}</Cell>
-                        <Cell>{row.user_email}</Cell>
-                        <Cell>{row.user_birth && `${row.user_birth.substr(0, 4)}년 ${row.user_birth.substr(4, 2)}월 ${row.user_birth.substr(6, 2)}일`}</Cell>
-                        <Cell>{row.user_company_name}</Cell>
-                        <Cell>{row.user_department_name}</Cell>
-                        <Cell>{row.lunar_yn}</Cell>
-                        <Cell>
-                          <Badge className={cn(
-                            {
-                              'bg-rose-500 dark:bg-rose-400': row.user_work_time === '8 ~ 5',
-                              'bg-sky-500 dark:bg-sky-400': row.user_work_time === '9 ~ 6',
-                              'bg-emerald-500 dark:bg-emerald-400': row.user_work_time === '10 ~ 7'
+          <div className='overflow-x-auto'>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className='min-w-[120px]'>이름</TableHead>
+                  <TableHead>ID</TableHead>
+                  <TableHead className='min-w-[200px]'>Email</TableHead>
+                  <TableHead className='min-w-[150px]'>생년월일</TableHead>
+                  <TableHead>회사</TableHead>
+                  <TableHead>부서</TableHead>
+                  <TableHead>음력여부</TableHead>
+                  <TableHead>유연근무제</TableHead>
+                  <TableHead>권한</TableHead>
+                  <TableHead>액션</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {users.map((row: GetUsersResp) => (
+                  <TableRow key={row.user_id} className='hover:bg-gray-50'>
+                    <TableCell>
+                      <div className='flex items-center gap-3'>
+                        <Avatar className='w-8 h-8'>
+                          <AvatarFallback>
+                            {row.user_role_type === 'ADMIN' ? 
+                              <UserRoundCog className='w-5 h-5' /> : 
+                              <UserRound className='w-5 h-5' />
                             }
-                          )}>{row.user_work_time}</Badge>
-                        </Cell>
-                        <Cell>
-                          <div className={cn(
-                            'flex flex-row items-center text-sm gap-1',
-                            {
-                              'text-rose-500 dark:text-rose-400': row.user_role_type === 'ADMIN',
-                              'text-sky-500 dark:text-sky-400': row.user_role_type === 'USER'
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className='font-medium'>{row.user_name}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>{row.user_id}</TableCell>
+                    <TableCell>{row.user_email}</TableCell>
+                    <TableCell>
+                      {row.user_birth && `${row.user_birth.substr(0, 4)}년 ${row.user_birth.substr(4, 2)}월 ${row.user_birth.substr(6, 2)}일`}
+                    </TableCell>
+                    <TableCell>
+                      <span className='text-sm'>{row.user_company_name}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span className='text-sm'>{row.user_department_name}</span>
+                    </TableCell>
+                    <TableCell>
+                      <div className='flex items-center gap-1'>
+                        {row.lunar_yn === 'Y' ? 
+                          <Moon className='w-4 h-4 text-blue-600' /> : 
+                          <Sun className='w-4 h-4 text-yellow-600' />
+                        }
+                        <Badge className={cn(
+                          row.lunar_yn === 'Y' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800'
+                        )}>
+                          {row.lunar_yn === 'Y' ? '음력' : '양력'}
+                        </Badge>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={cn(
+                        {
+                          'bg-rose-500 text-white': row.user_work_time === '8 ~ 5',
+                          'bg-sky-500 text-white': row.user_work_time === '9 ~ 6',
+                          'bg-emerald-500 text-white': row.user_work_time === '10 ~ 7'
+                        }
+                      )}>
+                        {row.user_work_time}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className={cn(
+                        'flex items-center gap-1 text-sm font-semibold',
+                        {
+                          'text-rose-500': row.user_role_type === 'ADMIN',
+                          'text-sky-500': row.user_role_type === 'USER'
+                        }
+                      )}>
+                        {row.user_role_type === 'ADMIN' ? 
+                          <UserRoundCog size={14}/> : 
+                          <UserRound size={14}/>
+                        }
+                        {row.user_role_type}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu modal={false}>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant='ghost'
+                            size='sm'
+                            className='h-8 w-8 p-0 data-[state=open]:bg-muted hover:bg-muted'
+                          >
+                            <EllipsisVertical className='w-4 h-4' />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align='end' className='w-32'>
+                          <UserEditDialog
+                            user={row}
+                            onSave={handleUpdateUser}
+                            trigger={
+                              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                <Pencil className="h-4 w-4" />
+                                <span>수정</span>
+                              </DropdownMenuItem>
                             }
-                          )}>{row.user_role_type === 'ADMIN' ? <UserRoundCog size={14}/> : <UserRound size={14}/>}{row.user_role_type}
-                          </div>
-                        </Cell>
-                        <Cell>
-                          <DropdownMenu modal={false}>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                variant='ghost'
-                                className='data-[state=open]:bg-muted text-muted-foreground flex size-8'
-                                size='icon'
+                          />
+                          <UserEditDialog
+                            user={{...row, user_id: ''}}
+                            onSave={handleCreateUser}
+                            trigger={
+                              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                <Copy className="h-4 w-4" />
+                                <span>복사</span>
+                              </DropdownMenuItem>
+                            }
+                          />
+                          <DropdownMenuSeparator />
+                          <UserDeleteDialog
+                            user={row}
+                            onDelete={handleDeleteUser}
+                            trigger={
+                              <DropdownMenuItem
+                                onSelect={(e) => e.preventDefault()}
+                                className='text-destructive focus:text-destructive hover:!bg-destructive/20'
                               >
-                                <EllipsisVertical />
-                                <span className='sr-only'>Open menu</span>
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align='end' className='w-32'>
-                              <UserEditDialog
-                                user={row}
-                                onSave={handleUpdateUser}
-                                trigger={
-                                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                                    <Pencil className="h-4 w-4" />
-                                    <span>수정</span>
-                                  </DropdownMenuItem>
-                                }
-                              />
-                              <UserEditDialog
-                                user={{...row, user_id: ''}}
-                                onSave={handleCreateUser}
-                                trigger={
-                                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                                    <Copy className="h-4 w-4" />
-                                    <span>복사</span>
-                                  </DropdownMenuItem>
-                                }
-                              />
-                              <DropdownMenuSeparator />
-                              <UserDeleteDialog
-                                user={row}
-                                onDelete={handleDeleteUser}
-                                trigger={
-                                  <DropdownMenuItem
-                                    onSelect={(e) => e.preventDefault()}
-                                    className='text-destructive focus:text-destructive hover:!bg-destructive/20'
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                    <span>삭제</span>
-                                  </DropdownMenuItem>
-                                }
-                              />
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </Cell>
-                      </Row>
-                    ))}
-                  </Body>
-                </>
-              )}
+                                <Trash2 className="h-4 w-4" />
+                                <span>삭제</span>
+                              </DropdownMenuItem>
+                            }
+                          />
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
             </Table>
           </div>
         ) : (
