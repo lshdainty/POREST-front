@@ -376,17 +376,17 @@ export default function DuesTable({ yearDues = [] }: DuesTableProps) {
                           <DropdownMenuContent align='end' className='w-32'>
                             {isEditing ? (
                               <DropdownMenuItem onClick={() => setEditingRow(null)}>
-                                <Save className='h-4 w-4 mr-2' />
+                                <Save className='h-4 w-4' />
                                 <span>저장</span>
                               </DropdownMenuItem>
                             ) : (
                               <DropdownMenuItem onClick={() => handleEdit(row.id)}>
-                                <Pencil className='h-4 w-4 mr-2' />
+                                <Pencil className='h-4 w-4' />
                                 <span>수정</span>
                               </DropdownMenuItem>
                             )}
                             <DropdownMenuItem onClick={() => handleCopy(row)}>
-                              <Copy className='h-4 w-4 mr-2' />
+                              <Copy className='h-4 w-4' />
                               <span>복사</span>
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
@@ -394,7 +394,7 @@ export default function DuesTable({ yearDues = [] }: DuesTableProps) {
                               className='text-destructive focus:text-destructive hover:!bg-destructive/20'
                               onClick={() => handleDelete(row.id)}
                             >
-                              <Trash2 className='h-4 w-4 mr-2' />
+                              <Trash2 className='h-4 w-4' />
                               <span>삭제</span>
                             </DropdownMenuItem>
                           </DropdownMenuContent>

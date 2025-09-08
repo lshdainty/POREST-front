@@ -1,14 +1,10 @@
 import { useState } from "react";
 import { Button } from "@/components/shadcn/button";
-
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/shadcn/command";
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/shadcn/resizable";
 import { Switch } from "@/components/shadcn/switch";
-import { Table, Header, HeaderRow, Body, Row, HeaderCell, Cell } from '@table-library/react-table-library/table';
-import { useTheme } from '@table-library/react-table-library/theme';
-import { useTree, TreeExpandClickTypes, ITreeState } from '@table-library/react-table-library/tree';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/shadcn/resizable";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/shadcn/command";
 import { ChevronRight, ChevronDown } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface User {
   id: string;
@@ -36,6 +32,7 @@ interface TreeNode {
   title: string;
   url: string;
   nodes?: TreeNode[];
+  level: number;
 }
 
 const navDatas = [
@@ -75,12 +72,13 @@ const navDatas = [
   },
 ];
 
-const transformToTreeData = (navs: typeof navDatas): TreeNode[] => {
+const transformToTreeData = (navs: typeof navDatas, level = 0): TreeNode[] => {
   return navs.map(nav => ({
     id: nav.url,
     title: nav.title,
     url: nav.url,
-    nodes: nav.items ? nav.items.map(item => ({ id: item.url, title: item.title, url: item.url, nodes: [] })) : [],
+    level,
+    nodes: nav.items ? nav.items.map(item => ({ id: item.url, title: item.title, url: item.url, level: level + 1, nodes: [] })) : [],
   }));
 }
 
@@ -130,18 +128,13 @@ mockUsers.forEach(user => {
 export default function Authority() {
   const [permissions, setPermissions] = useState<AllPermissions>(initialPermissions);
   const [selectedUser, setSelectedUser] = useState<User | null>(mockUsers[0]);
-  const [treeState, setTreeState] = useState<ITreeState>({ ids: treeData.map(n => n.id) });
+  const [expanded, setExpanded] = useState<string[]>(treeData.map(n => n.id));
 
-  const handleTreeChange = (action: any, state: ITreeState) => {
-    setTreeState(state);
+  const toggleExpand = (id: string) => {
+    setExpanded(current => 
+      current.includes(id) ? current.filter(item => item !== id) : [...current, id]
+    );
   };
-
-  const tree = useTree({ nodes: treeData }, {
-    state: treeState,
-    onChange: handleTreeChange,
-  }, {
-    treeExpandClickType: TreeExpandClickTypes.RowClick,
-  });
 
   const handlePermissionChange = (userId: string, pageUrl: string, key: keyof PagePermissions, value: boolean) => {
     setPermissions(prev => {
@@ -170,11 +163,43 @@ export default function Authority() {
     console.log("Saving permissions:", JSON.stringify(permissions, null, 2));
   };
 
-  const theme = useTheme({
-      Table: `
-        --data-table-library_grid-template-columns: minmax(250px, 1fr) repeat(4, 100px) !important;
-      `
-  });
+  const renderTree = (nodes: TreeNode[]): React.ReactNode[] => {
+    return nodes.flatMap(node => {
+      const isExpanded = expanded.includes(node.id);
+      const perms = selectedUser && permissions[selectedUser.id]?.[node.url];
+
+      const row = perms ? (
+        <TableRow key={node.id} className='hover:bg-muted/50'>
+          <TableCell style={{ paddingLeft: `${node.level * 20 + 16}px` }}>
+            <div className="flex items-center">
+              {node.nodes && node.nodes.length > 0 && (
+                <button onClick={() => toggleExpand(node.id)} className="mr-2">
+                  {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                </button>
+              )}
+              {node.title}
+            </div>
+          </TableCell>
+          <TableCell>
+            <div className="flex items-center justify-end">
+              {(["admin", "read", "write", "delete"] as const).map(permKey => (
+                <div key={permKey} className="w-20 flex justify-center">
+                  <Switch
+                    checked={perms[permKey]}
+                    onCheckedChange={(value) => selectedUser && handlePermissionChange(selectedUser.id, node.url, permKey, value)}
+                    disabled={permKey !== 'admin' && perms.admin}
+                  />
+                </div>
+              ))}
+            </div>
+          </TableCell>
+        </TableRow>
+      ) : null;
+
+      const children = isExpanded && node.nodes ? renderTree(node.nodes) : [];
+      return [row, ...children].filter(Boolean);
+    });
+  };
 
   return (
     <div className="p-4 sm:p-6 md:p-8 flex flex-col h-full">
@@ -205,57 +230,26 @@ export default function Authority() {
                 {selectedUser ? (
                   <>
                     <h2 className="text-2xl font-bold mb-4">{selectedUser.name}님의 권한</h2>
-                    <Table className="w-full !h-auto border overflow-hidden rounded-lg" data={{nodes: treeData}} theme={theme} tree={tree}>
-                      {(tableList: TreeNode[]) => (
-                        <>
-                          <Header>
-                              <HeaderRow className='!bg-muted !text-foreground [&_th]:!p-2 [&_th]:!text-sm [&_th]:!h-10 [&_th]:!font-medium'>
-                                  <HeaderCell>페이지</HeaderCell>
-                                  <HeaderCell><div className="flex justify-center">Admin</div></HeaderCell>
-                                  <HeaderCell><div className="flex justify-center">Read</div></HeaderCell>
-                                  <HeaderCell><div className="flex justify-center">Write</div></HeaderCell>
-                                  <HeaderCell><div className="flex justify-center">Delete</div></HeaderCell>
-                              </HeaderRow>
-                          </Header>
-                          <Body>
-                            {tableList.map((item, i) => {
-                              const perms = permissions[selectedUser.id]?.[item.url];
-                              if (!perms) return null;
-                              return (
-                                <Row 
-                                  key={item.id} 
-                                  item={item}
-                                  className={cn(
-                                      'hover:!bg-muted/50 !bg-background !text-foreground [&_td]:!p-2 [&_td]:!text-sm',
-                                      i !== tableList.length - 1 ? '[&_td]:!border-b' : '[&_td]:!border-b-0'
-                                  )}
-                                >
-                                  <Cell style={{ paddingLeft: `${item.treeXLevel * 20}px` }}>
-                                    <div className="flex items-center">
-                                      {item.nodes && item.nodes.length > 0 && (
-                                          tree.state.ids.includes(item.id) ? <ChevronDown className="w-4 h-4 mr-2"/> : <ChevronRight className="w-4 h-4 mr-2"/>
-                                      )}
-                                      {item.title}
-                                    </div>
-                                  </Cell>
-                                  {(["admin", "read", "write", "delete"] as const).map(permKey => (
-                                    <Cell key={permKey}>
-                                      <div className="flex items-center justify-center w-full h-full">
-                                        <Switch
-                                          checked={perms[permKey]}
-                                          onCheckedChange={(value) => handlePermissionChange(selectedUser.id, item.url, permKey, value)}
-                                          disabled={permKey !== 'admin' && perms.admin}
-                                        />
-                                      </div>
-                                    </Cell>
-                                  ))}
-                                </Row>
-                              )
-                            })}
-                          </Body>
-                        </>
-                      )}
-                    </Table>
+                    <div className="border rounded-lg overflow-hidden">
+                      <Table className="w-full">
+                        <TableHeader>
+                          <TableRow className='bg-muted hover:bg-muted text-foreground'>
+                            <TableHead className="w-[40%] pl-4">페이지</TableHead>
+                            <TableHead>
+                              <div className="flex justify-end">
+                                <div className="w-20 text-center">Admin</div>
+                                <div className="w-20 text-center">Read</div>
+                                <div className="w-20 text-center">Write</div>
+                                <div className="w-20 text-center">Delete</div>
+                              </div>
+                            </TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {renderTree(treeData)}
+                        </TableBody>
+                      </Table>
+                    </div>
                   </>
                 ) : (
                   <div className="flex items-center justify-center h-full">

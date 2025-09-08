@@ -39,11 +39,11 @@ export default function VacationHistoryTable({ value: data, canAdd = false }: Va
     }
   }, [data, currentPage, rowsPerPage]);
 
-  const handleEdit = (id: string) => {
+  const handleEdit = (id: number) => {
     console.log(`Edit item with id: ${id}`);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id: number) => {
     console.log(`Delete item with id: ${id}`);
   };
 
@@ -110,7 +110,7 @@ export default function VacationHistoryTable({ value: data, canAdd = false }: Va
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align='end' className='w-32'>
                           <DropdownMenuItem onClick={() => handleEdit(item.vacation_history_id)}>
-                            <Pencil className='h-4 w-4 mr-2' />
+                            <Pencil className='h-4 w-4' />
                             <span>수정</span>
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
@@ -118,7 +118,7 @@ export default function VacationHistoryTable({ value: data, canAdd = false }: Va
                             className='text-destructive focus:text-destructive hover:!bg-destructive/20'
                             onClick={() => handleDelete(item.vacation_history_id)}
                           >
-                            <Trash2 className='h-4 w-4 mr-2' />
+                            <Trash2 className='h-4 w-4' />
                             <span>삭제</span>
                           </DropdownMenuItem>
                         </DropdownMenuContent>
