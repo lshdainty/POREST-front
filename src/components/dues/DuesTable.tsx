@@ -37,7 +37,7 @@ export default function DuesTable({ yearDues = [] }: DuesTableProps) {
   });
   const [editingRow, setEditingRow] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 10;
+  const rowsPerPage = 5;
 
   useEffect(() => {
     if (yearDues) {

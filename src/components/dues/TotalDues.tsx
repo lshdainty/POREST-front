@@ -1,5 +1,5 @@
 import { GetYearOperationDuesResp, GetMonthBirthDuesResp } from '@/api/dues';
-import { Card, CardContent, CardHeader } from '@/components/shadcn/card'
+import { Card, CardContent, CardHeader } from '@/components/shadcn/card';
 import { DollarSign, Users, BanknoteArrowDown, BanknoteArrowUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import dayjs from 'dayjs';
@@ -9,25 +9,27 @@ interface TotalDuesProps {
   birthDues?: GetMonthBirthDuesResp;
 }
 
+interface BigNumberCardProps {
+  title: string;
+  icon: React.ComponentType<{ className?: string }>;
+  amount: number;
+  description: string;
+  colorClass: string;
+}
+
 const BigNumberCard = ({
   title,
   icon: Icon,
   amount,
   description,
   colorClass
-}: {
-  title: string;
-  icon: React.ComponentType<{ className?: string }>;
-  amount: number;
-  description: string;
-  colorClass: string;
-}) => {
+}: BigNumberCardProps) => {
   return (
     <Card className='relative overflow-hidden'>
       <CardHeader className='pb-2'>
         <div className='flex items-center gap-2'>
           <Icon className={cn('w-5 h-5', colorClass)} />
-          <h3 className='text-sm font-medium text-gray-600'>{title}</h3>
+          <h3 className='text-sm font-medium text-card-foreground'>{title}</h3>
         </div>
       </CardHeader>
       <CardContent>
@@ -35,12 +37,11 @@ const BigNumberCard = ({
           <span className={cn('text-3xl font-bold', colorClass)}>
             {amount.toLocaleString('ko-KR')}
           </span>
-          <span className='text-lg text-gray-400'>원</span>
+          <span className='text-lg text-card-foreground opacity-60'>원</span>
         </div>
-        <p className='text-xs text-gray-500'>{description}</p>
+        <p className='text-xs text-card-foreground opacity-70'>{description}</p>
       </CardContent>
-      <div className={cn('absolute bottom-0 right-0 w-16 h-16 opacity-10', 
-        colorClass.replace('text-', 'bg-').replace('-600', '-200'))}>
+      <div className='absolute bottom-0 right-0 w-16 h-16 opacity-10'>
         <Icon className='w-full h-full p-3' />
       </div>
     </Card>
