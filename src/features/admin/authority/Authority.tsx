@@ -169,11 +169,21 @@ export default function Authority() {
       const perms = selectedUser && permissions[selectedUser.id]?.[node.url];
 
       const row = perms ? (
-        <TableRow key={node.id} className='hover:bg-muted/50'>
+        <TableRow
+          key={node.id}
+          onClick={() => toggleExpand(node.id)}
+          className='hover:bg-muted/50 cursor-pointer'
+        >
           <TableCell style={{ paddingLeft: `${node.level * 20 + 16}px` }}>
             <div className="flex items-center">
               {node.nodes && node.nodes.length > 0 && (
-                <button onClick={() => toggleExpand(node.id)} className="mr-2">
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleExpand(node.id);
+                  }}
+                  className="mr-2 p-1"
+                >
                   {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                 </button>
               )}

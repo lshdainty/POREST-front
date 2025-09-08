@@ -252,9 +252,45 @@ export default function ApplicationTable({ onCreateNew }: OvertimeListPageProps)
               </div>
             </div>
             <div>
-              <p className='text-sm text-gray-600 mb-1'>총 신청건수</p>
+              <p className='text-sm text-gray-600 mb-1'>총 신청</p>
               <p className='text-2xl font-bold text-blue-600'>{totalRequests}</p>
               <p className='text-xs text-gray-500 mt-1'>이번 달 {thisMonthRequests}건</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className='p-6'>
+            <div className='flex items-center justify-between mb-4'>
+              <div className='w-12 h-12 rounded-lg bg-yellow-100 flex items-center justify-center'>
+                <Timer className='w-6 h-6 text-yellow-600' />
+              </div>
+              <Badge variant='secondary' className='bg-yellow-100 text-yellow-800'>
+                대기
+              </Badge>
+            </div>
+            <div>
+              <p className='text-sm text-gray-600 mb-1'>대기</p>
+              <p className='text-2xl font-bold text-yellow-600'>{pendingRequests}</p>
+              <p className='text-xs text-gray-500 mt-1'>평균 처리시간 1.5일</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className='p-6'>
+            <div className='flex items-center justify-between mb-4'>
+              <div className='w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center'>
+                <Clock className='w-6 h-6 text-blue-600' />
+              </div>
+              <Badge variant='secondary' className='bg-blue-100 text-blue-800'>
+                진행
+              </Badge>
+            </div>
+            <div>
+              <p className='text-sm text-gray-600 mb-1'>진행</p>
+              <p className='text-2xl font-bold text-blue-600'>{inProgressRequests}</p>
+              <p className='text-xs text-gray-500 mt-1'>처리중인 요청</p>
             </div>
           </CardContent>
         </Card>
@@ -271,7 +307,7 @@ export default function ApplicationTable({ onCreateNew }: OvertimeListPageProps)
               </div>
             </div>
             <div>
-              <p className='text-sm text-gray-600 mb-1'>승인된 신청</p>
+              <p className='text-sm text-gray-600 mb-1'>승인</p>
               <p className='text-2xl font-bold text-green-600'>{approvedRequests}</p>
               <div className='mt-2'>
                 <Progress value={approvalRate} className='h-2' />
@@ -283,35 +319,17 @@ export default function ApplicationTable({ onCreateNew }: OvertimeListPageProps)
         <Card>
           <CardContent className='p-6'>
             <div className='flex items-center justify-between mb-4'>
-              <div className='w-12 h-12 rounded-lg bg-yellow-100 flex items-center justify-center'>
-                <Timer className='w-6 h-6 text-yellow-600' />
+              <div className='w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center'>
+                <XCircle className='w-6 h-6 text-red-600' />
               </div>
-              <Badge variant='secondary' className='bg-yellow-100 text-yellow-800'>
-                검토중
+              <Badge variant='secondary' className='bg-red-100 text-red-800'>
+                반려
               </Badge>
             </div>
             <div>
-              <p className='text-sm text-gray-600 mb-1'>검토 대기중</p>
-              <p className='text-2xl font-bold text-yellow-600'>{pendingRequests}</p>
-              <p className='text-xs text-gray-500 mt-1'>평균 처리시간 1.5일</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className='p-6'>
-            <div className='flex items-center justify-between mb-4'>
-              <div className='w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center'>
-                <Clock className='w-6 h-6 text-blue-600' />
-              </div>
-              <Badge variant='secondary' className='bg-blue-100 text-blue-800'>
-                진행중
-              </Badge>
-            </div>
-            <div>
-              <p className='text-sm text-gray-600 mb-1'>진행중</p>
-              <p className='text-2xl font-bold text-blue-600'>{inProgressRequests}</p>
-              <p className='text-xs text-gray-500 mt-1'>처리중인 요청</p>
+              <p className='text-sm text-gray-600 mb-1'>반려</p>
+              <p className='text-2xl font-bold text-red-600'>{rejectedRequests}</p>
+              <p className='text-xs text-gray-500 mt-1'>재신청 필요</p>
             </div>
           </CardContent>
         </Card>
@@ -331,24 +349,6 @@ export default function ApplicationTable({ onCreateNew }: OvertimeListPageProps)
               <p className='text-sm text-gray-600 mb-1'>획득 보상일수</p>
               <p className='text-2xl font-bold text-purple-600'>{totalCompensationDays.toFixed(1)}일</p>
               <p className='text-xs text-gray-500 mt-1'>사용가능한 보상휴가</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className='p-6'>
-            <div className='flex items-center justify-between mb-4'>
-              <div className='w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center'>
-                <XCircle className='w-6 h-6 text-red-600' />
-              </div>
-              <Badge variant='secondary' className='bg-red-100 text-red-800'>
-                반려
-              </Badge>
-            </div>
-            <div>
-              <p className='text-sm text-gray-600 mb-1'>반려된 신청</p>
-              <p className='text-2xl font-bold text-red-600'>{rejectedRequests}</p>
-              <p className='text-xs text-gray-500 mt-1'>재신청 필요</p>
             </div>
           </CardContent>
         </Card>

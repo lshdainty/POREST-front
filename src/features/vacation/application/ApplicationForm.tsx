@@ -128,14 +128,12 @@ export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess }
         <DialogHeader className='p-6 pb-0'>
           <div className='flex items-center justify-between'>
             <div>
-              <DialogTitle className='text-2xl font-bold'>초과근무 보상휴가 신청</DialogTitle>
+              <DialogTitle className='text-2xl font-bold'>보상휴가 신청</DialogTitle>
               <DialogDescription className='mt-2'>
                 {dayjs().format('YYYY년 M월 D일 (ddd) 오후 HH:mm')} 작성
               </DialogDescription>
             </div>
-            <Button variant='ghost' size='sm' onClick={handleClose}>
-              <X className='w-4 h-4' />
-            </Button>
+            
           </div>
 
           {/* 진행 단계 */}
@@ -182,12 +180,12 @@ export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess }
                   <CardHeader>
                     <div className='flex items-center gap-2'>
                       <Calendar className='w-5 h-5 text-blue-600' />
-                      <CardTitle>초과근무 보상휴가 신청 정보</CardTitle>
+                      <CardTitle>보상휴가 신청 정보</CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent className='space-y-6'>
                     <div className='space-y-4'>
-                      <div>
+                      <div className='space-y-2'>
                         <Label htmlFor='title'>제목 *</Label>
                         <Input
                           id='title'
@@ -197,8 +195,8 @@ export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess }
                         />
                       </div>
 
-                      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                        <div>
+                      <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+                        <div className='space-y-2'>
                           <Label htmlFor='overtimeDate'>초과근무일 *</Label>
                           <Input
                             id='overtimeDate'
@@ -207,18 +205,7 @@ export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess }
                             onChange={(e) => setFormData(prev => ({ ...prev, overtimeDate: e.target.value }))}
                           />
                         </div>
-                        <div>
-                          <Label>예상 보상일수</Label>
-                          <div className='h-10 px-3 border rounded-md flex items-center bg-gray-50'>
-                            <span className='text-lg font-bold text-blue-600'>
-                              {getCompensationDays(formData.overtimeHours)}일
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-                        <div>
+                        <div className='space-y-2'>
                           <Label htmlFor='startTime'>시작 시간 *</Label>
                           <Input
                             id='startTime'
@@ -230,7 +217,7 @@ export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess }
                             }}
                           />
                         </div>
-                        <div>
+                        <div className='space-y-2'>
                           <Label htmlFor='endTime'>종료 시간 *</Label>
                           <Input
                             id='endTime'
@@ -242,18 +229,29 @@ export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess }
                             }}
                           />
                         </div>
-                        <div>
+                      </div>
+
+                      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                        <div className='space-y-2'>
                           <Label>초과근무 시간</Label>
-                          <div className='h-10 px-3 border rounded-md flex items-center bg-gray-50'>
+                          <div className='h-9 px-3 border rounded-md flex items-center bg-gray-50'>
                             <Clock className='w-4 h-4 text-gray-400 mr-2' />
                             <span className='font-semibold'>
                               {formData.overtimeHours > 0 ? `${formData.overtimeHours}시간` : '-'}
                             </span>
                           </div>
                         </div>
+                        <div className='space-y-2'>
+                          <Label>예상 보상일수</Label>
+                          <div className='h-9 px-3 border rounded-md flex items-center bg-gray-50'>
+                            <span className='text-lg font-bold text-blue-600'>
+                              {getCompensationDays(formData.overtimeHours)}일
+                            </span>
+                          </div>
+                        </div>
                       </div>
 
-                      <div>
+                      <div className='space-y-2'>
                         <Label htmlFor='reason'>초과근무 사유 *</Label>
                         <Textarea
                           id='reason'
@@ -264,7 +262,7 @@ export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess }
                         />
                       </div>
 
-                      <div>
+                      <div className='space-y-2'>
                         <Label htmlFor='approver'>결재자 선택 *</Label>
                         <Select value={formData.approver} onValueChange={(value) => 
                           setFormData(prev => ({ ...prev, approver: value }))
