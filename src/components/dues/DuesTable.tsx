@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Table, Header, HeaderRow, Body, Row, HeaderCell, Cell } from '@table-library/react-table-library/table';
-import { useTheme } from '@table-library/react-table-library/theme';
 import { usePostDues, usePutDues, useDeleteDues, GetYearDuesResp } from '@/api/dues';
 import { Badge } from '@/components/shadcn/badge';
 import { Input } from '@/components/shadcn/input';
 import { Button } from '@/components/shadcn/button';
 import { InputDatePicker } from '@/components/shadcn/inputDatePicker';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/shadcn/dropdownMenu';
 import { EllipsisVertical, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Pencil, Copy, Trash2, Save } from 'lucide-react';
@@ -56,10 +55,6 @@ export default function DuesTable({ yearDues = [] }: DuesTableProps) {
       setCurrentPage(totalPages);
     }
   }, [tableData, currentPage, rowsPerPage]);
-
-  const tableTheme = useTheme([{
-    Table: `--data-table-library_grid-template-columns: minmax(150px, 15%) minmax(120px, 15%) minmax(250px, 26%) minmax(120px, 15%) minmax(100px, 10%) minmax(120px, 15%) minmax(60px, 4%) !important;`,
-  }]);
 
   const handleDelete = (id: string) => {
     const rowToDelete = tableData.find(row => row.id === id);
@@ -258,205 +253,207 @@ export default function DuesTable({ yearDues = [] }: DuesTableProps) {
   );
 
   return (
-    <Card>
-      <CardHeader className='flex flex-row items-center justify-between'>
-        <CardTitle>입출금 내역</CardTitle>
-        <div className='flex gap-2'>
-          <Button className='text-sm h-8' onClick={handleAdd}>추가</Button>
-          <Button className='text-sm h-8' variant='outline' onClick={handleSave}>저장</Button>
+    <Card className='flex-1'>
+      <CardHeader>
+        <div className='flex items-center justify-between'>
+          <CardTitle>입출금 내역</CardTitle>
+          <div className='flex gap-2'>
+            <Button className='text-sm h-8' onClick={handleAdd}>추가</Button>
+            <Button className='text-sm h-8' variant='outline' onClick={handleSave}>저장</Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
-        <div className='w-full flex-grow overflow-auto'>
-          <div className='rounded-lg border overflow-hidden'>
-            <Table
-              theme={tableTheme}
-              className='w-full !h-auto'
-              data={{ nodes: paginatedData }}
-              layout={{ fixedHeader: true }}
-            >
-              {(tableList: EditableDuesData[]) => (
-                <>
-                  <Header> 
-                    <HeaderRow className='!bg-muted !text-foreground [&_th]:!p-2 [&_th]:!text-sm [&_th]:!h-10 [&_th]:!font-medium [&_div]:!pl-2'>
-                      <HeaderCell>날짜</HeaderCell>
-                      <HeaderCell>이름</HeaderCell>
-                      <HeaderCell>내용</HeaderCell>
-                      <HeaderCell>금액</HeaderCell>
-                      <HeaderCell>유형</HeaderCell>
-                      <HeaderCell>총액</HeaderCell>
-                      <HeaderCell></HeaderCell>
-                    </HeaderRow>
-                  </Header>
-                  <Body>
-                    {tableList.map((row, i) => {
-                      const isEditing = editingRow === row.id;
-                      return (
-                        <Row
-                          key={row.id}
-                          item={row}
-                          className={cn(
-                            'hover:!bg-muted/50 !bg-background !text-foreground [&_td]:!p-2 [&_td]:!text-sm [&_td>div]:!py-1 [&_td>div]:!pl-2',
-                            i !== tableList.length - 1 ? '[&_td]:!border-b' : '[&_td]:!border-b-0'
-                          )}
+        <div className='overflow-x-auto'>
+          <Table className='min-w-[1000px]'>
+            <TableHeader>
+              <TableRow>
+                <TableHead className='min-w-[140px] pl-4'>날짜</TableHead>
+                <TableHead className='min-w-[120px]'>이름</TableHead>
+                <TableHead className='min-w-[250px]'>내용</TableHead>
+                <TableHead className='min-w-[140px]'>금액</TableHead>
+                <TableHead className='min-w-[100px]'>유형</TableHead>
+                <TableHead className='min-w-[140px]'>총액</TableHead>
+                <TableHead className='min-w-[80px] pr-4'></TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {paginatedData.map((row) => {
+                const isEditing = editingRow === row.id;
+                return (
+                  <TableRow
+                    key={row.id}
+                    className={cn(
+                      'hover:bg-muted/50 hover:text-foreground',
+                      'dark:hover:bg-muted/80 dark:hover:text-foreground'
+                    )}
+                  >
+                    <TableCell className='pl-4'>
+                      {isEditing ? (
+                        <InputDatePicker
+                          value={dayjs(row.dues_date).format('YYYY-MM-DD')}
+                          onValueChange={(value) => handleDateChange(value, row.id)}
+                        />
+                      ) : (
+                        dayjs(row.dues_date).format('YYYY-MM-DD')
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {isEditing ? (
+                        <Input
+                          value={row.dues_user_name}
+                          onChange={(e) => handleInputChange(e, row.id, 'dues_user_name')}
+                        />
+                      ) : (
+                        row.dues_user_name
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {isEditing ? (
+                        <Input
+                          value={row.dues_detail}
+                          onChange={(e) => handleInputChange(e, row.id, 'dues_detail')}
+                        />
+                      ) : (
+                        <div>
+                          <p className='font-medium'>{row.dues_detail}</p>
+                        </div>
+                      )}
+                    </TableCell>
+                    <TableCell className={cn(row.dues_calc === 'PLUS' ? 'text-blue-500' : 'text-red-500')}>
+                      {isEditing ? (
+                        <Input
+                          type='number'
+                          value={row.dues_amount}
+                          onChange={(e) => handleInputChange(e, row.id, 'dues_amount')}
+                        />
+                      ) : (
+                        `${Math.abs(row.dues_amount).toLocaleString('ko-KR')}원`
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {isEditing ? (
+                        <Select
+                          value={row.dues_calc}
+                          onValueChange={(value) => handleSelectChange(value, row.id, 'dues_calc')}
                         >
-                          <Cell>
+                          <SelectTrigger>
+                            <SelectValue placeholder='유형' />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value='PLUS'>입금</SelectItem>
+                            <SelectItem value='MINUS'>출금</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <Badge className={cn(
+                          'text-xs whitespace-nowrap',
+                          row.dues_calc === 'PLUS' 
+                            ? 'bg-blue-100 text-blue-800' 
+                            : 'bg-red-100 text-red-800'
+                        )}>
+                          {row.dues_calc === 'PLUS' ? '입금' : '출금'}
+                        </Badge>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <span className='font-medium whitespace-nowrap'>
+                        {row.total_dues.toLocaleString('ko-KR')}원
+                      </span>
+                    </TableCell>
+                    <TableCell className='pr-4'>
+                      <div className='flex justify-end'>
+                        <DropdownMenu modal={false}>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant='ghost'
+                              size='sm'
+                              className='h-8 w-8 p-0 data-[state=open]:bg-muted hover:bg-muted'
+                            >
+                              <EllipsisVertical className='w-4 h-4' />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align='end' className='w-32'>
                             {isEditing ? (
-                              <InputDatePicker
-                                value={dayjs(row.dues_date).format('YYYY-MM-DD')}
-                                onValueChange={(value) => handleDateChange(value, row.id)}
-                              />
+                              <DropdownMenuItem onClick={() => setEditingRow(null)}>
+                                <Save className='h-4 w-4 mr-2' />
+                                <span>저장</span>
+                              </DropdownMenuItem>
                             ) : (
-                              dayjs(row.dues_date).format('YYYY-MM-DD')
+                              <DropdownMenuItem onClick={() => handleEdit(row.id)}>
+                                <Pencil className='h-4 w-4 mr-2' />
+                                <span>수정</span>
+                              </DropdownMenuItem>
                             )}
-                          </Cell>
-                          <Cell>
-                            {isEditing ? (
-                              <Input
-                                value={row.dues_user_name}
-                                onChange={(e) => handleInputChange(e, row.id, 'dues_user_name')}
-                              />
-                            ) : (
-                              row.dues_user_name
-                            )}
-                          </Cell>
-                          <Cell>
-                            {isEditing ? (
-                              <Input
-                                value={row.dues_detail}
-                                onChange={(e) => handleInputChange(e, row.id, 'dues_detail')}
-                              />
-                            ) : (
-                              row.dues_detail
-                            )}
-                          </Cell>
-                          <Cell className={cn(row.dues_calc === 'PLUS' ? 'text-blue-500' : 'text-red-500')}>
-                            {isEditing ? (
-                              <Input
-                                type='number'
-                                value={row.dues_amount}
-                                onChange={(e) => handleInputChange(e, row.id, 'dues_amount')}
-                              />
-                            ) : (
-                              `${Math.abs(row.dues_amount).toLocaleString('ko-KR')}원`
-                            )}
-                          </Cell>
-                          <Cell>
-                            {isEditing ? (
-                              <Select
-                                value={row.dues_calc}
-                                onValueChange={(value) => handleSelectChange(value, row.id, 'dues_calc')}
-                              >
-                                <SelectTrigger>
-                                  <SelectValue placeholder='유형' />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value='PLUS'>입금</SelectItem>
-                                  <SelectItem value='MINUS'>출금</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            ) : (
-                              <Badge variant={row.dues_calc === 'PLUS' ? 'default' : 'destructive'}>
-                                {row.dues_calc === 'PLUS' ? '입금' : '출금'}
-                              </Badge>
-                            )}
-                          </Cell>
-                          <Cell>{row.total_dues.toLocaleString('ko-KR')}원</Cell>
-                          <Cell>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button
-                                  variant='ghost'
-                                  className='data-[state=open]:bg-muted text-muted-foreground flex size-8'
-                                  size='icon'
-                                >
-                                  <EllipsisVertical />
-                                  <span className='sr-only'>Open menu</span>
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align='end' className='w-32'>
-                                {isEditing ? (
-                                  <DropdownMenuItem onClick={() => setEditingRow(null)}>
-                                    <Save className='h-4 w-4' />
-                                    <span>저장</span>
-                                  </DropdownMenuItem>
-                                ) : (
-                                  <DropdownMenuItem onClick={() => handleEdit(row.id)}>
-                                    <Pencil className='h-4 w-4' />
-                                    <span>수정</span>
-                                  </DropdownMenuItem>
-                                )}
-                                <DropdownMenuItem onClick={() => handleCopy(row)}>
-                                  <Copy className='h-4 w-4' />
-                                  <span>복사</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem
-                                  className='text-destructive focus:text-destructive hover:!bg-destructive/20'
-                                  onClick={() => handleDelete(row.id)}
-                                >
-                                  <Trash2 className='h-4 w-4' />
-                                  <span>삭제</span>
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </Cell>
-                        </Row>
-                      )
-                    })}
-                  </Body>
-                </>
-              )}
-            </Table>
+                            <DropdownMenuItem onClick={() => handleCopy(row)}>
+                              <Copy className='h-4 w-4 mr-2' />
+                              <span>복사</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              className='text-destructive focus:text-destructive hover:!bg-destructive/20'
+                              onClick={() => handleDelete(row.id)}
+                            >
+                              <Trash2 className='h-4 w-4 mr-2' />
+                              <span>삭제</span>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </div>
+        <div className='flex items-center justify-between p-4'>
+          <div className='text-sm text-muted-foreground'>
+            {tableData.length} row(s)
           </div>
-          <div className='flex items-center justify-between p-4'>
-            <div className='text-sm text-muted-foreground'>
-              {tableData.length} row(s)
+          <div className='flex items-center space-x-6 lg:space-x-8'>
+            <div className='flex items-center space-x-2'>
+              <p className='text-sm font-medium'>
+                Page {currentPage} of {totalPages}
+              </p>
             </div>
-            <div className='flex items-center space-x-6 lg:space-x-8'>
-              <div className='flex items-center space-x-2'>
-                <p className='text-sm font-medium'>
-                  Page {currentPage} of {totalPages}
-                </p>
-              </div>
-              <div className='flex items-center space-x-2'>
-                <Button
-                  variant='outline'
-                  className='h-8 w-8 p-0'
-                  onClick={() => setCurrentPage(1)}
-                  disabled={currentPage <= 1}
-                >
-                  <span className='sr-only'>Go to first page</span>
-                  <ChevronsLeft className='h-4 w-4' />
-                </Button>
-                <Button
-                  variant='outline'
-                  className='h-8 w-8 p-0'
-                  onClick={() => setCurrentPage(currentPage - 1)}
-                  disabled={currentPage <= 1}
-                >
-                  <span className='sr-only'>Go to previous page</span>
-                  <ChevronLeft className='h-4 w-4' />
-                </Button>
-                <Button
-                  variant='outline'
-                  className='h-8 w-8 p-0'
-                  onClick={() => setCurrentPage(currentPage + 1)}
-                  disabled={currentPage >= totalPages}
-                >
-                  <span className='sr-only'>Go to next page</span>
-                  <ChevronRight className='h-4 w-4' />
-                </Button>
-                <Button
-                  variant='outline'
-                  className='h-8 w-8 p-0'
-                  onClick={() => setCurrentPage(totalPages)}
-                  disabled={currentPage >= totalPages}
-                >
-                  <span className='sr-only'>Go to last page</span>
-                  <ChevronsRight className='h-4 w-4' />
-                </Button>
-              </div>
+            <div className='flex items-center space-x-2'>
+              <Button
+                variant='outline'
+                className='h-8 w-8 p-0'
+                onClick={() => setCurrentPage(1)}
+                disabled={currentPage <= 1}
+              >
+                <span className='sr-only'>Go to first page</span>
+                <ChevronsLeft className='h-4 w-4' />
+              </Button>
+              <Button
+                variant='outline'
+                className='h-8 w-8 p-0'
+                onClick={() => setCurrentPage(currentPage - 1)}
+                disabled={currentPage <= 1}
+              >
+                <span className='sr-only'>Go to previous page</span>
+                <ChevronLeft className='h-4 w-4' />
+              </Button>
+              <Button
+                variant='outline'
+                className='h-8 w-8 p-0'
+                onClick={() => setCurrentPage(currentPage + 1)}
+                disabled={currentPage >= totalPages}
+              >
+                <span className='sr-only'>Go to next page</span>
+                <ChevronRight className='h-4 w-4' />
+              </Button>
+              <Button
+                variant='outline'
+                className='h-8 w-8 p-0'
+                onClick={() => setCurrentPage(totalPages)}
+                disabled={currentPage >= totalPages}
+              >
+                <span className='sr-only'>Go to last page</span>
+                <ChevronsRight className='h-4 w-4' />
+              </Button>
             </div>
           </div>
         </div>

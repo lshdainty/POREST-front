@@ -53,53 +53,74 @@ export default function UserTable({ value: users }: UserTableProps) {
   };
 
   return (
-    <Card>
-      <CardHeader className='flex flex-row items-center justify-between'>
-        <CardTitle>사용자 목록</CardTitle>
-        <div className='flex gap-2'>
-          <UserEditDialog
-            user={{
-                user_id: '',
-                user_name: '',
-                user_email: '',
-                user_birth: dayjs().format('YYYY-MM-DD'),
-                user_company_name: companyOptions[0].company_name,
-                user_company_type: companyOptions[0].company_type,
-                user_department_name: departmentOptions[0].department_name,
-                user_department_type: departmentOptions[0].department_type,
-                lunar_yn: 'N',
-                user_work_time: '9 ~ 6',
-                user_role_type: 'USER',
-            }}
-            onSave={handleCreateUser}
-            trigger={<Button className='text-sm h-8' size='sm'>추가</Button>}
-          />
+    <Card className='flex-1'>
+      <CardHeader>
+        <div className='flex items-center justify-between'>
+          <CardTitle>사용자 목록</CardTitle>
+          <div className='flex gap-2'>
+            <UserEditDialog
+              user={{
+                  user_id: '',
+                  user_name: '',
+                  user_email: '',
+                  user_birth: dayjs().format('YYYY-MM-DD'),
+                  user_company_name: companyOptions[0].company_name,
+                  user_company_type: companyOptions[0].company_type,
+                  user_department_name: departmentOptions[0].department_name,
+                  user_department_type: departmentOptions[0].department_type,
+                  lunar_yn: 'N',
+                  user_work_time: '9 ~ 6',
+                  user_role_type: 'USER',
+              }}
+              onSave={handleCreateUser}
+              trigger={<Button className='text-sm h-8' size='sm'>추가</Button>}
+            />
+          </div>
         </div>
       </CardHeader>
       <CardContent>
         {users && users.length > 0 ? (
-          <div className='overflow-x-auto'>
-            <Table>
+          <div className='overflow-x-auto relative'>
+            <Table className='min-w-[1200px]'>
               <TableHeader>
                 <TableRow>
-                  <TableHead className='min-w-[120px]'>이름</TableHead>
-                  <TableHead>ID</TableHead>
-                  <TableHead className='min-w-[200px]'>Email</TableHead>
+                  <TableHead 
+                    className={cn(
+                      'min-w-[180px] w-[180px] pl-4',
+                      'sticky left-0 z-5 bg-background'
+                    )}
+                  >
+                    이름
+                  </TableHead>
+                  <TableHead className='min-w-[120px]'>ID</TableHead>
+                  <TableHead className='min-w-[220px]'>Email</TableHead>
                   <TableHead className='min-w-[150px]'>생년월일</TableHead>
-                  <TableHead>회사</TableHead>
-                  <TableHead>부서</TableHead>
-                  <TableHead>음력여부</TableHead>
-                  <TableHead>유연근무제</TableHead>
-                  <TableHead>권한</TableHead>
-                  <TableHead>액션</TableHead>
+                  <TableHead className='min-w-[120px]'>회사</TableHead>
+                  <TableHead className='min-w-[120px]'>부서</TableHead>
+                  <TableHead className='min-w-[120px]'>음력여부</TableHead>
+                  <TableHead className='min-w-[130px]'>유연근무제</TableHead>
+                  <TableHead className='min-w-[100px]'>권한</TableHead>
+                  <TableHead className='min-w-[80px] pr-4'></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {users.map((row: GetUsersResp) => (
-                  <TableRow key={row.user_id} className='hover:bg-gray-50'>
-                    <TableCell>
+                  <TableRow
+                    key={row.user_id}
+                    className={cn(
+                      'hover:bg-muted/50 hover:text-foreground',
+                      'dark:hover:bg-muted/80 dark:hover:text-foreground'
+                    )}
+                  >
+                    <TableCell 
+                      className={cn(
+                        'pl-4 w-[180px]',
+                        'sticky left-0 z-5 bg-background',
+                        'hover:bg-muted/50 dark:hover:bg-muted/80'
+                      )}
+                    >
                       <div className='flex items-center gap-3'>
-                        <Avatar className='w-8 h-8'>
+                        <Avatar className='w-8 h-8 flex-shrink-0'>
                           <AvatarFallback>
                             {row.user_role_type === 'ADMIN' ? 
                               <UserRoundCog className='w-5 h-5' /> : 
@@ -124,10 +145,11 @@ export default function UserTable({ value: users }: UserTableProps) {
                     <TableCell>
                       <div className='flex items-center gap-1'>
                         {row.lunar_yn === 'Y' ? 
-                          <Moon className='w-4 h-4 text-blue-600' /> : 
-                          <Sun className='w-4 h-4 text-yellow-600' />
+                          <Moon className='w-4 h-4 text-blue-600 flex-shrink-0' /> : 
+                          <Sun className='w-4 h-4 text-yellow-600 flex-shrink-0' />
                         }
                         <Badge className={cn(
+                          'text-xs whitespace-nowrap',
                           row.lunar_yn === 'Y' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800'
                         )}>
                           {row.lunar_yn === 'Y' ? '음력' : '양력'}
@@ -136,6 +158,7 @@ export default function UserTable({ value: users }: UserTableProps) {
                     </TableCell>
                     <TableCell>
                       <Badge className={cn(
+                        'text-xs whitespace-nowrap',
                         {
                           'bg-rose-500 text-white': row.user_work_time === '8 ~ 5',
                           'bg-sky-500 text-white': row.user_work_time === '9 ~ 6',
@@ -154,60 +177,62 @@ export default function UserTable({ value: users }: UserTableProps) {
                         }
                       )}>
                         {row.user_role_type === 'ADMIN' ? 
-                          <UserRoundCog size={14}/> : 
-                          <UserRound size={14}/>
+                          <UserRoundCog size={14} className='flex-shrink-0'/> : 
+                          <UserRound size={14} className='flex-shrink-0'/>
                         }
-                        {row.user_role_type}
+                        <span className='whitespace-nowrap'>{row.user_role_type}</span>
                       </div>
                     </TableCell>
-                    <TableCell>
-                      <DropdownMenu modal={false}>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant='ghost'
-                            size='sm'
-                            className='h-8 w-8 p-0 data-[state=open]:bg-muted hover:bg-muted'
-                          >
-                            <EllipsisVertical className='w-4 h-4' />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align='end' className='w-32'>
-                          <UserEditDialog
-                            user={row}
-                            onSave={handleUpdateUser}
-                            trigger={
-                              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                                <Pencil className="h-4 w-4" />
-                                <span>수정</span>
-                              </DropdownMenuItem>
-                            }
-                          />
-                          <UserEditDialog
-                            user={{...row, user_id: ''}}
-                            onSave={handleCreateUser}
-                            trigger={
-                              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                                <Copy className="h-4 w-4" />
-                                <span>복사</span>
-                              </DropdownMenuItem>
-                            }
-                          />
-                          <DropdownMenuSeparator />
-                          <UserDeleteDialog
-                            user={row}
-                            onDelete={handleDeleteUser}
-                            trigger={
-                              <DropdownMenuItem
-                                onSelect={(e) => e.preventDefault()}
-                                className='text-destructive focus:text-destructive hover:!bg-destructive/20'
-                              >
-                                <Trash2 className="h-4 w-4" />
-                                <span>삭제</span>
-                              </DropdownMenuItem>
-                            }
-                          />
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                    <TableCell className='pr-4'>
+                      <div className='flex justify-end'>
+                        <DropdownMenu modal={false}>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant='ghost'
+                              size='sm'
+                              className='h-8 w-8 p-0 data-[state=open]:bg-muted hover:bg-muted'
+                            >
+                              <EllipsisVertical className='w-4 h-4' />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align='end' className='w-32'>
+                            <UserEditDialog
+                              user={row}
+                              onSave={handleUpdateUser}
+                              trigger={
+                                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                  <Pencil className='h-4 w-4' />
+                                  <span>수정</span>
+                                </DropdownMenuItem>
+                              }
+                            />
+                            <UserEditDialog
+                              user={{...row, user_id: ''}}
+                              onSave={handleCreateUser}
+                              trigger={
+                                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                  <Copy className='h-4 w-4' />
+                                  <span>복사</span>
+                                </DropdownMenuItem>
+                              }
+                            />
+                            <DropdownMenuSeparator />
+                            <UserDeleteDialog
+                              user={row}
+                              onDelete={handleDeleteUser}
+                              trigger={
+                                <DropdownMenuItem
+                                  onSelect={(e) => e.preventDefault()}
+                                  className='text-destructive focus:text-destructive hover:!bg-destructive/20'
+                                >
+                                  <Trash2 className='h-4 w-4' />
+                                  <span>삭제</span>
+                                </DropdownMenuItem>
+                              }
+                            />
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
