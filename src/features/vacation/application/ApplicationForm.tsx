@@ -124,7 +124,7 @@ export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess }
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className='max-w-6xl max-h-[90vh] p-0'>
+      <DialogContent className='max-w-6xl max-h-[90vh] p-0 grid grid-rows-[auto_1fr_auto]'>
         <DialogHeader className='p-6 pb-0'>
           <div className='flex items-center justify-between'>
             <div>
@@ -171,7 +171,7 @@ export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess }
           </div>
         </DialogHeader>
 
-        <ScrollArea className='max-h-[calc(90vh-200px)]'>
+        <ScrollArea>
           <div className='p-6 pt-4'>
             <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
               {/* 메인 폼 */}
@@ -410,7 +410,7 @@ export default function ApplicationFormDialog({ open, onClose, onSubmitSuccess }
         </ScrollArea>
 
         {/* 하단 버튼 */}
-        <div className='p-6 pt-0 border-t bg-gray-50'>
+        <div className='p-6 pt-0 border-t bg-gray-50 rounded-b-lg'>
           <div className='flex items-center gap-2 text-sm text-gray-600 mb-4'>
             <AlertCircle className='w-4 h-4' />
             승인 완료되면 변경 내역이 바로 반영됩니다.
