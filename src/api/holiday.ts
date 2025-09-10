@@ -27,6 +27,7 @@ interface GetHolidaysResp {
   holiday_name: string
   holiday_date: string
   holiday_type: string
+  holiday_icon: string
   country_code: string
   lunar_yn : string
   lunar_date: string
@@ -53,6 +54,7 @@ interface PostHolidayReq {
   holiday_name: string
   holiday_date: string
   holiday_type: string
+  holiday_icon: string
   country_code: string
   lunar_yn : string
   lunar_date: string
@@ -89,6 +91,7 @@ interface PutHolidayReq {
   holiday_name: string
   holiday_date: string
   holiday_type: string
+  holiday_icon: string
   country_code: string
   lunar_yn : string
   lunar_date: string

@@ -13,6 +13,11 @@ import { type GetHolidaysResp, type PostHolidayReq } from '@/api/holiday';
 
 const formSchema = z.object({
   holiday_name: z.string().min(1, { message: '공휴일 이름을 입력해주세요.' }),
+  holiday_icon: z.string().optional().refine((val) => {
+    if (!val) return true; // optional이므로 빈 값 허용
+    // 이모지 길이 체크 (일반적으로 1-2 문자)
+    return val.length <= 2;
+  }, { message: '이모지는 2자 이내로 입력해주세요.' }),
   holiday_date: z.string().min(1, { message: '날짜를 선택해주세요.' }),
   holiday_type: z.string().min(1, { message: '공휴일 구분을 선택해주세요.' }),
   lunar_yn: z.string().min(1, { message: '음력 여부를 선택해주세요.' }),
@@ -42,6 +47,7 @@ export default function HolidayEditDialog({
     resolver: zodResolver(formSchema),
     defaultValues: {
       holiday_name: '',
+      holiday_icon: '',
       holiday_date: '',
       holiday_type: '',
       lunar_yn: 'N',
@@ -57,6 +63,7 @@ export default function HolidayEditDialog({
     } else {
       form.reset({
         holiday_name: '',
+        holiday_icon: '',
         holiday_date: '',
         holiday_type: '',
         lunar_yn: 'N',
@@ -99,19 +106,40 @@ export default function HolidayEditDialog({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
-            <FormField
-              control={form.control}
-              name="holiday_name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>공휴일 이름</FormLabel>
-                  <FormControl>
-                    <Input placeholder='예: 추석' {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className='grid grid-cols-2 gap-4'>
+              <FormField
+                control={form.control}
+                name="holiday_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>공휴일 이름</FormLabel>
+                    <FormControl>
+                      <Input placeholder='예: 추석' {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="holiday_icon"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>아이콘 (이모지)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type='text'
+                        maxLength={2}
+                        placeholder='🎉'
+                        {...field}
+                        className='text-center text-xl'
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <div className='grid grid-cols-2 gap-4'>
               <FormField

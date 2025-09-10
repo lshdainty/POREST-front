@@ -1,4 +1,3 @@
-import React from 'react';
 import dayjs from 'dayjs';
 import { Calendar, EllipsisVertical, Pencil, Trash2 } from 'lucide-react';
 import { Button } from '@/components/shadcn/button';
@@ -26,7 +25,14 @@ const holidayTypeLabels = {
   SUBSTITUTE: '대체',
 };
 
-const getHolidayEmoji = (holidayName: string) => {
+// holiday_icon 필드를 우선 사용하고, 없으면 이름으로 fallback하는 함수
+const getHolidayIcon = (holiday: GetHolidaysResp) => {
+  // holiday_icon이 있으면 우선 사용
+  if (holiday.holiday_icon && holiday.holiday_icon.trim() !== '') {
+    return holiday.holiday_icon;
+  }
+  
+  // holiday_icon이 없으면 기존 이모지 맵 사용
   const emojiMap: { [key: string]: string } = {
     '추석': '🌕',
     '국군의 날': '🌲',
@@ -41,7 +47,7 @@ const getHolidayEmoji = (holidayName: string) => {
     '크리스마스': '🎄'
   };
   
-  return emojiMap[holidayName] || '🎉';
+  return emojiMap[holiday.holiday_name] || '🎉';
 };
 
 const formatYYYYMMDDToDisplay = (yyyymmdd: string) => {
@@ -92,7 +98,6 @@ export default function HolidayList({
     return (
       <div className='flex items-center justify-center h-64'>
         <div className='text-center'>
-          <Calendar className='h-12 w-12 mx-auto text-muted-foreground mb-4 animate-pulse' />
           <p className='text-muted-foreground'>공휴일 데이터를 불러오는 중...</p>
         </div>
       </div>
@@ -106,7 +111,7 @@ export default function HolidayList({
           <CardContent className='px-6'>
             <div className='flex items-center justify-between'>
               <div className='flex items-center gap-4'>
-                <div className='text-3xl'>{getHolidayEmoji(holiday.holiday_name)}</div>
+                <div className='text-3xl'>{getHolidayIcon(holiday)}</div>
                 <div>
                   <h3 className='text-xl font-semibold text-card-foreground'>
                     {holiday.holiday_name}

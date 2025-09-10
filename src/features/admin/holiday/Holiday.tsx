@@ -101,7 +101,6 @@ export default function Holiday() {
       <div className='w-full max-w-4xl mx-auto'>
         <div className='flex items-center justify-between mb-6'>
           <div className='flex items-center gap-3'>
-            <Calendar className='h-8 w-8 text-blue-600' />
             <div>
               <h1 className='text-3xl font-bold text-card-foreground'>공휴일 관리</h1>
               <p className='text-muted-foreground mt-1'>공휴일을 관리하고 추가/수정/삭제할 수 있습니다</p>
