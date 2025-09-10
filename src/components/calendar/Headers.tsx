@@ -20,8 +20,8 @@ export const MonthDateHeader: React.FC<DateHeaderProps> = ({label, date, isOffRa
   let textColor:string = '';
   if (date.getDay() === 0) textColor = sunday;
   if (date.getDay() === 6) textColor = saturday;
-  if (holiday.holidayType === 'PUBLIC') textColor = sunday;
-  if (holiday.holidayType === 'RECOMMEND') textColor = saturday;
+  if (holiday.holidayType === 'PUBLIC' || holiday.holidayType === 'SUBSTITUTE') textColor = sunday;
+  if (holiday.holidayType === 'ETC') textColor = saturday;
 
   let opacity:string = '';
   if (isOffRange) opacity = 'opacity-50';
@@ -29,8 +29,8 @@ export const MonthDateHeader: React.FC<DateHeaderProps> = ({label, date, isOffRa
   return (
     <>
       <button type='button' className={`text-sm foreground-text ${textColor} ${opacity}`}>{label}</button>
-      {holiday.holidayType === 'PUBLIC' ? <span className={`holiday-public text-xs ${textColor} ${opacity}`}>{`${holiday.holidayName}`}</span> : null}
-      {holiday.holidayType === 'RECOMMEND' ? <span className={`holiday-recommend text-xs ${textColor} ${opacity}`}>{`${holiday.holidayName}`}</span> : null}
+      {holiday.holidayType === 'PUBLIC' || holiday.holidayType === 'SUBSTITUTE' ? <span className={`holiday-public text-xs ${textColor} ${opacity}`}>{`${holiday.holidayName}`}</span> : null}
+      {holiday.holidayType === 'ETC' ? <span className={`holiday-recommend text-xs ${textColor} ${opacity}`}>{`${holiday.holidayName}`}</span> : null}
     </>
   )
 }
