@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import dayjs from 'dayjs';
-import { Calendar } from 'lucide-react';
 import {
   useGetHolidaysByStartEndDate,
   usePostHoliday,

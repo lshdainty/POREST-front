@@ -28,12 +28,12 @@ export default function HolidayDeleteDialog({ holiday, trigger, onDelete }: Holi
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
-      <AlertDialogContent className="sm:max-w-lg">
-        <div className="flex items-start space-x-4">
-          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
-            <TriangleAlert className="h-6 w-6 text-red-600 dark:text-red-400" />
+      <AlertDialogContent className='sm:max-w-lg'>
+        <div className='flex items-start space-x-4'>
+          <div className='flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20'>
+            <TriangleAlert className='h-6 w-6 text-red-600 dark:text-red-400' />
           </div>
-          <AlertDialogHeader className="flex-1">
+          <AlertDialogHeader className='flex-1'>
             <AlertDialogTitle>공휴일 삭제</AlertDialogTitle>
             <AlertDialogDescription>
               정말 "{holiday.holiday_name}" 공휴일을 삭제하시겠습니까? 이 작업은 되돌릴 수 없으며, 공휴일 정보가 영구적으로 삭제됩니다.

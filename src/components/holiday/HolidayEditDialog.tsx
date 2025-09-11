@@ -93,7 +93,6 @@ export default function HolidayEditDialog({
           </Button>
         </DialogTrigger>
       )}
-      
       <DialogContent className='sm:max-w-[500px]'>
         <DialogHeader>
           <DialogTitle>
@@ -103,13 +102,12 @@ export default function HolidayEditDialog({
             공휴일 정보를 입력해주세요.
           </DialogDescription>
         </DialogHeader>
-
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
             <div className='grid grid-cols-2 gap-4'>
               <FormField
                 control={form.control}
-                name="holiday_name"
+                name='holiday_name'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>공휴일 이름</FormLabel>
@@ -122,7 +120,7 @@ export default function HolidayEditDialog({
               />
               <FormField
                 control={form.control}
-                name="holiday_icon"
+                name='holiday_icon'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>아이콘 (이모지)</FormLabel>
@@ -140,11 +138,10 @@ export default function HolidayEditDialog({
                 )}
               />
             </div>
-
             <div className='grid grid-cols-2 gap-4'>
               <FormField
                 control={form.control}
-                name="holiday_date"
+                name='holiday_date'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>날짜</FormLabel>
@@ -160,7 +157,7 @@ export default function HolidayEditDialog({
               />
               <FormField
                 control={form.control}
-                name="holiday_type"
+                name='holiday_type'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>공휴일 구분</FormLabel>
@@ -181,11 +178,10 @@ export default function HolidayEditDialog({
                 )}
               />
             </div>
-
             <div className='grid grid-cols-2 gap-4'>
               <FormField
                 control={form.control}
-                name="lunar_yn"
+                name='lunar_yn'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>음력 여부</FormLabel>
@@ -206,7 +202,7 @@ export default function HolidayEditDialog({
               />
               <FormField
                 control={form.control}
-                name="is_recurring"
+                name='is_recurring'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>매년 반복</FormLabel>
@@ -226,11 +222,10 @@ export default function HolidayEditDialog({
                 )}
               />
             </div>
-
             {form.watch('lunar_yn') === 'Y' && (
               <FormField
                 control={form.control}
-                name="lunar_date"
+                name='lunar_date'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>음력 날짜</FormLabel>
@@ -245,10 +240,9 @@ export default function HolidayEditDialog({
                 )}
               />
             )}
-
             <FormField
               control={form.control}
-              name="country_code"
+              name='country_code'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>국가 코드</FormLabel>
@@ -259,7 +253,6 @@ export default function HolidayEditDialog({
                 </FormItem>
               )}
             />
-
             <div className='flex justify-end gap-2 pt-4'>
               <Button 
                 type='button' 

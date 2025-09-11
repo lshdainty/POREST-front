@@ -1,15 +1,9 @@
 import dayjs from 'dayjs';
 import { Calendar, EllipsisVertical, Pencil, Trash2 } from 'lucide-react';
+import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Card, CardContent } from '@/components/shadcn/card';
-import { Badge } from '@/components/shadcn/badge';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/shadcn/dropdownMenu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
 import { type GetHolidaysResp } from '@/api/holiday';
 import HolidayDeleteDialog from '@/components/holiday/HolidayDeleteDialog';
 
@@ -23,31 +17,6 @@ const holidayTypeLabels = {
   PUBLIC: '공휴일',
   ETC: '기타',
   SUBSTITUTE: '대체',
-};
-
-// holiday_icon 필드를 우선 사용하고, 없으면 이름으로 fallback하는 함수
-const getHolidayIcon = (holiday: GetHolidaysResp) => {
-  // holiday_icon이 있으면 우선 사용
-  if (holiday.holiday_icon && holiday.holiday_icon.trim() !== '') {
-    return holiday.holiday_icon;
-  }
-  
-  // holiday_icon이 없으면 기존 이모지 맵 사용
-  const emojiMap: { [key: string]: string } = {
-    '추석': '🌕',
-    '국군의 날': '🌲',
-    '개천절': '🇰🇷',
-    '한글날': '📚',
-    '신정': '🎊',
-    '설날': '🧧',
-    '어린이날': '👶',
-    '부처님오신날': '🏮',
-    '현충일': '🕯️',
-    '광복절': '🇰🇷',
-    '크리스마스': '🎄'
-  };
-  
-  return emojiMap[holiday.holiday_name] || '🎉';
 };
 
 const formatYYYYMMDDToDisplay = (yyyymmdd: string) => {
@@ -111,7 +80,7 @@ export default function HolidayList({
           <CardContent className='px-6'>
             <div className='flex items-center justify-between'>
               <div className='flex items-center gap-4'>
-                <div className='text-3xl'>{getHolidayIcon(holiday)}</div>
+                <div className='text-3xl'>{(holiday.holiday_icon && holiday.holiday_icon.trim() !== '') ? holiday.holiday_icon : 'ㅤ'}</div>
                 <div>
                   <h3 className='text-xl font-semibold text-card-foreground'>
                     {holiday.holiday_name}
@@ -131,7 +100,6 @@ export default function HolidayList({
                   </div>
                 </div>
               </div>
-
               <div className='flex items-center gap-2'>
                 <Badge className={holidayTypeColors[holiday.holiday_type as keyof typeof holidayTypeColors]}>
                   {holidayTypeLabels[holiday.holiday_type as keyof typeof holidayTypeLabels]}
@@ -146,7 +114,6 @@ export default function HolidayList({
                     매년
                   </Badge>
                 )}
-
                 <DropdownMenu modal={false}>
                   <DropdownMenuTrigger asChild>
                     <Button
@@ -188,7 +155,6 @@ export default function HolidayList({
           </CardContent>
         </Card>
       ))}
-
       {(!holidays || holidays.length === 0) && (
         <Card>
           <CardContent className='p-12 text-center'>
