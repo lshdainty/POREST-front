@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { GetUsersResp } from '@/api/user';
+import { useState, useRef } from 'react';
+import { GetUsersResp, usePostUploadProfile } from '@/api/user';
 import { Input } from '@/components/shadcn/input';
 import { Button } from '@/components/shadcn/button';
 import { Separator } from '@/components/shadcn/separator';
@@ -8,7 +8,25 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/shadcn/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose, DialogTrigger } from '@/components/shadcn/dialog';
-import { User as UserIcon, Mail, Cake, Briefcase, Clock, Shield, Building2, UserRoundCog, UserRound, Moon } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/shadcn/alert';
+import { Skeleton } from '@/components/shadcn/skeleton';
+import { 
+  User as UserIcon, 
+  Mail, 
+  Cake, 
+  Briefcase, 
+  Clock, 
+  Shield, 
+  Building2, 
+  UserRoundCog, 
+  UserRound, 
+  Moon,
+  Upload,
+  Trash2,
+  Loader2,
+  AlertCircle,
+  Camera
+} from 'lucide-react';
 import dayjs from 'dayjs';
 import { cn } from '@/lib/utils';
 import { useForm } from 'react-hook-form';
@@ -36,8 +54,43 @@ interface UserEditDialogProps {
   onSave: (updatedUser: GetUsersResp) => void;
 }
 
+// 이미지 압축 유틸리티 함수
+const compressImage = (file: File, maxWidth: number = 800, quality: number = 0.8): Promise<File> => {
+  return new Promise((resolve) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d')!;
+    const img = new Image();
+    
+    img.onload = () => {
+      const ratio = Math.min(maxWidth / img.width, maxWidth / img.height);
+      canvas.width = img.width * ratio;
+      canvas.height = img.height * ratio;
+      
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      
+      canvas.toBlob((blob) => {
+        const compressedFile = new File([blob!], file.name, {
+          type: file.type,
+          lastModified: Date.now(),
+        });
+        resolve(compressedFile);
+      }, file.type, quality);
+    };
+    
+    img.src = URL.createObjectURL(file);
+  });
+};
+
 export default function UserEditDialog({ user, trigger, onSave }: UserEditDialogProps) {
   const [open, setOpen] = useState(false);
+  const { mutateAsync: uploadProfile, isPending: isUploading } = usePostUploadProfile();
+  
+  // 이미지 업로드 관련 상태 관리
+  const [profileImage, setProfileImage] = useState<string>(user.profile_url || '');
+  const [profileUuid, setProfileUuid] = useState<string | undefined>('');
+  const [uploadError, setUploadError] = useState<string>('');
+  const [uploadSuccess, setUploadSuccess] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<UserFormValues>({
     resolver: zodResolver(formSchema),
@@ -49,8 +102,73 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
     },
   });
 
+  // 이미지 파일 선택 핸들러
+  const handleImageSelect = () => {
+    fileInputRef.current?.click();
+  };
+
+  // 파일 변경 핸들러 - 이미지 업로드 및 압축 처리
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // 파일 타입 검증
+    if (!file.type.startsWith('image/')) {
+      setUploadError('이미지 파일만 업로드 가능합니다.');
+      return;
+    }
+
+    // 파일 크기 검증 (5MB 제한)
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError('파일 크기는 5MB 이하여야 합니다.');
+      return;
+    }
+
+    setUploadError('');
+    setUploadSuccess(false);
+
+    try {
+      // 이미지 압축 처리
+      const compressedFile = await compressImage(file);
+      
+      const data = await uploadProfile(compressedFile);
+
+      console.log(data);
+
+      // 성공 시 이미지 URL 업데이트
+      setProfileImage(`http://localhost:8080${data}`);
+      setUploadSuccess(true);
+      
+      // 성공 메시지를 3초 후 자동 숨김
+      setTimeout(() => setUploadSuccess(false), 3000);
+      
+    } catch (error) {
+      setUploadError(error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.');
+    } finally {
+      // 파일 입력 초기화
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  // 프로필 이미지 삭제 핸들러
+  const handleImageDelete = async () => {
+    if (!profileImage) return;
+
+    setProfileImage('');
+    setUploadSuccess(true);
+    setTimeout(() => setUploadSuccess(false), 3000);
+  };
+
   const onSubmit = (values: UserFormValues) => {
-    onSave({ ...user, ...values });
+    // 업데이트된 사용자 정보에 프로필 이미지 URL 포함
+    onSave({ 
+      ...user, 
+      ...values, 
+      profile_url: profileImage,
+      profile_uuid: profileUuid
+    });
     setOpen(false);
   };
 
@@ -80,16 +198,86 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="flex gap-6 p-6">
               <div className="w-1/3 flex flex-col items-center justify-center gap-4">
-                <Avatar className="w-32 h-32">
-                  <AvatarImage src="https://github.com/shadcn.png" alt={form.watch('user_name')} />
-                  <AvatarFallback>{form.watch('user_name').charAt(0)}</AvatarFallback>
-                </Avatar>
-                <Button type="button" variant="outline" asChild>
-                  <label htmlFor="avatar-upload" className="cursor-pointer">
-                    이미지 업로드
-                    <Input id="avatar-upload" type="file" className="hidden" />
-                  </label>
-                </Button>
+                {/* 프로필 이미지 섹션 - 호버 효과와 로딩 표시 개선 */}
+                <div className="relative group">
+                  {isUploading ? (
+                    // 로딩 중일 때 스켈레톤과 로딩 스피너 함께 표시
+                    <div className="relative">
+                      <Skeleton className="w-40 h-40 rounded-full" />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="flex flex-col items-center gap-2">
+                          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                          <span className="text-xs text-muted-foreground">처리 중...</span>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <Avatar className="w-40 h-40">
+                      <AvatarImage 
+                        src={profileImage || "https://github.com/shadcn.png"} 
+                        alt={form.watch('user_name')} 
+                      />
+                      <AvatarFallback>{form.watch('user_name').charAt(0)}</AvatarFallback>
+                    </Avatar>
+                  )}
+                  
+                  {/* 이미지 호버 시 업로드/수정/삭제 버튼 표시 */}
+                  {!isUploading && (
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 rounded-full">
+                      <div className="flex gap-1">
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="ghost"
+                          className="text-white hover:bg-white/20"
+                          onClick={handleImageSelect}
+                          title={profileImage ? "이미지 변경" : "이미지 업로드"}
+                        >
+                          {profileImage ? (
+                            <Camera className="h-4 w-4" />
+                          ) : (
+                            <Upload className="h-4 w-4" />
+                          )}
+                        </Button>
+                        {profileImage && (
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            className="text-white hover:bg-white/20"
+                            onClick={handleImageDelete}
+                            title="이미지 삭제"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* 숨겨진 파일 입력 요소 */}
+                <Input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+
+                {/* 업로드 상태 메시지 표시 */}
+                {uploadError && (
+                  <Alert className="w-full" variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{uploadError}</AlertDescription>
+                  </Alert>
+                )}
+
+                {uploadSuccess && (
+                  <Alert className="w-full">
+                    <AlertDescription>이미지가 성공적으로 처리되었습니다.</AlertDescription>
+                  </Alert>
+                )}
               </div>
 
               <Separator orientation="vertical" className="h-auto" />
@@ -277,8 +465,15 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
                   취소
                 </Button>
               </DialogClose>
-              <Button type="submit">
-                저장
+              <Button type="submit" disabled={isUploading}>
+                {isUploading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    처리 중...
+                  </>
+                ) : (
+                  '저장'
+                )}
               </Button>
             </DialogFooter>
           </form>

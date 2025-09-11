@@ -34,6 +34,7 @@ interface GetUserResp {
   user_department_name: string
   user_work_time: string
   lunar_yn: string
+  profile_url: string
 }
 
 const useGetUser = (reqData: GetUserReq) => {
@@ -65,6 +66,7 @@ interface GetUsersResp {
   user_department_name: string
   user_work_time: string
   lunar_yn: string
+  profile_url: string
 }
 
 const useGetUsers = () => {
@@ -93,6 +95,8 @@ interface PostUserReq {
   user_department_type: string
   user_work_time: string
   lunar_yn: string
+  profile_url: string
+  profile_uuid: string
 }
 
 const usePostUser = () => {
@@ -129,6 +133,8 @@ interface PutUserReq {
   user_department_type: string
   user_work_time: string
   lunar_yn: string
+  profile_url: string
+  profile_uuid: string
 }
 
 const usePutUser = () => {
@@ -180,6 +186,28 @@ const useDeleteUser = () => {
   });
 }
 
+const usePostUploadProfile = () => {
+  return useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append('profile', file);
+
+      const resp: ApiResponse = await api.request({
+        method: 'post',
+        url: `/user/upload/profile`,
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        }
+      });
+
+      if (resp.code !== 200) throw new Error(resp.data.data.message);
+
+      return resp.data;
+    }
+  });
+}
+
 export {
   // QueryKey
   UserQueryKey,
@@ -189,7 +217,8 @@ export {
   useGetUsers,
   usePostUser,
   usePutUser,
-  useDeleteUser
+  useDeleteUser,
+  usePostUploadProfile
 }
 
 export type {

@@ -31,7 +31,9 @@ export default function UserTable({ value: users }: UserTableProps) {
       user_company_type: user.user_company_type,
       user_department_type: user.user_department_type,
       user_work_time: user.user_work_time,
-      lunar_yn: user.lunar_yn
+      lunar_yn: user.lunar_yn,
+      profile_url: user.user_profile_image,
+      profile_uuid: user.user_profile_uuid
     });
   };
 
@@ -44,7 +46,9 @@ export default function UserTable({ value: users }: UserTableProps) {
       user_company_type: user.user_company_type,
       user_department_type: user.user_department_type,
       user_work_time: user.user_work_time,
-      lunar_yn: user.lunar_yn
+      lunar_yn: user.lunar_yn,
+      profile_url: user.user_profile_image,
+      profile_uuid: user.user_profile_uuid
     });
   };
 
@@ -71,6 +75,8 @@ export default function UserTable({ value: users }: UserTableProps) {
                   lunar_yn: 'N',
                   user_work_time: '9 ~ 6',
                   user_role_type: 'USER',
+                  user_profile_image: '',
+                  user_profile_uuid: '',
               }}
               onSave={handleCreateUser}
               trigger={<Button className='text-sm h-8' size='sm'>추가</Button>}
