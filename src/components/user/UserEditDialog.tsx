@@ -214,7 +214,7 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
                   ) : (
                     <Avatar className="w-40 h-40">
                       <AvatarImage 
-                        src={profileImage || "https://github.com/shadcn.png"} 
+                        src={profileImage} 
                         alt={form.watch('user_name')} 
                       />
                       <AvatarFallback>{form.watch('user_name').charAt(0)}</AvatarFallback>
