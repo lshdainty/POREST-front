@@ -63,19 +63,12 @@ export default function UserTable({ value: users }: UserTableProps) {
           <CardTitle>사용자 목록</CardTitle>
           <div className='flex gap-2'>
             <UserEditDialog
+              title='사용자 추가'
               user={{
-                  user_id: '',
-                  user_name: '',
-                  user_email: '',
-                  user_birth: dayjs().format('YYYY-MM-DD'),
-                  user_company_name: companyOptions[0].company_name,
-                  user_company_type: companyOptions[0].company_type,
-                  user_department_name: departmentOptions[0].department_name,
-                  user_department_type: departmentOptions[0].department_type,
-                  lunar_yn: 'N',
-                  user_work_time: '9 ~ 6',
-                  user_role_type: 'USER',
-                  profile_url: ''
+                user_id: '', user_name: '', user_email: '', user_birth: '',
+                user_company_name: '', user_company_type: '', user_department_name: '',
+                user_department_type: '', lunar_yn: '', user_work_time: '',
+                user_role_type: 'USER', profile_url: ''
               }}
               onSave={handleCreateUser}
               trigger={<Button className='text-sm h-8' size='sm'>추가</Button>}
@@ -201,6 +194,7 @@ export default function UserTable({ value: users }: UserTableProps) {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align='end' className='w-32'>
                             <UserEditDialog
+                              title='사용자 수정'
                               user={row}
                               onSave={handleUpdateUser}
                               trigger={
@@ -211,6 +205,7 @@ export default function UserTable({ value: users }: UserTableProps) {
                               }
                             />
                             <UserEditDialog
+                              title='사용자 복사'
                               user={{...row, user_id: ''}}
                               onSave={handleCreateUser}
                               trigger={

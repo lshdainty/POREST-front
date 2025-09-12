@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { GetUsersResp, usePostUploadProfile, type PutUserReq } from '@/api/user';
 import { Input } from '@/components/shadcn/input';
 import { Button } from '@/components/shadcn/button';
@@ -53,6 +53,7 @@ interface UserEditDialogProps {
   user: GetUsersResp;
   trigger: React.ReactNode;
   onSave: (updatedUser: PutUserReq) => void;
+  title: string;
 }
 
 // 이미지 압축 유틸리티 함수
@@ -82,7 +83,7 @@ const compressImage = (file: File, maxWidth: number = 800, quality: number = 0.8
   });
 };
 
-export default function UserEditDialog({ user, trigger, onSave }: UserEditDialogProps) {
+export default function UserEditDialog({ user, trigger, onSave, title }: UserEditDialogProps) {
   const [open, setOpen] = useState(false);
   const { mutateAsync: uploadProfile, isPending: isUploading } = usePostUploadProfile();
   
@@ -96,12 +97,37 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
   const form = useForm<UserFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      ...user,
-      user_company_type: user.user_company_type || companyOptions[0].company_type,
-      user_department_type: user.user_department_type || departmentOptions[0].department_type,
-      lunar_yn: user.lunar_yn || 'N',
+      user_name: '',
+      user_id: '',
+      user_email: '',
+      user_birth: dayjs().format('YYYY-MM-DD'),
+      user_company_type: companyOptions[0].company_type,
+      user_department_type: departmentOptions[0].department_type,
+      lunar_yn: 'N',
+      user_work_time: '9 ~ 6',
+      user_role_type: 'USER',
     },
   });
+
+  useEffect(() => {
+    if (open) {
+      if (title === '사용자 추가') {
+        form.reset();
+        setProfileImage('');
+      } else { // 수정 또는 복사
+        form.reset({
+          ...user,
+          user_company_type: user.user_company_type || companyOptions[0].company_type,
+          user_department_type: user.user_department_type || departmentOptions[0].department_type,
+          lunar_yn: user.lunar_yn || 'N',
+        });
+        setProfileImage(user.profile_url || '');
+      }
+      setProfileUUID('');
+      setUploadError('');
+      setUploadSuccess(false);
+    }
+  }, [open, user, title, form]);
 
   // 이미지 파일 선택 핸들러
   const handleImageSelect = () => {
@@ -194,7 +220,7 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
       </DialogTrigger>
       <DialogContent className="sm:max-w-4xl">
         <DialogHeader>
-          <DialogTitle>사용자 정보 수정</DialogTitle>
+          <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
