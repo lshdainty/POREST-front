@@ -3,13 +3,14 @@ import UserDeleteDialog from '@/components/user/UserDeleteDialog';
 import { usePostUser, usePutUser, useDeleteUser, type GetUsersResp, type PostUserReq, type PutUserReq } from '@/api/user';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
-import { Avatar, AvatarFallback } from '@/components/shadcn/avatar';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/shadcn/avatar';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/shadcn/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/shadcn/dropdownMenu';
 import { UserRoundCog, UserRound, EllipsisVertical, Pencil, Trash2, Sun, Moon } from 'lucide-react';
 import { Empty } from 'antd';
 import { cn } from '@/lib/utils';
+import config from '@/lib/config';
 import dayjs from 'dayjs';
 
 interface UserTableProps {
@@ -117,12 +118,8 @@ export default function UserTable({ value: users }: UserTableProps) {
                     >
                       <div className='flex items-center gap-3'>
                         <Avatar className='w-8 h-8 flex-shrink-0'>
-                          <AvatarFallback>
-                            {row.user_role_type === 'ADMIN' ? 
-                              <UserRoundCog className='w-5 h-5' /> : 
-                              <UserRound className='w-5 h-5' />
-                            }
-                          </AvatarFallback>
+                          <AvatarImage src={`${config.baseUrl}${row.profile_url}`} alt={row.user_name} />
+                          <AvatarFallback>{row.user_name.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <span className='font-medium'>{row.user_name}</span>
                       </div>
