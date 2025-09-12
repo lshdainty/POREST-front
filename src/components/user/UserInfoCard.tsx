@@ -67,7 +67,7 @@ export default function UserInfoCard({
           )}
         </CardHeader>
         <CardContent className='flex flex-col items-center text-center p-6'>
-          <Avatar className='w-24 h-24 mb-4'>
+          <Avatar className='w-32 h-32 mb-4'>
             <AvatarImage src={`${config.baseUrl}${selectedUser.profile_url}`} alt={selectedUser.user_name} />
             <AvatarFallback>{selectedUser.user_name.charAt(0)}</AvatarFallback>
           </Avatar>

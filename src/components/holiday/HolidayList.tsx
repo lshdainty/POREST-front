@@ -27,7 +27,6 @@ const formatYYYYMMDDToDisplay = (yyyymmdd: string) => {
 
 interface HolidayListProps {
   holidays?: GetHolidaysResp[];
-  isLoading: boolean;
   onEdit: (holiday: GetHolidaysResp) => void;
   onDelete: (holiday_seq: number) => void;
   onAddClick: () => void;
@@ -35,7 +34,6 @@ interface HolidayListProps {
 
 export default function HolidayList({ 
   holidays, 
-  isLoading, 
   onEdit, 
   onDelete, 
   onAddClick 
@@ -62,16 +60,6 @@ export default function HolidayList({
     const date = new Date(formattedDate);
     return `음력 ${date.getMonth() + 1}월 ${date.getDate()}일`;
   };
-
-  if (isLoading) {
-    return (
-      <div className='flex items-center justify-center h-64'>
-        <div className='text-center'>
-          <p className='text-muted-foreground'>공휴일 데이터를 불러오는 중...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className='grid gap-4'>

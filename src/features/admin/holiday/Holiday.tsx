@@ -11,6 +11,7 @@ import {
 } from '@/api/holiday';
 import HolidayEditDialog from '@/components/holiday/HolidayEditDialog';
 import HolidayList from '@/components/holiday/HolidayList';
+import HolidayListSkeleton from '@/components/holiday/HolidayListSkeleton';
 import { Button } from '@/components/shadcn/button';
 
 const formatDateToYYYYMMDD = (dateString: string) => {
@@ -117,13 +118,16 @@ export default function Holiday() {
             }
           />
         </div>
-        <HolidayList
-          holidays={holidays}
-          isLoading={holidaysLoding}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onAddClick={handleAddClick}
-        />
+        {holidaysLoding ? (
+          <HolidayListSkeleton />
+        ) : (
+          <HolidayList
+            holidays={holidays}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onAddClick={handleAddClick}
+          />
+        )}
       </div>
     </div>
   );

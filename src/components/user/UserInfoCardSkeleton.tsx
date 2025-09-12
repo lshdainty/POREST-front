@@ -13,7 +13,7 @@ export default function UserInfoCardSkeleton() {
           <Skeleton className='h-10 w-[150px]' />
         </CardHeader>
         <CardContent className='flex flex-col items-center text-center p-6'>
-          <Skeleton className='w-24 h-24 mb-4 rounded-full' />
+          <Skeleton className='w-32 h-32 mb-4 rounded-full' />
           <Skeleton className='h-8 w-20 mb-2' />
           <Skeleton className='h-4 w-32' />
           <Separator className='my-6' />
