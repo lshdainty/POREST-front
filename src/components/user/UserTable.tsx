@@ -1,6 +1,6 @@
 import UserEditDialog from '@/components/user/UserEditDialog';
 import UserDeleteDialog from '@/components/user/UserDeleteDialog';
-import { GetUsersResp, usePostUser, usePutUser, useDeleteUser } from '@/api/user';
+import { usePostUser, usePutUser, useDeleteUser, type GetUsersResp, type PostUserReq, type PutUserReq } from '@/api/user';
 import { Badge } from '@/components/shadcn/badge';
 import { Button } from '@/components/shadcn/button';
 import { Avatar, AvatarFallback } from '@/components/shadcn/avatar';
@@ -22,7 +22,7 @@ export default function UserTable({ value: users }: UserTableProps) {
   const { mutate: putUser } = usePutUser();
   const { mutate: deleteUser } = useDeleteUser();
 
-  const handleCreateUser = (user: GetUsersResp) => {
+  const handleCreateUser = (user: PostUserReq) => {
     postUser({
       user_id: user.user_id,
       user_name: user.user_name,
@@ -32,12 +32,12 @@ export default function UserTable({ value: users }: UserTableProps) {
       user_department_type: user.user_department_type,
       user_work_time: user.user_work_time,
       lunar_yn: user.lunar_yn,
-      profile_url: user.user_profile_image,
-      profile_uuid: user.user_profile_uuid
+      profile_url: user.profile_url,
+      profile_uuid: user.profile_uuid
     });
   };
 
-  const handleUpdateUser = (user: GetUsersResp) => {
+  const handleUpdateUser = (user: PutUserReq) => {
     putUser({
       user_id: user.user_id,
       user_name: user.user_name,
@@ -47,8 +47,8 @@ export default function UserTable({ value: users }: UserTableProps) {
       user_department_type: user.user_department_type,
       user_work_time: user.user_work_time,
       lunar_yn: user.lunar_yn,
-      profile_url: user.user_profile_image,
-      profile_uuid: user.user_profile_uuid
+      profile_url: user.profile_url,
+      profile_uuid: user.profile_uuid
     });
   };
 
@@ -75,8 +75,7 @@ export default function UserTable({ value: users }: UserTableProps) {
                   lunar_yn: 'N',
                   user_work_time: '9 ~ 6',
                   user_role_type: 'USER',
-                  user_profile_image: '',
-                  user_profile_uuid: '',
+                  profile_url: ''
               }}
               onSave={handleCreateUser}
               trigger={<Button className='text-sm h-8' size='sm'>추가</Button>}

@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/ca
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
 import { User as UserIcon, Mail, Cake, Briefcase, Clock, Shield, UserRound, UserRoundCog, Building2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import config from '@/lib/config';
 
 interface UserInfoCardProps {
   title?: string;
@@ -67,7 +68,7 @@ export default function UserInfoCard({
         </CardHeader>
         <CardContent className='flex flex-col items-center text-center p-6'>
           <Avatar className='w-24 h-24 mb-4'>
-            <AvatarImage src={selectedUser.profile_url} alt={selectedUser.user_name} />
+            <AvatarImage src={`${config.baseUrl}${selectedUser.profile_url}`} alt={selectedUser.user_name} />
             <AvatarFallback>{selectedUser.user_name.charAt(0)}</AvatarFallback>
           </Avatar>
           <p className='text-2xl font-bold'>{selectedUser.user_name}</p>

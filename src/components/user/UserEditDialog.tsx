@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { GetUsersResp, usePostUploadProfile } from '@/api/user';
+import { GetUsersResp, usePostUploadProfile, type PutUserReq } from '@/api/user';
 import { Input } from '@/components/shadcn/input';
 import { Button } from '@/components/shadcn/button';
 import { Separator } from '@/components/shadcn/separator';
@@ -33,6 +33,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { companyOptions, departmentOptions } from '@/lib/constants';
+import config from '@/lib/config';
 
 const formSchema = z.object({
   user_name: z.string().min(1, { message: '이름을 입력해주세요.' }),
@@ -51,7 +52,7 @@ type UserFormValues = z.infer<typeof formSchema>;
 interface UserEditDialogProps {
   user: GetUsersResp;
   trigger: React.ReactNode;
-  onSave: (updatedUser: GetUsersResp) => void;
+  onSave: (updatedUser: PutUserReq) => void;
 }
 
 // 이미지 압축 유틸리티 함수
@@ -87,7 +88,7 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
   
   // 이미지 업로드 관련 상태 관리
   const [profileImage, setProfileImage] = useState<string>(user.profile_url || '');
-  const [profileUuid, setProfileUuid] = useState<string | undefined>('');
+  const [profileUUID, setProfileUUID] = useState<string>('');
   const [uploadError, setUploadError] = useState<string>('');
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -136,7 +137,8 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
       console.log(data);
 
       // 성공 시 이미지 URL 업데이트
-      setProfileImage(`http://localhost:8080${data}`);
+      setProfileImage(`${config.baseUrl}${data.profile_url}`);
+      setProfileUUID(data.profile_uuid)
       setUploadSuccess(true);
       
       // 성공 메시지를 3초 후 자동 숨김
@@ -167,7 +169,7 @@ export default function UserEditDialog({ user, trigger, onSave }: UserEditDialog
       ...user, 
       ...values, 
       profile_url: profileImage,
-      profile_uuid: profileUuid
+      profile_uuid: profileUUID
     });
     setOpen(false);
   };

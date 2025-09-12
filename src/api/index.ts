@@ -1,10 +1,11 @@
 import axios, { AxiosError, AxiosResponse } from 'axios'
+import config from '@/lib/config';
 
 interface CustomHeaders {
   [key: string]: any;
 }
 
-const baseURL = 'http://localhost:8080/api/v1';
+const baseURL = config.apiBaseUrl;
 const api = axios.create({
   baseURL: baseURL,
   headers: {
