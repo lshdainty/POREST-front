@@ -7,11 +7,10 @@ import { Avatar, AvatarFallback } from '@/components/shadcn/avatar';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/shadcn/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/shadcn/dropdownMenu';
-import { UserRoundCog, UserRound, EllipsisVertical, Pencil, Copy, Trash2, Sun, Moon } from 'lucide-react';
+import { UserRoundCog, UserRound, EllipsisVertical, Pencil, Trash2, Sun, Moon } from 'lucide-react';
 import { Empty } from 'antd';
 import { cn } from '@/lib/utils';
 import dayjs from 'dayjs';
-import { companyOptions, departmentOptions } from '@/lib/constants';
 
 interface UserTableProps {
   value: GetUsersResp[];
@@ -201,17 +200,6 @@ export default function UserTable({ value: users }: UserTableProps) {
                                 <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                                   <Pencil className='h-4 w-4' />
                                   <span>수정</span>
-                                </DropdownMenuItem>
-                              }
-                            />
-                            <UserEditDialog
-                              title='사용자 복사'
-                              user={{...row, user_id: ''}}
-                              onSave={handleCreateUser}
-                              trigger={
-                                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                                  <Copy className='h-4 w-4' />
-                                  <span>복사</span>
                                 </DropdownMenuItem>
                               }
                             />

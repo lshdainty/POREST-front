@@ -56,6 +56,19 @@ interface UserEditDialogProps {
   title: string;
 }
 
+// 이미지 URL 변환 유틸리티 함수
+const getFullImageUrl = (imagePath: string): string => {
+  if (!imagePath) return '';
+  
+  // 이미 완전한 URL인 경우
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath;
+  }
+  
+  // 상대 경로인 경우 baseUrl과 결합
+  return `${config.baseUrl}${imagePath.startsWith('/') ? imagePath : `/${imagePath}`}`;
+};
+
 // 이미지 압축 유틸리티 함수
 const compressImage = (file: File, maxWidth: number = 800, quality: number = 0.8): Promise<File> => {
   return new Promise((resolve) => {
@@ -87,8 +100,8 @@ export default function UserEditDialog({ user, trigger, onSave, title }: UserEdi
   const [open, setOpen] = useState(false);
   const { mutateAsync: uploadProfile, isPending: isUploading } = usePostUploadProfile();
   
-  // 이미지 업로드 관련 상태 관리
-  const [profileImage, setProfileImage] = useState<string>(user.profile_url || '');
+  // 이미지 업로드 관련 상태 관리 - 초기값부터 완전한 URL로 설정
+  const [profileImage, setProfileImage] = useState<string>(getFullImageUrl(user.profile_url || ''));
   const [profileUUID, setProfileUUID] = useState<string>('');
   const [uploadError, setUploadError] = useState<string>('');
   const [uploadSuccess, setUploadSuccess] = useState(false);
@@ -114,14 +127,15 @@ export default function UserEditDialog({ user, trigger, onSave, title }: UserEdi
       if (title === '사용자 추가') {
         form.reset();
         setProfileImage('');
-      } else { // 수정 또는 복사
+      } else { // 수정
         form.reset({
           ...user,
           user_company_type: user.user_company_type || companyOptions[0].company_type,
           user_department_type: user.user_department_type || departmentOptions[0].department_type,
           lunar_yn: user.lunar_yn || 'N',
         });
-        setProfileImage(user.profile_url || '');
+        // 기존 이미지도 완전한 URL로 설정
+        setProfileImage(getFullImageUrl(user.profile_url || ''));
       }
       setProfileUUID('');
       setUploadError('');
@@ -162,9 +176,9 @@ export default function UserEditDialog({ user, trigger, onSave, title }: UserEdi
 
       console.log(data);
 
-      // 성공 시 이미지 URL 업데이트
-      setProfileImage(`${config.baseUrl}${data.profile_url}`);
-      setProfileUUID(data.profile_uuid)
+      // 성공 시 이미지 URL 업데이트 - 완전한 URL로 변환
+      setProfileImage(getFullImageUrl(data.profile_url));
+      setProfileUUID(data.profile_uuid);
       setUploadSuccess(true);
       
       // 성공 메시지를 3초 후 자동 숨김
@@ -185,16 +199,20 @@ export default function UserEditDialog({ user, trigger, onSave, title }: UserEdi
     if (!profileImage) return;
 
     setProfileImage('');
+    setProfileUUID('');
     setUploadSuccess(true);
     setTimeout(() => setUploadSuccess(false), 3000);
   };
 
   const onSubmit = (values: UserFormValues) => {
     // 업데이트된 사용자 정보에 프로필 이미지 URL 포함
+    // 저장할 때는 상대 경로만 저장 (서버에서 받은 원본 경로)
+    const imagePathForSave = profileImage ? profileImage.replace(config.baseUrl, '') : '';
+    
     onSave({ 
       ...user, 
       ...values, 
-      profile_url: profileImage,
+      profile_url: imagePathForSave, // 상대 경로로 저장
       profile_uuid: profileUUID
     });
     setOpen(false);
@@ -226,58 +244,74 @@ export default function UserEditDialog({ user, trigger, onSave, title }: UserEdi
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="flex gap-6 p-6">
               <div className="w-1/3 flex flex-col items-center justify-center gap-4">
-                {/* 프로필 이미지 섹션 - 호버 효과와 로딩 표시 개선 */}
                 <div className="relative group">
                   {isUploading ? (
-                    // 로딩 중일 때 스켈레톤과 로딩 스피너 함께 표시
                     <div className="relative">
-                      <Skeleton className="w-40 h-40 rounded-full" />
+                      <Skeleton className="w-40 h-40 rounded-full bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200px_100%] animate-pulse" 
+                        style={{
+                          backgroundImage: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
+                          backgroundSize: '200px 100%',
+                          animation: 'shimmer 1.5s infinite linear'
+                        }} 
+                      />
                       <div className="absolute inset-0 flex items-center justify-center">
                         <div className="flex flex-col items-center gap-2">
-                          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                          <span className="text-xs text-muted-foreground">처리 중...</span>
+                          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                          <span className="text-xs text-muted-foreground font-medium">처리 중...</span>
                         </div>
                       </div>
+                      <style jsx>{`
+                        @keyframes shimmer {
+                          0% { background-position: -200px 0; }
+                          100% { background-position: calc(200px + 100%) 0; }
+                        }
+                      `}</style>
                     </div>
                   ) : (
                     <Avatar className="w-40 h-40">
                       <AvatarImage 
                         src={profileImage} 
-                        alt={form.watch('user_name')} 
+                        alt={form.watch('user_name')}
+                        onError={(e) => {
+                          console.error('이미지 로드 오류:', profileImage);
+                          // 이미지 로드 실패 시 기본 이미지로 fallback
+                          (e.target as HTMLImageElement).src = "https://github.com/shadcn.png";
+                        }}
                       />
                       <AvatarFallback>{form.watch('user_name').charAt(0)}</AvatarFallback>
                     </Avatar>
                   )}
                   
-                  {/* 이미지 호버 시 업로드/수정/삭제 버튼 표시 */}
+                  {/* 개선된 호버 아이콘 효과 - 버튼 대신 아이콘 컨테이너 사용 */}
                   {!isUploading && (
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 rounded-full">
-                      <div className="flex gap-1">
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="ghost"
-                          className="text-white hover:bg-white/20"
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black/50 rounded-full cursor-pointer">
+                      <div className="flex gap-2">
+                        {/* 업로드/변경 아이콘 */}
+                        <div
+                          className="flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full 
+                                     hover:bg-primary/80 hover:scale-110 hover:shadow-lg hover:shadow-primary/30 
+                                     transition-all duration-200 cursor-pointer group/upload"
                           onClick={handleImageSelect}
                           title={profileImage ? "이미지 변경" : "이미지 업로드"}
                         >
                           {profileImage ? (
-                            <Camera className="h-4 w-4" />
+                            <Camera className="h-5 w-5 text-white group-hover/upload:scale-110 transition-transform duration-200" />
                           ) : (
-                            <Upload className="h-4 w-4" />
+                            <Upload className="h-5 w-5 text-white group-hover/upload:scale-110 transition-transform duration-200" />
                           )}
-                        </Button>
+                        </div>
+                        
+                        {/* 삭제 아이콘 */}
                         {profileImage && (
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="ghost"
-                            className="text-white hover:bg-white/20"
+                          <div
+                            className="flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full 
+                                       hover:bg-destructive/80 hover:scale-110 hover:shadow-lg hover:shadow-destructive/30 
+                                       transition-all duration-200 cursor-pointer group/delete"
                             onClick={handleImageDelete}
                             title="이미지 삭제"
                           >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                            <Trash2 className="h-5 w-5 text-white group-hover/delete:scale-110 transition-transform duration-200" />
+                          </div>
                         )}
                       </div>
                     </div>
@@ -293,6 +327,14 @@ export default function UserEditDialog({ user, trigger, onSave, title }: UserEdi
                   className="hidden"
                 />
 
+                {/* 디버깅을 위한 현재 이미지 URL 표시 (개발 중에만 사용) */}
+                {import.meta.env.DEV && profileImage && (
+                  <div className="text-xs text-muted-foreground p-2 bg-muted rounded text-center break-all">
+                    <p className="font-medium">현재 이미지 URL:</p>
+                    <p>{profileImage}</p>
+                  </div>
+                )}
+
                 {/* 업로드 상태 메시지 표시 */}
                 {uploadError && (
                   <Alert className="w-full" variant="destructive">
@@ -302,8 +344,11 @@ export default function UserEditDialog({ user, trigger, onSave, title }: UserEdi
                 )}
 
                 {uploadSuccess && (
-                  <Alert className="w-full">
-                    <AlertDescription>이미지가 성공적으로 처리되었습니다.</AlertDescription>
+                  <Alert className="w-full" variant="default" className="border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950">
+                    <AlertCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+                    <AlertDescription className="text-green-800 dark:text-green-300">
+                      이미지가 성공적으로 처리되었습니다.
+                    </AlertDescription>
                   </Alert>
                 )}
               </div>
