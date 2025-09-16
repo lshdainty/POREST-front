@@ -16,6 +16,10 @@ import {
   NotebookPen,
   ChartGantt,
   Settings,
+  UserRoundCog,
+  ShieldPlus,
+  ChartLine,
+  ShieldEllipsis,
 } from 'lucide-react';
 
 // 컴포넌트 직접 import
@@ -29,6 +33,7 @@ import Report from '@/features/work/report/Report';
 import Schedule from '@/features/work/schedule/Schedule';
 import Users from '@/features/admin/users/Users';
 import Vacation from '@/features/admin/vacation/Vacation';
+import Policy from '@/features/admin/vacation/Policy';
 import Authority from '@/features/admin/authority/Authority';
 import Holiday from '@/features/admin/holiday/Holiday';
 
@@ -152,18 +157,18 @@ export const routesConfig: RouteConfig[] = [
         isDefault: true,
         children: [
           {
-            id: 'admin-users-mgmt',
+            id: 'admin-users-management',
             name: 'Management',
-            path: '/admin/users/mgmt',
-            icon: Settings,
+            path: '/admin/users/management',
+            icon: UserRoundCog,
             component: Users,
             isDefault: true,
           },
           {
-            id: 'admin-users-dashboard',
-            name: 'Dashboard',
-            path: '/admin/users/dashboard',
-            icon: LayoutDashboard,
+            id: 'admin-users-vacation-policy',
+            name: 'Vacation Policy',
+            path: '/admin/users/vacation/policy',
+            icon: ShieldPlus,
             component: Users,
           },
         ],
@@ -175,19 +180,19 @@ export const routesConfig: RouteConfig[] = [
         icon: TreePalm,
         children: [
           {
-            id: 'admin-vacation-mgmt',
-            name: 'Management',
-            path: '/admin/vacation/mgmt',
-            icon: Settings,
+            id: 'admin-vacation-stats',
+            name: 'Stats',
+            path: '/admin/vacation/stats',
+            icon: ChartLine,
             component: Vacation,
             isDefault: true,
           },
           {
-            id: 'admin-vacation-dashboard',
-            name: 'Dashboard',
-            path: '/admin/vacation/dashboard',
-            icon: LayoutDashboard,
-            component: Vacation,
+            id: 'admin-vacation-policy',
+            name: 'Policy',
+            path: '/admin/vacation/policy',
+            icon: ShieldEllipsis,
+            component: Policy,
           },
         ],
       },
