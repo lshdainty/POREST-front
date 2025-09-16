@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/ca
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
 import { User as UserIcon, Mail, Cake, Briefcase, Clock, Shield, UserRound, UserRoundCog, Building2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import config from '@/lib/config';
+import config from '@/config/config';
 
 interface UserInfoCardProps {
   title?: string;

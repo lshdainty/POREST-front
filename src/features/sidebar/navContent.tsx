@@ -1,73 +1,70 @@
-import { ChevronRight, type LucideIcon } from 'lucide-react';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/shadcn/collapsible';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { TreeView, TreeDataItem } from '@/components/shadcn/treeView';
 import {
   SidebarGroup,
   SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
 } from '@/components/shadcn/sidebar';
-import { Link } from 'react-router-dom';
+import { cn } from "@/lib/utils";
 
-export function NavContent({
-  items,
-}: {
-  items: {
-    title: string
-    url: string
-    icon?: LucideIcon
-    isActive?: boolean
-    items?: {
-      title: string
-      url: string
-      icon?: LucideIcon
-    }[]
-  }[]
-}) {
+interface NavContentProps {
+  treeData: TreeDataItem[];
+  routeMapping: Record<string, string>;
+  pathToIdMapping: Record<string, string>;
+}
+
+function addClickHandlers(
+  items: TreeDataItem[], 
+  navigate: (path: string) => void, 
+  routeMapping: Record<string, string>
+): TreeDataItem[] {
+  return items.map(item => ({
+    ...item,
+    onClick: item.children ? undefined : () => {
+      const route = routeMapping[item.id];
+      if (route) {
+        navigate(route);
+      }
+    },
+    children: item.children ? addClickHandlers(item.children, navigate, routeMapping) : undefined,
+  }));
+}
+
+export function NavContent({ treeData, routeMapping, pathToIdMapping }: NavContentProps) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [selectedItemId, setSelectedItemId] = useState<string>('');
+
+  // 현재 경로에 따라 선택된 아이템 설정
+  useEffect(() => {
+    const currentId = pathToIdMapping[location.pathname];
+    if (currentId) {
+      setSelectedItemId(currentId);
+    }
+  }, [location.pathname, pathToIdMapping]);
+
+  // 클릭 핸들러가 추가된 트리 데이터
+  const enhancedTreeData = addClickHandlers(treeData, navigate, routeMapping);
+
+  const handleSelectChange = (item: TreeDataItem | undefined) => {
+    if (item && !item.children) {
+      const route = routeMapping[item.id];
+      if (route) {
+        navigate(route);
+      }
+    }
+  };
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
-      <SidebarMenu>
-        {items.map((item) => (
-          <Collapsible
-            key={item.title}
-            asChild
-            defaultOpen={item.isActive}
-            className='group/collapsible'
-          >
-            <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip={item.title}>
-                  {item.icon && <item.icon />}
-                  <span>{item.title}</span>
-                  <ChevronRight className='ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  {item.items?.map((subItem) => (
-                    <SidebarMenuSubItem key={subItem.title}>
-                      <SidebarMenuSubButton asChild>
-                        <Link to={subItem.url} className="flex items-center">
-                          {subItem.icon && <span><subItem.icon className="h-4 w-4" /></span>}
-                          <span>{subItem.title}</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
-                </SidebarMenuSub>
-              </CollapsibleContent>
-            </SidebarMenuItem>
-          </Collapsible>
-        ))}
-      </SidebarMenu>
+      <TreeView
+        data={enhancedTreeData}
+        initialSelectedItemId={selectedItemId}
+        onSelectChange={handleSelectChange}
+        expandAll={false}
+        className={cn('p-0 w-full')}
+      />
     </SidebarGroup>
-  )
+  );
 }

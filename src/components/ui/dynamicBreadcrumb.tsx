@@ -14,6 +14,9 @@ import {
 } from '@/components/shadcn/breadcrumb';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/shadcn/dropdownMenu';
 
+// 설정 파일에서 import
+import { breadcrumbMapping, defaultRedirects } from '@/config/routes.config';
+
 interface BreadcrumbSegment {
   title: string
   href: string
@@ -35,28 +38,11 @@ export function DynamicBreadcrumb({
 }: DynamicBreadcrumbProps) {
   const { pathname } = useLocation()
 
-  const pathMapping: Record<string, string> = {
-    dashboard: 'Dashboard',
-    calendar: 'Calendar',
-    work: 'Work',
-    culture: 'Culture',
-    rule: 'Rule',
-    admin: 'Admin',
-    user: 'User',
-    vacation: 'Vacation',
-    overview: 'Overview',
-  };
-
-  const parentPathToDefaultChild: Record<string, string> = {
-    '/work': '/work/report',
-    '/culture': '/culture/dues',
-    '/admin': '/admin/users',
-  };
-
   const generateBreadcrumbs = (): BreadcrumbSegment[] => {
     const segments = pathname.split('/').filter(Boolean);
     const breadcrumbs: BreadcrumbSegment[] = [];
 
+    // Home breadcrumb 추가
     if (showHome) {
       breadcrumbs.push({
         title: 'Home',
@@ -65,19 +51,24 @@ export function DynamicBreadcrumb({
       });
     }
 
-    const pathSegments = segments.filter(s => s !== 'dashboard');
-    if (pathSegments.length === 0) {
+    // /dashboard 경로면 Home만 반환
+    if (pathname === '/dashboard') {
       return breadcrumbs;
     }
 
-    pathSegments.forEach((segment, index) => {
-      const currentPath = `/${pathSegments.slice(0, index + 1).join('/')}`;
-      const title = pathMapping[segment] || segment.charAt(0).toUpperCase() + segment.slice(1);
-      const isActive = index === pathSegments.length - 1;
+    // 나머지 모든 세그먼트를 breadcrumb으로 변환
+    segments.forEach((segment, index) => {
+      const currentPath = `/${segments.slice(0, index + 1).join('/')}`;
+      
+      // breadcrumbMapping에서 찾거나 기본값 사용
+      const title = breadcrumbMapping[segment] || segment.charAt(0).toUpperCase() + segment.slice(1);
+      
+      // 마지막 세그먼트가 활성
+      const isActive = index === segments.length - 1;
 
       let href = currentPath;
-      if (!isActive && parentPathToDefaultChild[href]) {
-        href = parentPathToDefaultChild[href];
+      if (!isActive && defaultRedirects[href]) {
+        href = defaultRedirects[href];
       }
       
       breadcrumbs.push({
@@ -90,69 +81,80 @@ export function DynamicBreadcrumb({
     return breadcrumbs;
   };
 
-  const breadcrumbs = generateBreadcrumbs()
+  const breadcrumbs = generateBreadcrumbs();
 
-  // 너무 많은 항목이 있을 때 중간 항목들을 드롭다운으로 처리
-  const shouldCollapse = breadcrumbs.length > maxItems
-  let displayBreadcrumbs = breadcrumbs
-  let collapsedItems: BreadcrumbSegment[] = []
+  // 3개 이상이면 collapse
+  const shouldCollapse = breadcrumbs.length > maxItems;
+  let displayBreadcrumbs = breadcrumbs;
+  let collapsedItems: BreadcrumbSegment[] = [];
 
-  if (shouldCollapse) {
-    const firstItem = breadcrumbs[0]
-    const lastTwoItems = breadcrumbs.slice(-2)
-    collapsedItems = breadcrumbs.slice(1, -2)
-    displayBreadcrumbs = [firstItem, ...lastTwoItems]
+  if (shouldCollapse && breadcrumbs.length > 0) {
+    const firstItem = breadcrumbs[0];
+    const lastTwoItems = breadcrumbs.slice(-2);
+    
+    // 중간 항목들은 collapse
+    collapsedItems = breadcrumbs.slice(1, -2);
+    
+    displayBreadcrumbs = [firstItem, ...lastTwoItems];
   }
 
-  const separator = customSeparator || <BreadcrumbSeparator />
+  const separator = customSeparator || <BreadcrumbSeparator />;
 
   return (
     <Breadcrumb className={className}>
       <BreadcrumbList>
-        {displayBreadcrumbs.map((crumb, index) => (
-          <React.Fragment key={`${crumb.title}-${index}`}>
-            {/* 첫 번째 항목 후에 collapsed items가 있다면 드롭다운 표시 */}
-            {index === 1 && shouldCollapse && collapsedItems.length > 0 && (
-              <>
-                {separator}
-                <BreadcrumbItem>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger className='flex items-center gap-1 hover:text-foreground'>
-                      <BreadcrumbEllipsis className='h-4 w-4' />
-                      <span className='sr-only'>Show more</span>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align='start'>
-                      {collapsedItems.map((item, itemIndex) => (
-                        <DropdownMenuItem key={`${item.href}-${itemIndex}`}>
-                          <BreadcrumbLink asChild>
-                            <Link to={item.href}>{item.title}</Link>
-                          </BreadcrumbLink>
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </BreadcrumbItem>
-              </>
-            )}
+        {displayBreadcrumbs.map((crumb, index) => {
+          const isFirst = index === 0;
+          const isLast = index === displayBreadcrumbs.length - 1;
+          const shouldShowEllipsis = shouldCollapse && index === 1 && collapsedItems.length > 0;
 
-            {/* 일반 breadcrumb 항목 */}
-            <BreadcrumbItem className={index === 0 && showHome ? 'hidden md:block' : ''}>
-              {crumb.isActive ? (
-                <BreadcrumbPage className='font-medium text-foreground'>{crumb.title}</BreadcrumbPage>
-              ) : (
-                <BreadcrumbLink asChild className='transition-colors hover:text-foreground'>
-                  <Link to={crumb.href}>
-                    {index === 0 && showHome ? <Home className='h-4 w-4' /> : crumb.title}
-                  </Link>
-                </BreadcrumbLink>
+          return (
+            <React.Fragment key={`${crumb.title}-${index}`}>
+              {/* ellipsis 표시 */}
+              {shouldShowEllipsis && (
+                <>
+                  <BreadcrumbItem>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger className='flex items-center gap-1 hover:text-foreground'>
+                        <BreadcrumbEllipsis className='h-4 w-4' />
+                        <span className='sr-only'>Show more</span>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align='start'>
+                        {collapsedItems.map((item, itemIndex) => (
+                          <DropdownMenuItem key={`${item.href}-${itemIndex}`}>
+                            <BreadcrumbLink asChild>
+                              <Link to={item.href}>{item.title}</Link>
+                            </BreadcrumbLink>
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </BreadcrumbItem>
+                  {separator}
+                </>
               )}
-            </BreadcrumbItem>
 
-            {/* 마지막 항목이 아니라면 구분자 추가 */}
-            {index < displayBreadcrumbs.length - 1 && <React.Fragment>{separator}</React.Fragment>}
-          </React.Fragment>
-        ))}
+              {/* breadcrumb 항목 */}
+              <BreadcrumbItem className={isFirst && showHome ? 'hidden md:block' : ''}>
+                {crumb.isActive ? (
+                  <BreadcrumbPage className='font-medium text-foreground'>
+                    {crumb.title}
+                  </BreadcrumbPage>
+                ) : (
+                  <BreadcrumbLink asChild className='transition-colors hover:text-foreground'>
+                    <Link to={crumb.href}>
+                      {isFirst && showHome ? <Home className='h-4 w-4' /> : crumb.title}
+                    </Link>
+                  </BreadcrumbLink>
+                )}
+              </BreadcrumbItem>
+
+              {/* 구분자 */}
+              {!isLast && separator}
+            </React.Fragment>
+          );
+        })}
       </BreadcrumbList>
     </Breadcrumb>
-  )
+  );
 }

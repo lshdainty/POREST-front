@@ -10,7 +10,7 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { UserRoundCog, UserRound, EllipsisVertical, Pencil, Trash2, Sun, Moon } from 'lucide-react';
 import { Empty } from 'antd';
 import { cn } from '@/lib/utils';
-import config from '@/lib/config';
+import config from '@/config/config';
 import dayjs from 'dayjs';
 
 interface UserTableProps {

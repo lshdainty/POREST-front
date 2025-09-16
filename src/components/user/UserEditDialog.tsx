@@ -33,7 +33,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { companyOptions, departmentOptions } from '@/lib/constants';
-import config from '@/lib/config';
+import config from '@/config/config';
 
 const formSchema = z.object({
   user_name: z.string().min(1, { message: '이름을 입력해주세요.' }),

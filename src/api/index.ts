@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosResponse } from 'axios'
-import config from '@/lib/config';
+import config from '@/config/config';
 
 interface CustomHeaders {
   [key: string]: any;

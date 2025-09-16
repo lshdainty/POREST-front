@@ -1,23 +1,4 @@
 import {
-  Home,
-  Briefcase,
-  HeartHandshake,
-  ShieldUser,
-  LayoutDashboard,
-  CalendarDays,
-  CircleDollarSign,
-  Scale,
-  Users,
-  ShieldCheck,
-  CalendarCog,
-  TreePalm,
-  MessageSquarePlus,
-  ChartNoAxesCombined,
-  NotebookPen,
-  ChartGantt,
-} from 'lucide-react';
-
-import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
@@ -27,61 +8,14 @@ import { NavLogo } from '@/features/sidebar/navLogo';
 import { NavUser } from '@/features/sidebar/navUser';
 import { NavContent } from '@/features/sidebar/navContent';
 
+// 설정 파일에서 import
+import { treeData, routeMapping, pathToIdMapping } from '@/config/routes.config';
+
 const user = {
   name: 'lsh',
   email: 'lsh@example.com',
   image: '/avatars/shadcn.jpg',
 }
-
-const navDatas = [
-  {
-    title: 'Home',
-    url: '/',
-    icon: Home,
-    items: [
-      { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
-      { title: 'Calendar', url: '/calendar', icon: CalendarDays }
-    ],
-  },
-  {
-    title: 'Vacation',
-    url: '/vacation',
-    icon: TreePalm,
-    items: [
-      { title: 'History', url: '/vacation/history', icon: ChartNoAxesCombined },
-      { title: 'Application', url: '/vacation/application', icon: MessageSquarePlus },
-    ],
-  },
-  {
-    title: 'Work',
-    url: '/work',
-    icon: Briefcase,
-    items: [
-      { title: 'Report', url: '/work/report', icon: NotebookPen },
-      { title: 'Schedule', url: '/work/schedule', icon: ChartGantt },
-    ],
-  },
-  {
-    title: 'Culture',
-    url: '/culture',
-    icon:   HeartHandshake,
-    items: [
-      { title: 'Dues', url: '/culture/dues', icon: CircleDollarSign },
-      { title: 'Rule', url: '/culture/rule', icon: Scale },
-    ],
-  },
-  {
-    title: 'Admin',
-    url: '/admin',
-    icon: ShieldUser,
-    items: [
-      { title: 'Users', url: '/admin/users', icon: Users },
-      { title: 'Vacation', url: '/admin/vacation', icon: TreePalm },
-      { title: 'Authority', url: '/admin/authority', icon: ShieldCheck },
-      { title: 'Holiday', url: '/admin/holiday', icon: CalendarCog },
-    ],
-  },
-]
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -90,10 +24,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavLogo />
       </SidebarHeader>
       <SidebarContent>
-          <NavContent items={navDatas} />
+        <NavContent 
+          treeData={treeData} 
+          routeMapping={routeMapping} 
+          pathToIdMapping={pathToIdMapping} 
+        />
       </SidebarContent>
       <SidebarFooter>
-          <NavUser user={user}/>
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   )
