@@ -13,6 +13,7 @@ import {
   TreePalm,
   MessageSquarePlus,
   ChartNoAxesCombined,
+  Building2,
   NotebookPen,
   ChartGantt,
   Settings,
@@ -36,6 +37,7 @@ import Vacation from '@/features/admin/vacation/Vacation';
 import Policy from '@/features/admin/vacation/Policy';
 import Authority from '@/features/admin/authority/Authority';
 import Holiday from '@/features/admin/holiday/Holiday';
+import Company from '@/features/admin/company/Company'
 
 import { TreeDataItem } from '@/components/shadcn/treeView';
 import React from 'react';
@@ -149,6 +151,14 @@ export const routesConfig: RouteConfig[] = [
     path: '/admin',
     icon: ShieldUser,
     children: [
+      {
+        id: 'admin-company',
+        name: 'Company',
+        path: '/admin/company',
+        icon: Building2,
+        component: Company,
+        isDefault: true,
+      },
       {
         id: 'admin-users',
         name: 'Users',
