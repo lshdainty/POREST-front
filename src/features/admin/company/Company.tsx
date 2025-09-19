@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Building2, Phone, Mail, Globe } from 'lucide-react';
-import CompanyCreateScreen from '@/components/company/CompanyCreateScreen';
+import CompanyCreatePage from '@/components/company/CompanyCreatePage';
 import OrganizationTreePanel from '@/components/company/OrganizationTreePanel';
 import OrganizationChartPanel from '@/components/company/OrganizationChartPanel';
 
@@ -155,7 +155,7 @@ export default function Company() {
   if (!company) {
     return (
       <div className='flex-1 flex items-center justify-center'>
-        <CompanyCreateScreen onCompanyCreate={handleCompanyCreate} />
+        <CompanyCreatePage onCompanyCreate={handleCompanyCreate} />
       </div>
     );
   }
