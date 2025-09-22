@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Plus, Edit, Trash2, Building2 } from 'lucide-react';
 import { Button } from '@/components/shadcn/button';
-import OrganizationFormDialog from '@/components/company/OrganizationFormDialog';
+import DepartmentFormDialog from '@/components/company/DepartmentFormDialog';
 import { TreeView, TreeDataItem } from '@/components/shadcn/treeView';
 import { Department } from '@/types/company';
 
-interface OrganizationTreePanelProps {
+interface DepartmentTreePanelProps {
   departments: Department[];
   selectedDept: Department | null;
   onDeptSelect: (dept: Department) => void;
@@ -13,13 +13,13 @@ interface OrganizationTreePanelProps {
   onDeptDelete: (deptId: number) => void;
 }
 
-const OrganizationTreePanel: React.FC<OrganizationTreePanelProps> = ({
+export default function DepartmentTreePanel({
   departments,
   selectedDept,
   onDeptSelect,
   onDeptUpdate,
   onDeptDelete,
-}) => {
+}: DepartmentTreePanelProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingDept, setEditingDept] = useState<Department | null>(null);
   const [addingChildToId, setAddingChildToId] = useState<number | null>(null);
@@ -173,7 +173,7 @@ const OrganizationTreePanel: React.FC<OrganizationTreePanelProps> = ({
         </div>
       )}
 
-      <OrganizationFormDialog
+      <DepartmentFormDialog
         isOpen={isDialogOpen}
         onOpenChange={setIsDialogOpen}
         onSave={handleSave}
@@ -184,5 +184,3 @@ const OrganizationTreePanel: React.FC<OrganizationTreePanelProps> = ({
     </div>
   );
 };
-
-export default OrganizationTreePanel;

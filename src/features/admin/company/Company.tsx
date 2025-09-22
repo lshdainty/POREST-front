@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Building2, Phone, Mail, Globe } from 'lucide-react';
 import CompanyCreateCard from '@/components/company/CompanyCreateCard';
-import OrganizationTreePanel from '@/components/company/OrganizationTreePanel';
-import OrganizationChartPanel from '@/components/company/OrganizationChartPanel';
+import DepartmentTreePanel from '@/components/company/DepartmentTreePanel';
+import DepartmentChartPanel from '@/components/company/DepartmentChartPanel';
 import { Company } from '@/types/company';
 import { Department } from '@/types/company';
 
@@ -184,7 +184,7 @@ export default function CompanyPage() {
       </div>
 
       <div className="flex flex-1 overflow-hidden">
-        <OrganizationTreePanel
+        <DepartmentTreePanel
           departments={departments}
           selectedDept={selectedDept}
           onDeptSelect={setSelectedDept}
@@ -192,7 +192,7 @@ export default function CompanyPage() {
           onDeptDelete={handleDeptDelete}
         />
         
-        <OrganizationChartPanel
+        <DepartmentChartPanel
           departments={departments}
           onAddClick={handleAddDeptFromChart}
         />

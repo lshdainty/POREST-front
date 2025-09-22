@@ -1,18 +1,17 @@
-import React from 'react';
 import { Tree, TreeNode } from 'react-organizational-chart';
 import { Building2, Plus, Users } from 'lucide-react';
 import { Button } from '@/components/shadcn/button';
 import { Department } from '@/types/company';
 
-interface OrganizationChartPanelProps {
+interface DepartmentChartPanelProps {
   departments: Department[];
   onAddClick: () => void;
 }
 
-const OrganizationChartPanel: React.FC<OrganizationChartPanelProps> = ({ 
+export default function DepartmentChartPanel({ 
   departments, 
   onAddClick 
-}) => {
+}: DepartmentChartPanelProps) {
   const StyledNode = ({ children, isRoot = false }) => (
     <div className={`
       p-3 
@@ -114,5 +113,3 @@ const OrganizationChartPanel: React.FC<OrganizationChartPanelProps> = ({
     </div>
   );
 };
-
-export default OrganizationChartPanel;
