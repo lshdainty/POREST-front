@@ -7,10 +7,11 @@ import { Button } from '@/components/shadcn/button';
 import { Textarea } from '@/components/shadcn/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/shadcn/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/shadcn/form';
+import { Company } from '@/types/company';
 
 const companyFormSchema = z.object({
   company_name: z.string().min(1, { message: '회사명을 입력해주세요.' }),
-  description: z.string().optional(),
+  company_desc: z.string().optional(),
 });
 
 type CompanyFormValues = z.infer<typeof companyFormSchema>;
@@ -18,8 +19,8 @@ type CompanyFormValues = z.infer<typeof companyFormSchema>;
 interface CompanyFormDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (formData: CompanyFormValues) => void;
-  initialData?: Partial<CompanyFormValues>;
+  onSave: (formData: Omit<Company, 'company_id'>) => void;
+  initialData?: Partial<Company>;
 }
 
 const CompanyFormDialog: React.FC<CompanyFormDialogProps> = ({ 
@@ -32,7 +33,7 @@ const CompanyFormDialog: React.FC<CompanyFormDialogProps> = ({
     resolver: zodResolver(companyFormSchema),
     defaultValues: {
       company_name: '',
-      description: '',
+      company_desc: '',
     },
     mode: 'onChange',
   });
@@ -41,13 +42,16 @@ const CompanyFormDialog: React.FC<CompanyFormDialogProps> = ({
     if (isOpen && initialData) {
       form.reset({
         company_name: initialData.company_name || '',
-        description: initialData.description || '',
+        company_desc: initialData.company_desc || '',
       });
     }
-  }, [isOpen, form]);
+  }, [isOpen, form, initialData]);
 
   const onSubmit = (values: CompanyFormValues): void => {
-    onSave(values);
+    onSave({
+      company_name: values.company_name,
+      company_desc: values.company_desc || '',
+    });
   };
 
   const handleOpenChange = (open: boolean): void => {
@@ -82,7 +86,7 @@ const CompanyFormDialog: React.FC<CompanyFormDialogProps> = ({
             
             <FormField
               control={form.control}
-              name="description"
+              name="company_desc"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>회사소개</FormLabel>

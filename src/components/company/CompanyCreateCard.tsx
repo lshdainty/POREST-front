@@ -3,20 +3,16 @@ import { Building2, Plus } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { Button } from '@/components/shadcn/button';
 import CompanyFormDialog from '@/components/company/CompanyFormDialog';
-
-interface CompanyData {
-  company_name: string;
-  description?: string;
-}
+import { Company } from '@/types/company';
 
 interface CompanyCreateCardProps {
-  onCompanyCreate: (companyData: CompanyData) => void;
+  onCompanyCreate: (companyData: Omit<Company, 'company_id'>) => void;
 }
 
 export default function CompanyCreateCard({ onCompanyCreate }: CompanyCreateCardProps) {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 
-  const handleSaveCompany = (formData: CompanyData): void => {
+  const handleSaveCompany = (formData: Omit<Company, 'company_id'>): void => {
     console.log('회사 정보 저장:', formData);
     onCompanyCreate(formData);
     setIsDialogOpen(false);

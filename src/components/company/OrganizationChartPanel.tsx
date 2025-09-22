@@ -2,9 +2,18 @@ import React from 'react';
 import { Tree, TreeNode } from 'react-organizational-chart';
 import { Building2, Plus, Users } from 'lucide-react';
 import { Button } from '@/components/shadcn/button';
+import { Department } from '@/types/company';
 
-const OrganizationChartPanel = ({ organizations, onAddClick }) => {
-  const StyledNode = ({ children, isRoot = false, isHidden = false }) => (
+interface OrganizationChartPanelProps {
+  departments: Department[];
+  onAddClick: () => void;
+}
+
+const OrganizationChartPanel: React.FC<OrganizationChartPanelProps> = ({ 
+  departments, 
+  onAddClick 
+}) => {
+  const StyledNode = ({ children, isRoot = false }) => (
     <div className={`
       p-3 
       bg-white 
@@ -18,31 +27,27 @@ const OrganizationChartPanel = ({ organizations, onAddClick }) => {
       hover:shadow-md 
       hover:-translate-y-1
       ${isRoot ? 'border-blue-500 bg-blue-50' : 'border-blue-200'}
-      ${isHidden ? 'opacity-50 border-gray-300' : ''}
     `}>
       {children}
     </div>
   );
 
-  const renderNode = (node) => (
+  const renderNode = (node: Department) => (
     <TreeNode 
-      key={node.org_id}
+      key={node.department_id}
       label={
-        <StyledNode isHidden={node.is_hidden}>
-          <div className="font-medium text-sm text-gray-900">{node.org_name}</div>
-          <div className="text-xs text-gray-600 mt-1">{node.org_type}</div>
-          {node.manager_name && (
-            <div className="text-xs text-blue-600 mt-1">{node.manager_name}</div>
-          )}
+        <StyledNode>
+          <div className="font-medium text-sm text-gray-900">{node.department_name_kr}</div>
+          <div className="text-xs text-gray-600 mt-1">{node.department_type}</div>
         </StyledNode>
       }
     >
-      {node.children?.map(renderNode)}
+      {node.children_department?.map(renderNode)}
     </TreeNode>
   );
 
-  const renderOrgChart = (org) => {
-    if (!org) return null;
+  const renderChart = (dept: Department) => {
+    if (!dept) return null;
 
     return (
       <div className="flex justify-center items-center min-h-[400px] p-4">
@@ -53,31 +58,28 @@ const OrganizationChartPanel = ({ organizations, onAddClick }) => {
           nodePadding="8px"
           label={
             <StyledNode isRoot={true}>
-              <div className="font-bold text-base text-gray-900">{org.org_name}</div>
-              <div className="text-sm text-gray-600 mt-1">{org.org_type}</div>
-              {org.manager_name && (
-                <div className="text-sm text-blue-600 mt-1">{org.manager_name}</div>
-              )}
+              <div className="font-bold text-base text-gray-900">{dept.department_name_kr}</div>
+              <div className="text-sm text-gray-600 mt-1">{dept.department_type}</div>
             </StyledNode>
           }
         >
-          {org.children?.map(renderNode)}
+          {dept.children_department?.map(renderNode)}
         </Tree>
       </div>
     );
   };
 
-  const getTotalOrgCount = (orgs) => {
+  const getTotalDeptCount = (depts: Department[]): number => {
     let count = 0;
-    const countOrgs = (orgList) => {
-      orgList.forEach(org => {
+    const countDepts = (deptList: Department[]) => {
+      deptList.forEach(dept => {
         count++;
-        if (org.children && org.children.length > 0) {
-          countOrgs(org.children);
+        if (dept.children_department && dept.children_department.length > 0) {
+          countDepts(dept.children_department);
         }
       });
     };
-    countOrgs(orgs);
+    countDepts(depts);
     return count;
   };
 
@@ -88,23 +90,23 @@ const OrganizationChartPanel = ({ organizations, onAddClick }) => {
         <div className="flex items-center space-x-2">
           <Users size={16} className="text-gray-600" />
           <span className="text-sm text-gray-600">
-            전체 조직: {getTotalOrgCount(organizations)}개
+            전체 부서: {getTotalDeptCount(departments)}개
           </span>
         </div>
       </div>
 
       <div className="flex justify-center">
-        {organizations.length > 0 ? (
+        {departments.length > 0 ? (
           <div className="org-chart-container">
-            {renderOrgChart(organizations[0])}
+            {renderChart(departments[0])}
           </div>
         ) : (
           <div className="text-center py-12">
             <Building2 size={48} className="mx-auto text-gray-400 mb-4" />
-            <p className="text-gray-600 mb-4">조직이 없습니다</p>
+            <p className="text-gray-600 mb-4">부서가 없습니다</p>
             <Button onClick={onAddClick}>
               <Plus size={16} className="mr-2" />
-              첫 조직 추가하기
+              첫 부서 추가하기
             </Button>
           </div>
         )}

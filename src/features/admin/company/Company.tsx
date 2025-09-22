@@ -3,69 +3,50 @@ import { Building2, Phone, Mail, Globe } from 'lucide-react';
 import CompanyCreateCard from '@/components/company/CompanyCreateCard';
 import OrganizationTreePanel from '@/components/company/OrganizationTreePanel';
 import OrganizationChartPanel from '@/components/company/OrganizationChartPanel';
+import { Company } from '@/types/company';
+import { Department } from '@/types/company';
 
-export default function Company() {
-  const [company, setCompany] = useState(null);
-  const [organizations, setOrganizations] = useState([]);
-  const [selectedOrg, setSelectedOrg] = useState(null);
+export default function CompanyPage() {
+  const [company, setCompany] = useState<Company | null>(null);
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [selectedDept, setSelectedDept] = useState<Department | null>(null);
 
   // 샘플 데이터 (테스트용)
   useEffect(() => {
     const sampleData = {
       company: {
+        company_id: "1",
         company_name: "테크코리아",
-        business_number: "123-45-67890",
-        ceo_name: "김대표",
-        establishment_date: "2020-01-01",
-        business_type: "소프트웨어 개발",
-        address: "서울시 강남구 테헤란로 123",
-        phone: "02-1234-5678",
-        email: "info@techkorea.com",
-        website: "www.techkorea.com",
-        employee_count: "150",
-        capital: "10억원",
-        description: "혁신적인 소프트웨어 솔루션을 제공하는 기술 기업"
+        company_desc: "혁신적인 소프트웨어 솔루션을 제공하는 기술 기업"
       },
-      organizations: [
+      departments: [
         {
-          org_id: "1",
-          org_name: "테크코리아",
-          org_name_en: "Tech Korea",
-          org_code: "TK",
-          parent_org_id: null,
-          org_level: 0,
-          org_type: "본사",
-          manager_name: "김대표",
-          is_hidden: false,
-          is_active: true,
-          description: "본사",
-          children: [
+          department_id: 1,
+          department_name: "Tech Korea",
+          department_name_kr: "테크코리아",
+          parent_department_id: 0,
+          department_level: 0,
+          department_type: "본사",
+          department_desc: "본사",
+          children_department: [
             {
-              org_id: "2",
-              org_name: "경영지원본부",
-              org_name_en: "Management Support Division",
-              org_code: "MS",
-              parent_org_id: "1",
-              org_level: 1,
-              org_type: "본부",
-              manager_name: "이본부장",
-              is_hidden: false,
-              is_active: true,
-              description: "경영지원업무",
-              children: [
+              department_id: 2,
+              department_name: "Management Support Division",
+              department_name_kr: "경영지원본부",
+              parent_department_id: 1,
+              department_level: 1,
+              department_type: "본부",
+              department_desc: "경영지원업무",
+              children_department: [
                 {
-                  org_id: "3",
-                  org_name: "인사팀",
-                  org_name_en: "HR Team",
-                  org_code: "HR",
-                  parent_org_id: "2",
-                  org_level: 2,
-                  org_type: "팀",
-                  manager_name: "박팀장",
-                  is_hidden: false,
-                  is_active: true,
-                  description: "인사관리",
-                  children: []
+                  department_id: 3,
+                  department_name: "HR Team",
+                  department_name_kr: "인사팀",
+                  parent_department_id: 2,
+                  department_level: 2,
+                  department_type: "팀",
+                  department_desc: "인사관리",
+                  children_department: []
                 }
               ]
             }
@@ -76,79 +57,106 @@ export default function Company() {
     
     // 개발 시에는 주석 해제하여 샘플 데이터 사용
     // setCompany(sampleData.company);
-    // setOrganizations(sampleData.organizations);
+    // setDepartments(sampleData.departments);
   }, []);
 
-  const handleCompanyCreate = (companyData) => {
-    console.log('회사 생성:', companyData);
-    setCompany(companyData);
+  const handleCompanyCreate = (companyData: Omit<Company, 'company_id'>) => {
+    const newCompany: Company = {
+      company_id: Date.now().toString(),
+      ...companyData
+    };
+    console.log('회사 생성:', newCompany);
+    setCompany(newCompany);
   };
 
-  const handleOrgUpdate = (formData, editingOrg) => {
-    console.log('조직 업데이트:', formData, editingOrg);
+  const handleDeptUpdate = (formData: Department, editingDept: any) => {
+    console.log('부서 업데이트:', formData, editingDept);
     
-    if (editingOrg) {
-      // 수정 로직
-      const updateOrg = (orgs) => {
-        return orgs.map(org => {
-          if (org.org_id === editingOrg.org_id) {
-            return { ...org, ...formData };
+    if (editingDept && editingDept.isAddingChild) {
+      // 하위 노드 추가 로직
+      const parentId = editingDept.department_id;
+      console.log('하위 노드 추가:', formData, '부모 ID:', parentId);
+      
+      const addChildToParent = (depts: Department[]): Department[] => {
+        return depts.map(dept => {
+          if (dept.department_id === parentId) {
+            return {
+              ...dept,
+              children_department: [
+                ...dept.children_department,
+                formData
+              ]
+            };
           }
-          if (org.children) {
-            return { ...org, children: updateOrg(org.children) };
+          
+          if (dept.children_department && dept.children_department.length > 0) {
+            return {
+              ...dept,
+              children_department: addChildToParent(dept.children_department)
+            };
           }
-          return org;
+          
+          return dept;
         });
       };
-      setOrganizations(updateOrg(organizations));
+      
+      setDepartments(addChildToParent(departments));
+      
+    } else if (editingDept && editingDept.isDragDrop) {
+      // 드래그앤드롭 로직
+      const sourceId = formData.department_id;
+      const targetId = editingDept.department_id;
+      console.log('드래그앤드롭:', sourceId, '→', targetId);
+      
+    } else if (editingDept && editingDept.department_id) {
+      // 기존 노드 수정 로직
+      console.log('노드 수정:', formData, editingDept);
+      
+      const updateDept = (depts: Department[]): Department[] => {
+        return depts.map(dept => {
+          if (dept.department_id === editingDept.department_id) {
+            return { ...dept, ...formData };
+          }
+          if (dept.children_department) {
+            return { ...dept, children_department: updateDept(dept.children_department) };
+          }
+          return dept;
+        });
+      };
+      setDepartments(updateDept(departments));
+      
     } else {
-      // 새로 추가 로직
-      const newOrg = {
-        org_id: Date.now().toString(),
-        org_level: 0,
-        is_hidden: false,
-        is_active: true,
-        children: [],
+      // 최상위 새로 추가 로직
+      console.log('최상위 노드 추가:', formData);
+      
+      const newDept: Department = {
+        department_id: Date.now(),
+        department_level: 0,
+        parent_department_id: 0,
+        children_department: [],
         ...formData
       };
-      setOrganizations([...organizations, newOrg]);
+      setDepartments([...departments, newDept]);
     }
   };
 
-  const handleOrgDelete = (orgId) => {
-    console.log('조직 삭제:', orgId);
+  const handleDeptDelete = (deptId: number) => {
+    console.log('부서 삭제:', deptId);
     
-    const deleteFromTree = (orgs) => {
-      return orgs.filter(org => {
-        if (org.org_id === orgId) return false;
-        if (org.children) {
-          org.children = deleteFromTree(org.children);
+    const deleteFromTree = (depts: Department[]): Department[] => {
+      return depts.filter(dept => {
+        if (dept.department_id === deptId) return false;
+        if (dept.children_department) {
+          dept.children_department = deleteFromTree(dept.children_department);
         }
         return true;
       });
     };
-    setOrganizations(deleteFromTree(organizations));
+    setDepartments(deleteFromTree(departments));
   };
 
-  const handleToggleVisibility = (orgId) => {
-    console.log('조직 숨김/표시 토글:', orgId);
-    
-    const toggleInTree = (orgs) => {
-      return orgs.map(org => {
-        if (org.org_id === orgId) {
-          return { ...org, is_hidden: !org.is_hidden };
-        }
-        if (org.children) {
-          return { ...org, children: toggleInTree(org.children) };
-        }
-        return org;
-      });
-    };
-    setOrganizations(toggleInTree(organizations));
-  };
-
-  const handleAddOrgFromChart = () => {
-    console.log('차트에서 조직 추가');
+  const handleAddDeptFromChart = () => {
+    console.log('차트에서 부서 추가');
   };
 
   // 회사 정보가 없으면 회사 생성 화면 표시
@@ -161,53 +169,32 @@ export default function Company() {
   }
 
   return (
-    <div className='p-4 sm:p-6 md:p-8 h-screen bg-gray-50 flex flex-col'>
+    <div className='p-4 sm:p-6 md:p-8'>
       {/* 헤더 */}
-      <div className="bg-white border-b border-gray-200 p-4 sm:p-6 md:p-8 pb-4 flex-shrink-0">
+      <div className="bg-white border-b border-gray-200 flex-shrink-0 mb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Building2 className="text-blue-600" size={24} />
             <div>
               <h1 className="text-xl font-bold">{company.company_name}</h1>
-              <p className="text-sm text-gray-600">{company.business_type}</p>
+              <p className="text-sm text-gray-600">{company.company_desc}</p>
             </div>
-          </div>
-          <div className="flex items-center space-x-4 text-sm text-gray-600">
-            {company.phone && (
-              <div className="flex items-center space-x-1">
-                <Phone size={16} />
-                <span>{company.phone}</span>
-              </div>
-            )}
-            {company.email && (
-              <div className="flex items-center space-x-1">
-                <Mail size={16} />
-                <span>{company.email}</span>
-              </div>
-            )}
-            {company.website && (
-              <div className="flex items-center space-x-1">
-                <Globe size={16} />
-                <span>{company.website}</span>
-              </div>
-            )}
           </div>
         </div>
       </div>
 
       <div className="flex flex-1 overflow-hidden">
         <OrganizationTreePanel
-          organizations={organizations}
-          selectedOrg={selectedOrg}
-          onOrgSelect={setSelectedOrg}
-          onOrgUpdate={handleOrgUpdate}
-          onOrgDelete={handleOrgDelete}
-          onToggleVisibility={handleToggleVisibility}
+          departments={departments}
+          selectedDept={selectedDept}
+          onDeptSelect={setSelectedDept}
+          onDeptUpdate={handleDeptUpdate}
+          onDeptDelete={handleDeptDelete}
         />
         
         <OrganizationChartPanel
-          organizations={organizations}
-          onAddClick={handleAddOrgFromChart}
+          departments={departments}
+          onAddClick={handleAddDeptFromChart}
         />
       </div>
     </div>

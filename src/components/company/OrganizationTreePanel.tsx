@@ -1,132 +1,185 @@
 import React, { useState } from 'react';
-import { Building2, Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
+import { Plus, Edit, Trash2, Building2 } from 'lucide-react';
 import { Button } from '@/components/shadcn/button';
-import { Badge } from '@/components/shadcn/badge';
 import OrganizationFormDialog from '@/components/company/OrganizationFormDialog';
+import { TreeView, TreeDataItem } from '@/components/shadcn/treeView';
+import { Department } from '@/types/company';
 
-const OrganizationTreePanel = ({ 
-  organizations, 
-  selectedOrg,
-  onOrgSelect,
-  onOrgUpdate,
-  onOrgDelete,
-  onToggleVisibility 
+interface OrganizationTreePanelProps {
+  departments: Department[];
+  selectedDept: Department | null;
+  onDeptSelect: (dept: Department) => void;
+  onDeptUpdate: (formData: Department, editingDept: any) => void;
+  onDeptDelete: (deptId: number) => void;
+}
+
+const OrganizationTreePanel: React.FC<OrganizationTreePanelProps> = ({
+  departments,
+  selectedDept,
+  onDeptSelect,
+  onDeptUpdate,
+  onDeptDelete,
 }) => {
-  const [isOrgDialogOpen, setIsOrgDialogOpen] = useState(false);
-  const [editingOrg, setEditingOrg] = useState(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingDept, setEditingDept] = useState<Department | null>(null);
+  const [addingChildToId, setAddingChildToId] = useState<number | null>(null);
 
-  const handleSaveOrg = (formData) => {
-    onOrgUpdate(formData, editingOrg);
-    setIsOrgDialogOpen(false);
-    setEditingOrg(null);
+  const handleAddChild = (parentId: number) => {
+    setAddingChildToId(parentId);
+    setEditingDept(null);
+    setIsDialogOpen(true);
   };
 
-  const handleEditClick = (org, e) => {
-    e.stopPropagation();
-    setEditingOrg(org);
-    setIsOrgDialogOpen(true);
+  const handleEdit = (dept: Department) => {
+    setEditingDept(dept);
+    setAddingChildToId(null);
+    setIsDialogOpen(true);
   };
 
-  const handleAddClick = () => {
-    setEditingOrg(null);
-    setIsOrgDialogOpen(true);
+  const handleSave = (formData: Department) => {
+    if (addingChildToId) {
+      const newDept: Department = {
+        department_id: Date.now(),
+        department_name: formData.department_name,
+        department_name_kr: formData.department_name_kr,
+        parent_department_id: addingChildToId,
+        department_level: 0,
+        department_type: formData.department_type,
+        department_desc: formData.department_desc,
+        children_department: []
+      };
+      
+      onDeptUpdate(newDept, { 
+        department_id: addingChildToId, 
+        isAddingChild: true 
+      });
+    } else if (editingDept) {
+      onDeptUpdate(formData, editingDept);
+    } else {
+      const newDept: Department = {
+        department_id: Date.now(),
+        ...formData,
+        parent_department_id: 0,
+        department_level: 0,
+        children_department: []
+      };
+      onDeptUpdate(newDept, null);
+    }
+    
+    setIsDialogOpen(false);
+    setEditingDept(null);
+    setAddingChildToId(null);
   };
 
-  const renderTreeNode = (org, level = 0) => {
-    return (
-      <div key={org.org_id}>
-        <div
-          className={`p-3 border rounded-lg cursor-pointer transition-colors ${
-            selectedOrg?.org_id === org.org_id 
-              ? 'bg-blue-50 border-blue-200' 
-              : 'bg-white border-gray-200 hover:bg-gray-50'
-          }`}
-          style={{ marginLeft: `${level * 16}px` }}
-          onClick={() => onOrgSelect(org)}
+  const handleSelectChange = (item?: TreeDataItem) => {
+    if (!item) return;
+    const dept = findDeptById(departments, Number(item.id));
+    if (dept) onDeptSelect(dept);
+  };
+
+  const mapDeptToTreeItem = (dept: Department): TreeDataItem => ({
+    id: dept.department_id.toString(),
+    name: dept.department_name_kr,
+    icon: Building2,
+    actions: (
+      <div className="flex space-x-1">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={e => {
+            e.stopPropagation();
+            handleAddChild(dept.department_id);
+          }}
+          title="하위 부서 추가"
         >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Building2 size={16} />
-              <span className="font-medium">{org.org_name}</span>
-              <Badge variant="outline">{org.org_type}</Badge>
-              {org.is_hidden && <EyeOff size={14} className="text-gray-400" />}
-            </div>
-            <div className="flex space-x-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={(e) => handleEditClick(org, e)}
-              >
-                <Edit size={14} />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onToggleVisibility(org.org_id);
-                }}
-              >
-                {org.is_hidden ? <Eye size={14} /> : <EyeOff size={14} />}
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onOrgDelete(org.org_id);
-                }}
-              >
-                <Trash2 size={14} />
-              </Button>
-            </div>
-          </div>
-          <div className="mt-1 text-sm text-gray-600">
-            {org.manager_name && <span>조직장: {org.manager_name}</span>}
-          </div>
-        </div>
-        
-        {/* 하위 조직 렌더링 */}
-        {org.children && org.children.length > 0 && (
-          <div className="mt-2 space-y-2">
-            {org.children.map(child => renderTreeNode(child, level + 1))}
-          </div>
-        )}
+          <Plus size={14} />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={e => {
+            e.stopPropagation();
+            handleEdit(dept);
+          }}
+          title="수정"
+        >
+          <Edit size={14} />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={e => {
+            e.stopPropagation();
+            onDeptDelete(dept.department_id);
+          }}
+          title="삭제"
+        >
+          <Trash2 size={14} />
+        </Button>
       </div>
-    );
+    ),
+    children: dept.children_department?.map(mapDeptToTreeItem),
+    draggable: true,
+    droppable: true,
+  });
+
+  const findDeptById = (depts: Department[], id: number): Department | null => {
+    for (const dept of depts) {
+      if (dept.department_id === id) return dept;
+      if (dept.children_department) {
+        const found = findDeptById(dept.children_department, id);
+        if (found) return found;
+      }
+    }
+    return null;
   };
+
+  const treeData = departments.map(mapDeptToTreeItem);
 
   return (
     <div className="w-1/3 bg-white border-r border-gray-200 p-4 overflow-y-auto">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold">조직 관리</h2>
-        <Button size="sm" onClick={handleAddClick}>
+        <h2 className="text-lg font-semibold">부서 관리</h2>
+        <Button size="sm" onClick={() => {
+          setEditingDept(null);
+          setAddingChildToId(null);
+          setIsDialogOpen(true);
+        }}>
           <Plus size={16} className="mr-2" />
-          조직 추가
+          부서 추가
         </Button>
       </div>
 
-      <div className="space-y-2">
-        {organizations.length > 0 ? (
-          organizations.map(org => renderTreeNode(org))
-        ) : (
-          <div className="text-center py-8 text-gray-500">
-            <Building2 size={48} className="mx-auto mb-2" />
-            <p>조직이 없습니다</p>
-            <Button onClick={handleAddClick} className="mt-2">
-              <Plus size={16} className="mr-2" />
-              첫 조직 추가하기
-            </Button>
-          </div>
-        )}
-      </div>
+      {departments.length > 0 ? (
+        <TreeView
+          data={treeData}
+          initialSelectedItemId={selectedDept?.department_id.toString()}
+          onSelectChange={handleSelectChange}
+          expandAll={false}
+          className="bg-transparent"
+        />
+      ) : (
+        <div className="text-center py-8 text-gray-500">
+          <Building2 size={48} className="mx-auto mb-2" />
+          <p>부서가 없습니다</p>
+          <Button onClick={() => {
+            setEditingDept(null);
+            setAddingChildToId(null);
+            setIsDialogOpen(true);
+          }} className="mt-2">
+            <Plus size={16} className="mr-2" />
+            첫 부서 추가하기
+          </Button>
+        </div>
+      )}
 
       <OrganizationFormDialog
-        isOpen={isOrgDialogOpen}
-        onOpenChange={setIsOrgDialogOpen}
-        onSave={handleSaveOrg}
-        initialData={editingOrg}
-        isEditing={!!editingOrg}
+        isOpen={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        onSave={handleSave}
+        initialData={editingDept}
+        isEditing={!!editingDept}
+        isAddingChild={!!addingChildToId}
       />
     </div>
   );
