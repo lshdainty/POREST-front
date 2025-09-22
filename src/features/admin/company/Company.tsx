@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Building2, Phone, Mail, Globe } from 'lucide-react';
 import CompanyCreateCard from '@/components/company/CompanyCreateCard';
-import OrganizationTreePanel from '@/components/company/OrganizationTreePanel';
-import OrganizationChartPanel from '@/components/company/OrganizationChartPanel';
+import DepartmentTreePanel from '@/components/company/DepartmentTreePanel';
+import DepartmentChartPanel from '@/components/company/DepartmentChartPanel';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/shadcn/resizable";
 import { Company } from '@/types/company';
 import { Department } from '@/types/company';
+import { Building2 } from 'lucide-react';
 
 export default function CompanyPage() {
   const [company, setCompany] = useState<Company | null>(null);
@@ -169,34 +170,32 @@ export default function CompanyPage() {
   }
 
   return (
-    <div className='p-4 sm:p-6 md:p-8'>
-      {/* 헤더 */}
-      <div className="bg-white border-b border-gray-200 flex-shrink-0 mb-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Building2 className="text-blue-600" size={24} />
-            <div>
-              <h1 className="text-xl font-bold">{company.company_name}</h1>
-              <p className="text-sm text-gray-600">{company.company_desc}</p>
-            </div>
-          </div>
-        </div>
+    <div className="p-4 sm:p-6 md:p-8 flex flex-col gap-6 h-full">
+      <div className="flex items-center gap-2">
+        <Building2 />
+        <h1 className="text-3xl font-bold">{company.company_name}</h1>
       </div>
 
-      <div className="flex flex-1 overflow-hidden">
-        <OrganizationTreePanel
-          departments={departments}
-          selectedDept={selectedDept}
-          onDeptSelect={setSelectedDept}
-          onDeptUpdate={handleDeptUpdate}
-          onDeptDelete={handleDeptDelete}
-        />
+      <ResizablePanelGroup direction="horizontal" className="flex-grow rounded-lg border">
+        <ResizablePanel defaultSize={30} minSize={25}>
+          <DepartmentTreePanel
+            departments={departments}
+            selectedDept={selectedDept}
+            onDeptSelect={setSelectedDept}
+            onDeptUpdate={handleDeptUpdate}
+            onDeptDelete={handleDeptDelete}
+          />
+        </ResizablePanel>
         
-        <OrganizationChartPanel
-          departments={departments}
-          onAddClick={handleAddDeptFromChart}
-        />
-      </div>
+        <ResizableHandle withHandle />
+        
+        <ResizablePanel defaultSize={70}>
+          <DepartmentChartPanel
+            departments={departments}
+            onAddClick={handleAddDeptFromChart}
+          />
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   );
 }

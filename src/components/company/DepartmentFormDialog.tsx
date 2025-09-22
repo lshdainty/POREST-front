@@ -40,14 +40,14 @@ interface DepartmentFormDialogProps {
   isAddingChild?: boolean;
 }
 
-const OrganizationFormDialog: React.FC<DepartmentFormDialogProps> = ({ 
+export default function DepartmentFormDialog({ 
   isOpen, 
   onOpenChange, 
   onSave, 
   initialData = null,
   isEditing = false,
   isAddingChild = false 
-}) => {
+}: DepartmentFormDialogProps) {
   const form = useForm<DepartmentFormValues>({
     resolver: zodResolver(departmentFormSchema),
     defaultValues: {
@@ -202,5 +202,3 @@ const OrganizationFormDialog: React.FC<DepartmentFormDialogProps> = ({
     </Dialog>
   );
 };
-
-export default OrganizationFormDialog;

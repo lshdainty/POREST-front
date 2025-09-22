@@ -23,12 +23,12 @@ interface CompanyFormDialogProps {
   initialData?: Partial<Company>;
 }
 
-const CompanyFormDialog: React.FC<CompanyFormDialogProps> = ({ 
+export default function CompanyFormDialog({ 
   isOpen, 
   onOpenChange, 
   onSave, 
   initialData = {} 
-}) => {
+}: CompanyFormDialogProps) {
   const form = useForm<CompanyFormValues>({
     resolver: zodResolver(companyFormSchema),
     defaultValues: {
@@ -123,5 +123,3 @@ const CompanyFormDialog: React.FC<CompanyFormDialogProps> = ({
     </Dialog>
   );
 };
-
-export default CompanyFormDialog;

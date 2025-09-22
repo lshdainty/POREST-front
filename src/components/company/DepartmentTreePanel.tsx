@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Plus, Edit, Trash2, Building2 } from 'lucide-react';
 import { Button } from '@/components/shadcn/button';
-import OrganizationFormDialog from '@/components/company/OrganizationFormDialog';
+import DepartmentFormDialog from '@/components/company/DepartmentFormDialog';
 import { TreeView, TreeDataItem } from '@/components/shadcn/treeView';
 import { Department } from '@/types/company';
 
-interface OrganizationTreePanelProps {
+interface DepartmentTreePanelProps {
   departments: Department[];
   selectedDept: Department | null;
   onDeptSelect: (dept: Department) => void;
@@ -13,13 +13,13 @@ interface OrganizationTreePanelProps {
   onDeptDelete: (deptId: number) => void;
 }
 
-const OrganizationTreePanel: React.FC<OrganizationTreePanelProps> = ({
+export default function DepartmentTreePanel({
   departments,
   selectedDept,
   onDeptSelect,
   onDeptUpdate,
   onDeptDelete,
-}) => {
+}: DepartmentTreePanelProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingDept, setEditingDept] = useState<Department | null>(null);
   const [addingChildToId, setAddingChildToId] = useState<number | null>(null);
@@ -86,35 +86,50 @@ const OrganizationTreePanel: React.FC<OrganizationTreePanelProps> = ({
         <Button
           variant="ghost"
           size="icon"
+          className="hover:bg-transparent"
           onClick={e => {
             e.stopPropagation();
             handleAddChild(dept.department_id);
           }}
           title="하위 부서 추가"
         >
-          <Plus size={14} />
+          <Plus 
+            size={10} 
+            strokeWidth={1.5}
+            className="hover:[stroke-width:2.5] transition-all duration-200"
+          />
         </Button>
         <Button
           variant="ghost"
           size="icon"
+          className="hover:bg-transparent"
           onClick={e => {
             e.stopPropagation();
             handleEdit(dept);
           }}
           title="수정"
         >
-          <Edit size={14} />
+          <Edit 
+            size={10} 
+            strokeWidth={1.5}
+            className="hover:[stroke-width:2.5] transition-all duration-200"
+          />
         </Button>
         <Button
           variant="ghost"
           size="icon"
+          className="hover:bg-transparent"
           onClick={e => {
             e.stopPropagation();
             onDeptDelete(dept.department_id);
           }}
           title="삭제"
         >
-          <Trash2 size={14} />
+          <Trash2 
+            size={10} 
+            strokeWidth={1.5}
+            className="hover:[stroke-width:2.5] transition-all duration-200"
+          />
         </Button>
       </div>
     ),
@@ -137,8 +152,8 @@ const OrganizationTreePanel: React.FC<OrganizationTreePanelProps> = ({
   const treeData = departments.map(mapDeptToTreeItem);
 
   return (
-    <div className="w-1/3 bg-white border-r border-gray-200 p-4 overflow-y-auto">
-      <div className="flex items-center justify-between mb-4">
+    <div className="h-full flex flex-col bg-white">
+      <div className="flex items-center justify-between p-4 border-b">
         <h2 className="text-lg font-semibold">부서 관리</h2>
         <Button size="sm" onClick={() => {
           setEditingDept(null);
@@ -150,30 +165,24 @@ const OrganizationTreePanel: React.FC<OrganizationTreePanelProps> = ({
         </Button>
       </div>
 
-      {departments.length > 0 ? (
-        <TreeView
-          data={treeData}
-          initialSelectedItemId={selectedDept?.department_id.toString()}
-          onSelectChange={handleSelectChange}
-          expandAll={false}
-          className="bg-transparent"
-        />
-      ) : (
-        <div className="text-center py-8 text-gray-500">
-          <Building2 size={48} className="mx-auto mb-2" />
-          <p>부서가 없습니다</p>
-          <Button onClick={() => {
-            setEditingDept(null);
-            setAddingChildToId(null);
-            setIsDialogOpen(true);
-          }} className="mt-2">
-            <Plus size={16} className="mr-2" />
-            첫 부서 추가하기
-          </Button>
-        </div>
-      )}
+      <div className="flex-1 p-4 overflow-y-auto">
+        {departments.length > 0 ? (
+          <TreeView
+            data={treeData}
+            initialSelectedItemId={selectedDept?.department_id.toString()}
+            onSelectChange={handleSelectChange}
+            expandAll={false}
+            className="bg-transparent"
+          />
+        ) : (
+          <div className="flex flex-col items-center justify-center h-full text-gray-500">
+            <Building2 size={48} className="mb-4 text-gray-400" />
+            <p>부서가 없습니다</p>
+          </div>
+        )}
+      </div>
 
-      <OrganizationFormDialog
+      <DepartmentFormDialog
         isOpen={isDialogOpen}
         onOpenChange={setIsDialogOpen}
         onSave={handleSave}
@@ -184,5 +193,3 @@ const OrganizationTreePanel: React.FC<OrganizationTreePanelProps> = ({
     </div>
   );
 };
-
-export default OrganizationTreePanel;

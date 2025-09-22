@@ -297,7 +297,7 @@ const TreeNode = ({
                         {item.actions}
                     </TreeActions>
                 </AccordionTrigger>
-                <AccordionContent className="border-sidebar-border mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-l px-2.5 py-0.5">
+                <AccordionContent className="border-sidebar-border ml-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-l pl-2.5 py-0.5">
                     <TreeItem
                         data={item.children ? item.children : item}
                         selectedItemId={selectedItemId}
@@ -441,7 +441,7 @@ const AccordionContent = React.forwardRef<
         )}
         {...props}
     >
-        <div className="pb-1 pt-0">{children}</div>
+        <div className="pb-0 pt-0">{children}</div>
     </AccordionPrimitive.Content>
 ))
 AccordionContent.displayName = AccordionPrimitive.Content.displayName

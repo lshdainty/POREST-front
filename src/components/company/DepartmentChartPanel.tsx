@@ -1,18 +1,17 @@
-import React from 'react';
 import { Tree, TreeNode } from 'react-organizational-chart';
 import { Building2, Plus, Users } from 'lucide-react';
 import { Button } from '@/components/shadcn/button';
 import { Department } from '@/types/company';
 
-interface OrganizationChartPanelProps {
+interface DepartmentChartPanelProps {
   departments: Department[];
   onAddClick: () => void;
 }
 
-const OrganizationChartPanel: React.FC<OrganizationChartPanelProps> = ({ 
+export default function DepartmentChartPanel({ 
   departments, 
   onAddClick 
-}) => {
+}: DepartmentChartPanelProps) {
   const StyledNode = ({ children, isRoot = false }) => (
     <div className={`
       p-3 
@@ -84,10 +83,10 @@ const OrganizationChartPanel: React.FC<OrganizationChartPanelProps> = ({
   };
 
   return (
-    <div className="flex-1 p-6 overflow-auto">
-      <div className="flex items-center justify-between mb-6">
+    <div className="h-full flex flex-col bg-white">
+      <div className="flex items-center justify-between p-4 border-b">
         <h2 className="text-lg font-semibold">조직도</h2>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 h-8">
           <Users size={16} className="text-gray-600" />
           <span className="text-sm text-gray-600">
             전체 부서: {getTotalDeptCount(departments)}개
@@ -95,24 +94,20 @@ const OrganizationChartPanel: React.FC<OrganizationChartPanelProps> = ({
         </div>
       </div>
 
-      <div className="flex justify-center">
-        {departments.length > 0 ? (
-          <div className="org-chart-container">
-            {renderChart(departments[0])}
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <Building2 size={48} className="mx-auto text-gray-400 mb-4" />
-            <p className="text-gray-600 mb-4">부서가 없습니다</p>
-            <Button onClick={onAddClick}>
-              <Plus size={16} className="mr-2" />
-              첫 부서 추가하기
-            </Button>
-          </div>
-        )}
+      <div className="flex-1 overflow-auto">
+        <div className="flex justify-center items-center h-full">
+          {departments.length > 0 ? (
+            <div className="org-chart-container">
+              {renderChart(departments[0])}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <Building2 size={48} className="mx-auto text-gray-400 mb-4" />
+              <p className="text-gray-600">부서가 없습니다</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 };
-
-export default OrganizationChartPanel;
