@@ -2,18 +2,18 @@ import { useState } from 'react';
 import { Building2, Plus } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { Button } from '@/components/shadcn/button';
-import CompanyFormDialog from './CompanyFormDialog';
+import CompanyFormDialog from '@/components/company/CompanyFormDialog';
 
 interface CompanyData {
   company_name: string;
   description?: string;
 }
 
-interface CompanyCreatePageProps {
+interface CompanyCreateCardProps {
   onCompanyCreate: (companyData: CompanyData) => void;
 }
 
-export default function CompanyCreatePage({ onCompanyCreate }: CompanyCreatePageProps) {
+export default function CompanyCreateCard({ onCompanyCreate }: CompanyCreateCardProps) {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 
   const handleSaveCompany = (formData: CompanyData): void => {
