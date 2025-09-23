@@ -82,11 +82,11 @@ export default function DepartmentTreePanel({
     name: dept.department_name_kr,
     icon: Building2,
     actions: (
-      <div className="flex space-x-1">
+      <div className="flex space-x-1 items-center">
         <Button
           variant="ghost"
           size="icon"
-          className="hover:bg-transparent"
+          className="size-6 hover:border hover:border-input hover:bg-background"
           onClick={e => {
             e.stopPropagation();
             handleAddChild(dept.department_id);
@@ -96,13 +96,12 @@ export default function DepartmentTreePanel({
           <Plus 
             size={10} 
             strokeWidth={1.5}
-            className="hover:[stroke-width:2.5] transition-all duration-200"
           />
         </Button>
         <Button
           variant="ghost"
           size="icon"
-          className="hover:bg-transparent"
+          className="size-6 hover:border hover:border-input hover:bg-background"
           onClick={e => {
             e.stopPropagation();
             handleEdit(dept);
@@ -112,13 +111,12 @@ export default function DepartmentTreePanel({
           <Edit 
             size={10} 
             strokeWidth={1.5}
-            className="hover:[stroke-width:2.5] transition-all duration-200"
           />
         </Button>
         <Button
           variant="ghost"
           size="icon"
-          className="hover:bg-transparent"
+          className="size-6 hover:border hover:border-input hover:bg-background"
           onClick={e => {
             e.stopPropagation();
             onDeptDelete(dept.department_id);
@@ -128,7 +126,6 @@ export default function DepartmentTreePanel({
           <Trash2 
             size={10} 
             strokeWidth={1.5}
-            className="hover:[stroke-width:2.5] transition-all duration-200"
           />
         </Button>
       </div>
@@ -137,6 +134,7 @@ export default function DepartmentTreePanel({
     draggable: true,
     droppable: true,
   });
+
 
   const findDeptById = (depts: Department[], id: number): Department | null => {
     for (const dept of depts) {
