@@ -1,167 +1,97 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import CompanyCreateCard from '@/components/company/CompanyCreateCard';
 import DepartmentTreePanel from '@/components/company/DepartmentTreePanel';
 import DepartmentChartPanel from '@/components/company/DepartmentChartPanel';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/shadcn/resizable";
-import { Company } from '@/types/company';
-import { Department } from '@/types/company';
 import { Building2 } from 'lucide-react';
+import { useGetCompanyWithDepartments, usePostCompany } from '@/api/company';
+import { Skeleton } from '@/components/shadcn/skeleton';
 
-export default function CompanyPage() {
-  const [company, setCompany] = useState<Company | null>(null);
-  const [departments, setDepartments] = useState<Department[]>([]);
+// API 응답을 Department[] 타입으로 변환하는 함수
+const transformToDepartments = (data: any[]): Department[] => {
+  return data.map(d => ({
+    department_id: d.department_id,
+    department_name: d.department_name,
+    department_name_kr: d.department_name_kr,
+    parent_department_id: d.parent_id,
+    department_level: d.tree_level,
+    department_type: d.department_type || '팀', // API에 없으므로 기본값 설정
+    department_desc: d.department_desc,
+    children_department: d.children ? transformToDepartments(d.children) : [],
+  }));
+};
+
+export default function Company() {
   const [selectedDept, setSelectedDept] = useState<Department | null>(null);
+  
+  // 임시로 company_id '1' 사용
+  const { data: companyData, isLoading, isError } = useGetCompanyWithDepartments({ company_id: 'SKC' });
+  const { mutate: createCompany } = usePostCompany();
 
-  // 샘플 데이터 (테스트용)
-  useEffect(() => {
-    const sampleData = {
-      company: {
-        company_id: "1",
-        company_name: "테크코리아",
-        company_desc: "혁신적인 소프트웨어 솔루션을 제공하는 기술 기업"
-      },
-      departments: [
-        {
-          department_id: 1,
-          department_name: "Tech Korea",
-          department_name_kr: "테크코리아",
-          parent_department_id: 0,
-          department_level: 0,
-          department_type: "본사",
-          department_desc: "본사",
-          children_department: [
-            {
-              department_id: 2,
-              department_name: "Management Support Division",
-              department_name_kr: "경영지원본부",
-              parent_department_id: 1,
-              department_level: 1,
-              department_type: "본부",
-              department_desc: "경영지원업무",
-              children_department: [
-                {
-                  department_id: 3,
-                  department_name: "HR Team",
-                  department_name_kr: "인사팀",
-                  parent_department_id: 2,
-                  department_level: 2,
-                  department_type: "팀",
-                  department_desc: "인사관리",
-                  children_department: []
-                }
-              ]
-            }
-          ]
-        }
-      ]
+  const company: Company | null = useMemo(() => {
+    if (!companyData) return null;
+    return {
+      company_id: companyData.company_id,
+      company_name: companyData.company_name,
+      company_desc: companyData.company_desc,
     };
-    
-    // 개발 시에는 주석 해제하여 샘플 데이터 사용
-    // setCompany(sampleData.company);
-    // setDepartments(sampleData.departments);
-  }, []);
+  }, [companyData]);
 
-  const handleCompanyCreate = (companyData: Omit<Company, 'company_id'>) => {
-    const newCompany: Company = {
-      company_id: Date.now().toString(),
-      ...companyData
-    };
-    console.log('회사 생성:', newCompany);
-    setCompany(newCompany);
+  const departments: Department[] = useMemo(() => {
+    if (companyData?.departments) {
+      return transformToDepartments(companyData.departments);
+    }
+    return [];
+  }, [companyData]);
+
+  const handleCompanyCreate = (companyFormData: Omit<Company, 'company_id'>) => {
+    console.log('회사 생성:', companyFormData);
+    // createCompany(companyFormData); // TODO: API 연동
   };
 
   const handleDeptUpdate = (formData: Department, editingDept: any) => {
     console.log('부서 업데이트:', formData, editingDept);
-    
-    if (editingDept && editingDept.isAddingChild) {
-      // 하위 노드 추가 로직
-      const parentId = editingDept.department_id;
-      console.log('하위 노드 추가:', formData, '부모 ID:', parentId);
-      
-      const addChildToParent = (depts: Department[]): Department[] => {
-        return depts.map(dept => {
-          if (dept.department_id === parentId) {
-            return {
-              ...dept,
-              children_department: [
-                ...dept.children_department,
-                formData
-              ]
-            };
-          }
-          
-          if (dept.children_department && dept.children_department.length > 0) {
-            return {
-              ...dept,
-              children_department: addChildToParent(dept.children_department)
-            };
-          }
-          
-          return dept;
-        });
-      };
-      
-      setDepartments(addChildToParent(departments));
-      
-    } else if (editingDept && editingDept.isDragDrop) {
-      // 드래그앤드롭 로직
-      const sourceId = formData.department_id;
-      const targetId = editingDept.department_id;
-      console.log('드래그앤드롭:', sourceId, '→', targetId);
-      
-    } else if (editingDept && editingDept.department_id) {
-      // 기존 노드 수정 로직
-      console.log('노드 수정:', formData, editingDept);
-      
-      const updateDept = (depts: Department[]): Department[] => {
-        return depts.map(dept => {
-          if (dept.department_id === editingDept.department_id) {
-            return { ...dept, ...formData };
-          }
-          if (dept.children_department) {
-            return { ...dept, children_department: updateDept(dept.children_department) };
-          }
-          return dept;
-        });
-      };
-      setDepartments(updateDept(departments));
-      
-    } else {
-      // 최상위 새로 추가 로직
-      console.log('최상위 노드 추가:', formData);
-      
-      const newDept: Department = {
-        department_id: Date.now(),
-        department_level: 0,
-        parent_department_id: 0,
-        children_department: [],
-        ...formData
-      };
-      setDepartments([...departments, newDept]);
-    }
+    // TODO: 부서 업데이트 API 연동
   };
 
   const handleDeptDelete = (deptId: number) => {
     console.log('부서 삭제:', deptId);
-    
-    const deleteFromTree = (depts: Department[]): Department[] => {
-      return depts.filter(dept => {
-        if (dept.department_id === deptId) return false;
-        if (dept.children_department) {
-          dept.children_department = deleteFromTree(dept.children_department);
-        }
-        return true;
-      });
-    };
-    setDepartments(deleteFromTree(departments));
+    // TODO: 부서 삭제 API 연동
   };
 
   const handleAddDeptFromChart = () => {
     console.log('차트에서 부서 추가');
+    // TODO: 부서 추가 로직 구현
   };
 
-  // 회사 정보가 없으면 회사 생성 화면 표시
-  if (!company) {
+  if (isLoading) {
+    return (
+      <div className="p-4 sm:p-6 md:p-8 flex flex-col gap-6 h-full">
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-8 w-8" />
+          <Skeleton className="h-8 w-48" />
+        </div>
+        <ResizablePanelGroup direction="horizontal" className="flex-grow rounded-lg border">
+          <ResizablePanel defaultSize={30} minSize={25}>
+            <div className="p-4 space-y-2">
+              <Skeleton className="h-8 w-full" />
+              <Skeleton className="h-64 w-full" />
+            </div>
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel defaultSize={70}>
+          <div className="p-4 space-y-2">
+              <Skeleton className="h-8 w-1/4" />
+              <Skeleton className="h-96 w-full" />
+            </div>
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </div>
+    );
+  }
+
+  // 회사 정보가 없거나 에러 발생 시 회사 생성 화면 표시
+  if (isError || !company) {
     return (
       <div className='flex-1 flex items-center justify-center'>
         <CompanyCreateCard onCompanyCreate={handleCompanyCreate} />
