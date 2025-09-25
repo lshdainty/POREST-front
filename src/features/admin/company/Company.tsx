@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import CompanyCreateCard from '@/components/company/CompanyCreateCard';
 import DepartmentTreePanel from '@/components/company/DepartmentTreePanel';
 import DepartmentChartPanel from '@/components/company/DepartmentChartPanel';
@@ -11,8 +11,8 @@ import { Skeleton } from '@/components/shadcn/skeleton';
 export default function Company() {
   const [selectedDept, setSelectedDept] = useState<GetCompanyWithDepartment | null>(null);
   
-  // 임시로 company_id '1' 사용
-  const { data: companyData, isLoading, isError } = useGetCompanyWithDepartments({ company_id: 'SKC' });
+  // 임시로 company_id 'SKC' 사용
+  const { data: companyData, isLoading, isError } = useGetCompanyWithDepartments({ company_id: 'skc' });
   const { mutate: createCompany } = usePostCompany();
 
   const company: GetCompanyWithDepartmentResp | null = useMemo(() => {
@@ -24,8 +24,7 @@ export default function Company() {
   }, [companyData]);
 
   const handleCompanyCreate = (companyFormData: PostCompanyReq) => {
-    console.log('회사 생성:', companyFormData);
-    // createCompany(companyFormData); // TODO: API 연동
+    createCompany(companyFormData);
   };
 
   const handleDeptUpdate = (formData: GetCompanyWithDepartment, editingDept: any) => {

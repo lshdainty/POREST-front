@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -87,7 +87,6 @@ export default function CompanyFormDialog({
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="company_name"
@@ -101,7 +100,6 @@ export default function CompanyFormDialog({
                 </FormItem>
               )}
             />
-            
             <FormField
               control={form.control}
               name="company_desc"
@@ -119,7 +117,6 @@ export default function CompanyFormDialog({
                 </FormItem>
               )}
             />
-            
             <div className="flex justify-end space-x-2 pt-4">
               <Button 
                 type="button" 

@@ -13,7 +13,6 @@ export default function CompanyCreateCard({ onCompanyCreate }: CompanyCreateCard
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 
   const handleSaveCompany = (formData: PostCompanyReq): void => {
-    console.log('회사 정보 저장:', formData);
     onCompanyCreate(formData);
     setIsDialogOpen(false);
   };
