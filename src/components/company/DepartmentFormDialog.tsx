@@ -11,7 +11,6 @@ import {
 import { Button } from '@/components/shadcn/button';
 import { Input } from '@/components/shadcn/input';
 import { Textarea } from '@/components/shadcn/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
 import { 
   Form, 
   FormControl, 
@@ -20,13 +19,16 @@ import {
   FormLabel, 
   FormMessage 
 } from '@/components/shadcn/form';
-import { GetCompanyWithDepartment } from '@/api/company';
+import { PostDepartmentReq, PutDepartmentReq } from '@/api/department';
 
 const departmentFormSchema = z.object({
   department_name: z.string().min(1, { message: '영문 부서명을 입력해주세요.' }),
   department_name_kr: z.string().min(1, { message: '한글 부서명을 입력해주세요.' }),
-  department_type: z.string().min(1, { message: '부서유형을 선택해주세요.' }),
+  parent_id: z.number().nullable(),
+  head_user_id: z.string().optional(),
+  tree_level: z.number().optional(),
   department_desc: z.string().optional(),
+  company_id: z.string().optional(),
 });
 
 type DepartmentFormValues = z.infer<typeof departmentFormSchema>;
@@ -34,63 +36,107 @@ type DepartmentFormValues = z.infer<typeof departmentFormSchema>;
 interface DepartmentFormDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (formData: GetCompanyWithDepartment) => void;
-  initialData?: GetCompanyWithDepartment | null;
+  onSave: (formData: PostDepartmentReq | { departmentId: number; data: PutDepartmentReq }) => void;
+  initialData?: any;
   isEditing?: boolean;
   isAddingChild?: boolean;
+  parentId?: number | null;
+  companyId?: string;
 }
 
-export default function DepartmentFormDialog({ 
-  isOpen, 
-  onOpenChange, 
-  onSave, 
+export default function DepartmentFormDialog({
+  isOpen,
+  onOpenChange,
+  onSave,
   initialData = null,
   isEditing = false,
-  isAddingChild = false 
+  isAddingChild = false,
+  parentId,
+  companyId
 }: DepartmentFormDialogProps) {
   const form = useForm<DepartmentFormValues>({
     resolver: zodResolver(departmentFormSchema),
     defaultValues: {
       department_name: '',
       department_name_kr: '',
-      department_type: '',
+      parent_id: null,
+      head_user_id: '',
+      tree_level: 0,
       department_desc: '',
+      company_id: '',
     },
     mode: 'onChange',
   });
 
   useEffect(() => {
+    console.log('DepartmentFormDialog 상태:', {
+      isOpen,
+      isEditing,
+      isAddingChild,
+      parentId,
+      companyId,
+      initialData
+    });
+
     if (isOpen) {
       if (isEditing && initialData) {
         form.reset({
           department_name: initialData.department_name || '',
           department_name_kr: initialData.department_name_kr || '',
-          department_type: '',
+          parent_id: initialData.parent_id ?? null,
+          head_user_id: initialData.head_user_id || '',
+          tree_level: initialData.tree_level || 0,
           department_desc: initialData.department_desc || '',
+          company_id: initialData.company_id || companyId || '',
         });
       } else {
         form.reset({
           department_name: '',
           department_name_kr: '',
-          department_type: '',
+          parent_id: isAddingChild && typeof parentId === 'number' ? parentId : null,
+          head_user_id: '',
+          tree_level: isAddingChild && typeof parentId === 'number' && initialData ? (initialData.tree_level || 0) + 1 : 0,
           department_desc: '',
+          company_id: companyId || '',
         });
       }
     }
   }, [isOpen, isEditing, initialData, form]);
 
   const onSubmit = (values: DepartmentFormValues): void => {
-    const departmentData: GetCompanyWithDepartment = {
-      department_id: initialData?.department_id || Date.now(),
-      department_name: values.department_name,
-      department_name_kr: values.department_name_kr,
-      parent_id: initialData?.parent_id || 0,
-      head_user_id: initialData?.head_user_id || '',
-      tree_level: initialData?.tree_level || 0,
-      department_desc: values.department_desc || '',
-      children: initialData?.children || [],
-    };
-    onSave(departmentData);
+    console.log('onSubmit 호출:', {
+      values,
+      isEditing,
+      isAddingChild,
+      initialData,
+      parentId
+    });
+
+    if (isEditing && !isAddingChild && initialData?.department_id) {
+      // 수정 모드
+      const updateData: PutDepartmentReq = {
+        department_name: values.department_name,
+        department_name_kr: values.department_name_kr,
+        parent_id: values.parent_id,
+        head_user_id: values.head_user_id || undefined,
+        tree_level: values.tree_level,
+        department_desc: values.department_desc || undefined,
+        company_id: values.company_id || undefined,
+      };
+      onSave({ departmentId: initialData.department_id, data: updateData });
+    } else {
+      // 생성 모드 (새 부서 또는 하위 부서 추가)
+      const createData: PostDepartmentReq = {
+        department_name: values.department_name,
+        department_name_kr: values.department_name_kr,
+        parent_id: values.parent_id,
+        head_user_id: values.head_user_id || undefined,
+        tree_level: values.tree_level,
+        department_desc: values.department_desc || undefined,
+        company_id: values.company_id || undefined,
+      };
+      onSave(createData);
+    }
   };
 
   const getDialogTitle = () => {
@@ -140,24 +186,13 @@ export default function DepartmentFormDialog({
             
             <FormField
               control={form.control}
-              name="department_type"
+              name="head_user_id"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>부서유형 *</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="선택하세요" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="본사">본사</SelectItem>
-                      <SelectItem value="본부">본부</SelectItem>
-                      <SelectItem value="부서">부서</SelectItem>
-                      <SelectItem value="팀">팀</SelectItem>
-                      <SelectItem value="파트">파트</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <FormLabel>부서장 ID</FormLabel>
+                  <FormControl>
+                    <Input placeholder="부서장 ID를 입력하세요" {...field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}

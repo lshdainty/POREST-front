@@ -20,7 +20,7 @@ const enum DepartmentQueryKey {
 interface PostDepartmentReq {
   department_name: string
   department_name_kr: string
-  parent_id?: number
+  parent_id?: number | null
   head_user_id?: string
   tree_level?: number
   department_desc?: string
@@ -38,7 +38,7 @@ const usePostDepartment = () => {
     mutationFn: async (d: PostDepartmentReq): Promise<PostDepartmentResp> => {
       const resp: ApiResponse<PostDepartmentResp> = await api.request({
         method: 'post',
-        url: `/api/v1/department`,
+        url: `/department`,
         data: d
       });
 
@@ -58,7 +58,7 @@ const usePostDepartment = () => {
 interface PutDepartmentReq {
   department_name?: string
   department_name_kr?: string
-  parent_id?: number
+  parent_id?: number | null
   head_user_id?: string
   tree_level?: number
   department_desc?: string
@@ -72,7 +72,7 @@ const usePutDepartment = () => {
     mutationFn: async ({ departmentId, data }: { departmentId: number;  data: PutDepartmentReq }): Promise<void> => {
       await api.request({
         method: 'put',
-        url: `/api/v1/department/${departmentId}`,
+        url: `/department/${departmentId}`,
         data: data
       });
     },
@@ -94,7 +94,7 @@ const useDeleteDepartment = () => {
     mutationFn: async (departmentId: number): Promise<void> => {
       await api.request({
         method: 'delete',
-        url: `/api/v1/department/${departmentId}`
+        url: `/department/${departmentId}`
       });
     },
     onSuccess: () => {
@@ -125,7 +125,7 @@ const useGetDepartment = (departmentId: number, enabled: boolean = true) => {
     queryFn: async (): Promise<GetDepartmentResp> => {
       const resp: ApiResponse<GetDepartmentResp> = await api.request({
         method: 'get',
-        url: `/api/v1/department/${departmentId}`
+        url: `/department/${departmentId}`
       });
 
       return resp.data;
@@ -152,7 +152,7 @@ const useGetDepartmentWithChildren = (departmentId: number, enabled: boolean = t
     queryFn: async (): Promise<GetDepartmentWithChildrenResp> => {
       const resp: ApiResponse<GetDepartmentWithChildrenResp> = await api.request({
         method: 'get',
-        url: `/api/v1/department/${departmentId}/children`
+        url: `/department/${departmentId}/children`
       });
 
       return resp.data;

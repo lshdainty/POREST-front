@@ -9,8 +9,9 @@ interface DepartmentTreePanelProps {
   departments: GetCompanyWithDepartment[];
   selectedDept: GetCompanyWithDepartment | null;
   onDeptSelect: (dept: GetCompanyWithDepartment) => void;
-  onDeptUpdate: (formData: GetCompanyWithDepartment, editingDept: any) => void;
+  onDeptUpdate: (formData: any, editingDept: any) => void;
   onDeptDelete: (deptId: number) => void;
+  companyId: string;
 }
 
 export default function DepartmentTreePanel({
@@ -19,6 +20,7 @@ export default function DepartmentTreePanel({
   onDeptSelect,
   onDeptUpdate,
   onDeptDelete,
+  companyId,
 }: DepartmentTreePanelProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingDept, setEditingDept] = useState<GetCompanyWithDepartment | null>(null);
@@ -26,7 +28,8 @@ export default function DepartmentTreePanel({
 
   const handleAddChild = (parentId: number) => {
     setAddingChildToId(parentId);
-    setEditingDept(null);
+    const parentDept = findDeptById(departments, parentId);
+    setEditingDept(parentDept); // 부모 부서 정보 (트리 레벨 계산용)
     setIsDialogOpen(true);
   };
 
@@ -36,37 +39,9 @@ export default function DepartmentTreePanel({
     setIsDialogOpen(true);
   };
 
-  const handleSave = (formData: GetCompanyWithDepartment) => {
-    if (addingChildToId) {
-      const newDept: GetCompanyWithDepartment = {
-        department_id: Date.now(),
-        department_name: formData.department_name,
-        department_name_kr: formData.department_name_kr,
-        parent_id: addingChildToId,
-        head_user_id: '',
-        tree_level: 0,
-        department_desc: formData.department_desc,
-        children: []
-      };
-      
-      onDeptUpdate(newDept, { 
-        department_id: addingChildToId, 
-        isAddingChild: true 
-      });
-    } else if (editingDept) {
-      onDeptUpdate(formData, editingDept);
-    } else {
-      const newDept: GetCompanyWithDepartment = {
-        department_id: Date.now(),
-        ...formData,
-        parent_id: 0,
-        head_user_id: '',
-        tree_level: 0,
-        children: []
-      };
-      onDeptUpdate(newDept, null);
-    }
-    
+  const handleSave = (formData: any) => {
+    onDeptUpdate(formData, editingDept);
+
     setIsDialogOpen(false);
     setEditingDept(null);
     setAddingChildToId(null);
@@ -186,8 +161,10 @@ export default function DepartmentTreePanel({
         onOpenChange={setIsDialogOpen}
         onSave={handleSave}
         initialData={editingDept}
-        isEditing={!!editingDept}
+        isEditing={!!editingDept && !addingChildToId}
         isAddingChild={!!addingChildToId}
+        parentId={addingChildToId}
+        companyId={companyId}
       />
     </div>
   );

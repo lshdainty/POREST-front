@@ -5,6 +5,7 @@ import DepartmentChartPanel from '@/components/company/DepartmentChartPanel';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/shadcn/resizable";
 import { Building2 } from 'lucide-react';
 import { useGetCompanyWithDepartments, usePostCompany, type GetCompanyWithDepartmentResp, type GetCompanyWithDepartment, type PostCompanyReq } from '@/api/company';
+import { usePostDepartment, usePutDepartment, type PostDepartmentReq, type PutDepartmentReq } from '@/api/department';
 import { Skeleton } from '@/components/shadcn/skeleton';
 
 
@@ -14,6 +15,8 @@ export default function Company() {
   // 임시로 company_id 'SKC' 사용
   const { data: companyData, isLoading, isError } = useGetCompanyWithDepartments({ company_id: 'skc' });
   const { mutate: createCompany } = usePostCompany();
+  const { mutate: createDepartment } = usePostDepartment();
+  const { mutate: updateDepartment } = usePutDepartment();
 
   const company: GetCompanyWithDepartmentResp | null = useMemo(() => {
     return companyData || null;
@@ -27,9 +30,20 @@ export default function Company() {
     createCompany(companyFormData);
   };
 
-  const handleDeptUpdate = (formData: GetCompanyWithDepartment, editingDept: any) => {
+  const handleDeptUpdate = (formData: PostDepartmentReq | { departmentId: number; data: PutDepartmentReq }, editingDept: any) => {
     console.log('부서 업데이트:', formData, editingDept);
-    // TODO: 부서 업데이트 API 연동
+
+    if ('departmentId' in formData) {
+      // 수정 모드
+      updateDepartment(formData);
+    } else {
+      // 생성 모드
+      const createData: PostDepartmentReq = {
+        ...formData,
+        company_id: company?.company_id || 'skc'
+      };
+      createDepartment(createData);
+    }
   };
 
   const handleDeptDelete = (deptId: number) => {
@@ -92,6 +106,7 @@ export default function Company() {
             onDeptSelect={setSelectedDept}
             onDeptUpdate={handleDeptUpdate}
             onDeptDelete={handleDeptDelete}
+            companyId={company?.company_id || 'skc'}
           />
         </ResizablePanel>
         
