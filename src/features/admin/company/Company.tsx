@@ -2,6 +2,8 @@ import { useState, useMemo } from 'react';
 import CompanyCreateCard from '@/components/company/CompanyCreateCard';
 import DepartmentTreePanel from '@/components/company/DepartmentTreePanel';
 import DepartmentChartPanel from '@/components/company/DepartmentChartPanel';
+import DepartmentTreePanelSkeleton from '@/components/company/DepartmentTreePanelSkeleton';
+import DepartmentChartPanelSkeleton from '@/components/company/DepartmentChartPanelSkeleton';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/shadcn/resizable";
 import { Building2 } from 'lucide-react';
 import { useGetCompanyWithDepartments, usePostCompany, type GetCompanyWithDepartmentResp, type GetCompanyWithDepartment, type PostCompanyReq } from '@/api/company';
@@ -13,7 +15,7 @@ export default function Company() {
   const [selectedDept, setSelectedDept] = useState<GetCompanyWithDepartment | null>(null);
   
   // 임시로 company_id 'SKC' 사용
-  const { data: companyData, isLoading, isError } = useGetCompanyWithDepartments({ company_id: 'skc' });
+  const { data: companyData, isLoading, isError } = useGetCompanyWithDepartments({ company_id: 'SKC' });
   const { mutate: createCompany } = usePostCompany();
   const { mutate: createDepartment } = usePostDepartment();
   const { mutate: updateDepartment } = usePutDepartment();
@@ -31,9 +33,7 @@ export default function Company() {
     createCompany(companyFormData);
   };
 
-  const handleDeptUpdate = (formData: PostDepartmentReq | { departmentId: number; data: PutDepartmentReq }, editingDept: any) => {
-    console.log('부서 업데이트:', formData, editingDept);
-
+  const handleDeptUpdate = (formData: PostDepartmentReq | { departmentId: number; data: PutDepartmentReq }) => {
     if ('departmentId' in formData) {
       // 수정 모드
       updateDepartment(formData);
@@ -48,7 +48,6 @@ export default function Company() {
   };
 
   const handleDeptDelete = (deptId: number) => {
-    console.log('부서 삭제:', deptId);
     deleteDepartment(deptId);
   };
 
@@ -62,17 +61,11 @@ export default function Company() {
         </div>
         <ResizablePanelGroup direction="horizontal" className="flex-grow rounded-lg border">
           <ResizablePanel defaultSize={30} minSize={25}>
-            <div className="p-4 space-y-2">
-              <Skeleton className="h-8 w-full" />
-              <Skeleton className="h-64 w-full" />
-            </div>
+            <DepartmentTreePanelSkeleton />
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize={70}>
-          <div className="p-4 space-y-2">
-              <Skeleton className="h-8 w-1/4" />
-              <Skeleton className="h-96 w-full" />
-            </div>
+            <DepartmentChartPanelSkeleton />
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
@@ -103,7 +96,7 @@ export default function Company() {
             onDeptSelect={setSelectedDept}
             onDeptUpdate={handleDeptUpdate}
             onDeptDelete={handleDeptDelete}
-            companyId={company?.company_id || 'skc'}
+            companyId={company?.company_id || 'SKC'}
           />
         </ResizablePanel>
         

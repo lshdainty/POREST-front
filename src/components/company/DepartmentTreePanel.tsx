@@ -9,7 +9,7 @@ interface DepartmentTreePanelProps {
   departments: GetCompanyWithDepartment[];
   selectedDept: GetCompanyWithDepartment | null;
   onDeptSelect: (dept: GetCompanyWithDepartment) => void;
-  onDeptUpdate: (formData: any, editingDept: any) => void;
+  onDeptUpdate: (formData: any) => void;
   onDeptDelete: (deptId: number) => void;
   companyId: string;
 }
@@ -40,7 +40,7 @@ export default function DepartmentTreePanel({
   };
 
   const handleSave = (formData: any) => {
-    onDeptUpdate(formData, editingDept);
+    onDeptUpdate(formData);
 
     setIsDialogOpen(false);
     setEditingDept(null);
@@ -126,7 +126,7 @@ export default function DepartmentTreePanel({
   const treeData = departments.map(mapDeptToTreeItem);
 
   return (
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full flex flex-col">
       <div className="flex items-center justify-between p-4 border-b">
         <h2 className="text-lg font-semibold">부서 관리</h2>
         <Button size="sm" onClick={() => {
@@ -149,8 +149,8 @@ export default function DepartmentTreePanel({
             className="bg-transparent"
           />
         ) : (
-          <div className="flex flex-col items-center justify-center h-full text-gray-500">
-            <Building2 size={48} className="mb-4 text-gray-400" />
+          <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+            <Building2 size={48} className="mb-4 text-muted-foreground" />
             <p>부서가 없습니다</p>
           </div>
         )}
