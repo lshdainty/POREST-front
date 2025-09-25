@@ -5,12 +5,10 @@ import { GetCompanyWithDepartment } from '@/api/company';
 
 interface DepartmentChartPanelProps {
   departments: GetCompanyWithDepartment[];
-  onAddClick: () => void;
 }
 
-export default function DepartmentChartPanel({ 
-  departments, 
-  onAddClick 
+export default function DepartmentChartPanel({
+  departments
 }: DepartmentChartPanelProps) {
   const StyledNode = ({ children, isRoot = false }) => (
     <div className={`

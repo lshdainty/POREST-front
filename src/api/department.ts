@@ -1,6 +1,7 @@
 import { api } from '@/api/index'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/alert/toast';
+import { CompanyQueryKey } from '@/api/company';
 
 interface ApiResponse<T = any> {
   code: number
@@ -47,6 +48,7 @@ const usePostDepartment = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [DepartmentQueryKey.GET_DEPARTMENT] });
       queryClient.invalidateQueries({ queryKey: [DepartmentQueryKey.GET_DEPARTMENT_WITH_CHILDREN] });
+      queryClient.invalidateQueries({ queryKey: [CompanyQueryKey.GET_COMPANY_WITH_DEPARTMENTS] });
       toast.success('부서가 등록되었습니다.');
     },
     onError: (error) => {
@@ -79,6 +81,7 @@ const usePutDepartment = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [DepartmentQueryKey.GET_DEPARTMENT] });
       queryClient.invalidateQueries({ queryKey: [DepartmentQueryKey.GET_DEPARTMENT_WITH_CHILDREN] });
+      queryClient.invalidateQueries({ queryKey: [CompanyQueryKey.GET_COMPANY_WITH_DEPARTMENTS] });
       toast.success('부서 정보가 수정되었습니다.');
     },
     onError: (error) => {
@@ -100,6 +103,7 @@ const useDeleteDepartment = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [DepartmentQueryKey.GET_DEPARTMENT] });
       queryClient.invalidateQueries({ queryKey: [DepartmentQueryKey.GET_DEPARTMENT_WITH_CHILDREN] });
+      queryClient.invalidateQueries({ queryKey: [CompanyQueryKey.GET_COMPANY_WITH_DEPARTMENTS] });
       toast.success('부서가 삭제되었습니다.');
     },
     onError: (error) => {

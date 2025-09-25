@@ -5,7 +5,7 @@ import DepartmentChartPanel from '@/components/company/DepartmentChartPanel';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/shadcn/resizable";
 import { Building2 } from 'lucide-react';
 import { useGetCompanyWithDepartments, usePostCompany, type GetCompanyWithDepartmentResp, type GetCompanyWithDepartment, type PostCompanyReq } from '@/api/company';
-import { usePostDepartment, usePutDepartment, type PostDepartmentReq, type PutDepartmentReq } from '@/api/department';
+import { usePostDepartment, usePutDepartment, useDeleteDepartment, type PostDepartmentReq, type PutDepartmentReq } from '@/api/department';
 import { Skeleton } from '@/components/shadcn/skeleton';
 
 
@@ -17,6 +17,7 @@ export default function Company() {
   const { mutate: createCompany } = usePostCompany();
   const { mutate: createDepartment } = usePostDepartment();
   const { mutate: updateDepartment } = usePutDepartment();
+  const { mutate: deleteDepartment } = useDeleteDepartment();
 
   const company: GetCompanyWithDepartmentResp | null = useMemo(() => {
     return companyData || null;
@@ -48,13 +49,9 @@ export default function Company() {
 
   const handleDeptDelete = (deptId: number) => {
     console.log('부서 삭제:', deptId);
-    // TODO: 부서 삭제 API 연동
+    deleteDepartment(deptId);
   };
 
-  const handleAddDeptFromChart = () => {
-    console.log('차트에서 부서 추가');
-    // TODO: 부서 추가 로직 구현
-  };
 
   if (isLoading) {
     return (
@@ -115,7 +112,6 @@ export default function Company() {
         <ResizablePanel defaultSize={70}>
           <DepartmentChartPanel
             departments={departments}
-            onAddClick={handleAddDeptFromChart}
           />
         </ResizablePanel>
       </ResizablePanelGroup>

@@ -69,15 +69,6 @@ export default function DepartmentFormDialog({
   });
 
   useEffect(() => {
-    console.log('DepartmentFormDialog 상태:', {
-      isOpen,
-      isEditing,
-      isAddingChild,
-      parentId,
-      companyId,
-      initialData
-    });
-
     if (isOpen) {
       if (isEditing && initialData) {
         form.reset({
@@ -104,14 +95,6 @@ export default function DepartmentFormDialog({
   }, [isOpen, isEditing, initialData, form]);
 
   const onSubmit = (values: DepartmentFormValues): void => {
-    console.log('onSubmit 호출:', {
-      values,
-      isEditing,
-      isAddingChild,
-      initialData,
-      parentId
-    });
-
     if (isEditing && !isAddingChild && initialData?.department_id) {
       // 수정 모드
       const updateData: PutDepartmentReq = {
