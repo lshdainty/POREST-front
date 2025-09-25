@@ -1,7 +1,6 @@
 import { api } from '@/api/index'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from '@/components/alert/toast';
-import { number, string } from 'zod';
 
 interface ApiResponse<T = any> {
   code: number
@@ -155,5 +154,7 @@ export {
 export type {
   // Interface
   PostCompanyReq,
-  PutCompanyReq
+  PutCompanyReq,
+  GetCompanyWithDepartmentResp,
+  GetCompanyWithDepartment
 }

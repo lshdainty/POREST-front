@@ -3,13 +3,13 @@ import { Plus, Edit, Trash2, Building2 } from 'lucide-react';
 import { Button } from '@/components/shadcn/button';
 import DepartmentFormDialog from '@/components/company/DepartmentFormDialog';
 import { TreeView, TreeDataItem } from '@/components/shadcn/treeView';
-import { Department } from '@/types/company';
+import { GetCompanyWithDepartment } from '@/api/company';
 
 interface DepartmentTreePanelProps {
-  departments: Department[];
-  selectedDept: Department | null;
-  onDeptSelect: (dept: Department) => void;
-  onDeptUpdate: (formData: Department, editingDept: any) => void;
+  departments: GetCompanyWithDepartment[];
+  selectedDept: GetCompanyWithDepartment | null;
+  onDeptSelect: (dept: GetCompanyWithDepartment) => void;
+  onDeptUpdate: (formData: GetCompanyWithDepartment, editingDept: any) => void;
   onDeptDelete: (deptId: number) => void;
 }
 
@@ -21,7 +21,7 @@ export default function DepartmentTreePanel({
   onDeptDelete,
 }: DepartmentTreePanelProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingDept, setEditingDept] = useState<Department | null>(null);
+  const [editingDept, setEditingDept] = useState<GetCompanyWithDepartment | null>(null);
   const [addingChildToId, setAddingChildToId] = useState<number | null>(null);
 
   const handleAddChild = (parentId: number) => {
@@ -30,23 +30,23 @@ export default function DepartmentTreePanel({
     setIsDialogOpen(true);
   };
 
-  const handleEdit = (dept: Department) => {
+  const handleEdit = (dept: GetCompanyWithDepartment) => {
     setEditingDept(dept);
     setAddingChildToId(null);
     setIsDialogOpen(true);
   };
 
-  const handleSave = (formData: Department) => {
+  const handleSave = (formData: GetCompanyWithDepartment) => {
     if (addingChildToId) {
-      const newDept: Department = {
+      const newDept: GetCompanyWithDepartment = {
         department_id: Date.now(),
         department_name: formData.department_name,
         department_name_kr: formData.department_name_kr,
-        parent_department_id: addingChildToId,
-        department_level: 0,
-        department_type: formData.department_type,
+        parent_id: addingChildToId,
+        head_user_id: '',
+        tree_level: 0,
         department_desc: formData.department_desc,
-        children_department: []
+        children: []
       };
       
       onDeptUpdate(newDept, { 
@@ -56,12 +56,13 @@ export default function DepartmentTreePanel({
     } else if (editingDept) {
       onDeptUpdate(formData, editingDept);
     } else {
-      const newDept: Department = {
+      const newDept: GetCompanyWithDepartment = {
         department_id: Date.now(),
         ...formData,
-        parent_department_id: 0,
-        department_level: 0,
-        children_department: []
+        parent_id: 0,
+        head_user_id: '',
+        tree_level: 0,
+        children: []
       };
       onDeptUpdate(newDept, null);
     }
@@ -77,7 +78,7 @@ export default function DepartmentTreePanel({
     if (dept) onDeptSelect(dept);
   };
 
-  const mapDeptToTreeItem = (dept: Department): TreeDataItem => ({
+  const mapDeptToTreeItem = (dept: GetCompanyWithDepartment): TreeDataItem => ({
     id: dept.department_id.toString(),
     name: dept.department_name_kr,
     icon: Building2,
@@ -130,17 +131,17 @@ export default function DepartmentTreePanel({
         </Button>
       </div>
     ),
-    children: dept.children_department?.map(mapDeptToTreeItem),
+    children: dept.children?.map(mapDeptToTreeItem),
     draggable: true,
     droppable: true,
   });
 
 
-  const findDeptById = (depts: Department[], id: number): Department | null => {
+  const findDeptById = (depts: GetCompanyWithDepartment[], id: number): GetCompanyWithDepartment | null => {
     for (const dept of depts) {
       if (dept.department_id === id) return dept;
-      if (dept.children_department) {
-        const found = findDeptById(dept.children_department, id);
+      if (dept.children) {
+        const found = findDeptById(dept.children, id);
         if (found) return found;
       }
     }

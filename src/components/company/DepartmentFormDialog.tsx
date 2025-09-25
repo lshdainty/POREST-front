@@ -20,7 +20,7 @@ import {
   FormLabel, 
   FormMessage 
 } from '@/components/shadcn/form';
-import { Department } from '@/types/company';
+import { GetCompanyWithDepartment } from '@/api/company';
 
 const departmentFormSchema = z.object({
   department_name: z.string().min(1, { message: '영문 부서명을 입력해주세요.' }),
@@ -34,8 +34,8 @@ type DepartmentFormValues = z.infer<typeof departmentFormSchema>;
 interface DepartmentFormDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (formData: Department) => void;
-  initialData?: Department | null;
+  onSave: (formData: GetCompanyWithDepartment) => void;
+  initialData?: GetCompanyWithDepartment | null;
   isEditing?: boolean;
   isAddingChild?: boolean;
 }
@@ -65,7 +65,7 @@ export default function DepartmentFormDialog({
         form.reset({
           department_name: initialData.department_name || '',
           department_name_kr: initialData.department_name_kr || '',
-          department_type: initialData.department_type || '',
+          department_type: '',
           department_desc: initialData.department_desc || '',
         });
       } else {
@@ -80,15 +80,15 @@ export default function DepartmentFormDialog({
   }, [isOpen, isEditing, initialData, form]);
 
   const onSubmit = (values: DepartmentFormValues): void => {
-    const departmentData: Department = {
+    const departmentData: GetCompanyWithDepartment = {
       department_id: initialData?.department_id || Date.now(),
       department_name: values.department_name,
       department_name_kr: values.department_name_kr,
-      parent_department_id: initialData?.parent_department_id || 0,
-      department_level: initialData?.department_level || 0,
-      department_type: values.department_type,
+      parent_id: initialData?.parent_id || 0,
+      head_user_id: initialData?.head_user_id || '',
+      tree_level: initialData?.tree_level || 0,
       department_desc: values.department_desc || '',
-      children_department: initialData?.children_department || [],
+      children: initialData?.children || [],
     };
     onSave(departmentData);
   };

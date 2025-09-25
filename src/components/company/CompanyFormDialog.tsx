@@ -7,9 +7,10 @@ import { Button } from '@/components/shadcn/button';
 import { Textarea } from '@/components/shadcn/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/shadcn/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/shadcn/form';
-import { Company } from '@/types/company';
+import { PostCompanyReq } from '@/api/company';
 
 const companyFormSchema = z.object({
+  company_id: z.string().min(1, { message: '회사 ID를 입력해주세요.' }),
   company_name: z.string().min(1, { message: '회사명을 입력해주세요.' }),
   company_desc: z.string().optional(),
 });
@@ -19,8 +20,8 @@ type CompanyFormValues = z.infer<typeof companyFormSchema>;
 interface CompanyFormDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (formData: Omit<Company, 'company_id'>) => void;
-  initialData?: Partial<Company>;
+  onSave: (formData: PostCompanyReq) => void;
+  initialData?: Partial<PostCompanyReq>;
 }
 
 export default function CompanyFormDialog({ 
@@ -32,6 +33,7 @@ export default function CompanyFormDialog({
   const form = useForm<CompanyFormValues>({
     resolver: zodResolver(companyFormSchema),
     defaultValues: {
+      company_id: '',
       company_name: '',
       company_desc: '',
     },
@@ -41,6 +43,7 @@ export default function CompanyFormDialog({
   useEffect(() => {
     if (isOpen && initialData) {
       form.reset({
+        company_id: initialData.company_id || '',
         company_name: initialData.company_name || '',
         company_desc: initialData.company_desc || '',
       });
@@ -49,6 +52,7 @@ export default function CompanyFormDialog({
 
   const onSubmit = (values: CompanyFormValues): void => {
     onSave({
+      company_id: values.company_id,
       company_name: values.company_name,
       company_desc: values.company_desc || '',
     });
@@ -70,6 +74,20 @@ export default function CompanyFormDialog({
         
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="company_id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>회사 ID *</FormLabel>
+                  <FormControl>
+                    <Input placeholder="회사 ID를 입력하세요" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="company_name"

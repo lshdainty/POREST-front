@@ -4,52 +4,31 @@ import DepartmentTreePanel from '@/components/company/DepartmentTreePanel';
 import DepartmentChartPanel from '@/components/company/DepartmentChartPanel';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/shadcn/resizable";
 import { Building2 } from 'lucide-react';
-import { useGetCompanyWithDepartments, usePostCompany } from '@/api/company';
+import { useGetCompanyWithDepartments, usePostCompany, type GetCompanyWithDepartmentResp, type GetCompanyWithDepartment, type PostCompanyReq } from '@/api/company';
 import { Skeleton } from '@/components/shadcn/skeleton';
 
-// API 응답을 Department[] 타입으로 변환하는 함수
-const transformToDepartments = (data: any[]): Department[] => {
-  return data.map(d => ({
-    department_id: d.department_id,
-    department_name: d.department_name,
-    department_name_kr: d.department_name_kr,
-    parent_department_id: d.parent_id,
-    department_level: d.tree_level,
-    department_type: d.department_type || '팀', // API에 없으므로 기본값 설정
-    department_desc: d.department_desc,
-    children_department: d.children ? transformToDepartments(d.children) : [],
-  }));
-};
 
 export default function Company() {
-  const [selectedDept, setSelectedDept] = useState<Department | null>(null);
+  const [selectedDept, setSelectedDept] = useState<GetCompanyWithDepartment | null>(null);
   
   // 임시로 company_id '1' 사용
   const { data: companyData, isLoading, isError } = useGetCompanyWithDepartments({ company_id: 'SKC' });
   const { mutate: createCompany } = usePostCompany();
 
-  const company: Company | null = useMemo(() => {
-    if (!companyData) return null;
-    return {
-      company_id: companyData.company_id,
-      company_name: companyData.company_name,
-      company_desc: companyData.company_desc,
-    };
+  const company: GetCompanyWithDepartmentResp | null = useMemo(() => {
+    return companyData || null;
   }, [companyData]);
 
-  const departments: Department[] = useMemo(() => {
-    if (companyData?.departments) {
-      return transformToDepartments(companyData.departments);
-    }
-    return [];
+  const departments: GetCompanyWithDepartment[] = useMemo(() => {
+    return companyData?.departments || [];
   }, [companyData]);
 
-  const handleCompanyCreate = (companyFormData: Omit<Company, 'company_id'>) => {
+  const handleCompanyCreate = (companyFormData: PostCompanyReq) => {
     console.log('회사 생성:', companyFormData);
     // createCompany(companyFormData); // TODO: API 연동
   };
 
-  const handleDeptUpdate = (formData: Department, editingDept: any) => {
+  const handleDeptUpdate = (formData: GetCompanyWithDepartment, editingDept: any) => {
     console.log('부서 업데이트:', formData, editingDept);
     // TODO: 부서 업데이트 API 연동
   };
