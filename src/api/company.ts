@@ -5,7 +5,7 @@ import { toast } from '@/components/alert/toast';
 interface ApiResponse<T = any> {
   code: number
   message: string
-  count: string
+  count: number
   data: T
 }
 
@@ -22,18 +22,20 @@ interface PostCompanyReq {
   company_desc: string
 }
 
+interface PostCompanyResp {
+  company_id: string
+}
+
 const usePostCompany = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (d: PostCompanyReq) => {
-      const resp: ApiResponse = await api.request({
+    mutationFn: async (d: PostCompanyReq): Promise<PostCompanyResp> => {
+      const resp: ApiResponse<PostCompanyResp> = await api.request({
         method: 'post',
         url: `/company`,
         data: d
       });
-
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
 
       return resp.data;
     },
@@ -42,38 +44,33 @@ const usePostCompany = () => {
       toast.success('회사가 등록되었습니다.');
     },
     onError: (error) => {
-      toast.error(error.message);
+      console.error('Company creation failed:', error);
     }
   });
 }
 
 interface PutCompanyReq {
-  company_id: string
-  company_name: string
-  company_desc: string
+  company_name?: string
+  company_desc?: string
 }
 
 const usePutCompany = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (d: PutCompanyReq) => {
-      const resp: ApiResponse = await api.request({
+    mutationFn: async ({ companyId, data }: { companyId: string;  data: PutCompanyReq }): Promise<void> => {
+      await api.request({
         method: 'put',
-        url: `/company/${d.company_id}`,
-        data: d
+        url: `/company/${companyId}`,
+        data: data
       });
-
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
-
-      return resp.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [CompanyQueryKey.GET_COMPANY_WITH_DEPARTMENTS] });
       toast.success('회사 정보가 수정되었습니다.');
     },
     onError: (error) => {
-      toast.error(error.message);
+      console.error('Company update failed:', error);
     }
   });
 }
@@ -82,22 +79,22 @@ const useDeleteCompany = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (company_id: string) => {
-      const resp: ApiResponse = await api.request({
+    mutationFn: async (companyId: string): Promise<void> => {
+      if (!companyId || companyId.trim() === '') {
+        throw new Error('회사 ID가 필요합니다.');
+      }
+
+      await api.request({
         method: 'delete',
-        url: `/company/${company_id}`
+        url: `/company/${companyId}`
       });
-
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
-
-      return resp.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [CompanyQueryKey.GET_COMPANY_WITH_DEPARTMENTS] });
       toast.success('회사 정보가 삭제되었습니다.');
     },
     onError: (error) => {
-      toast.error(error.message);
+      console.error('Company deletion failed:', error);
     }
   });
 }
@@ -114,29 +111,32 @@ interface GetCompanyWithDepartmentResp {
 }
 
 interface GetCompanyWithDepartment {
-    department_id: number
-    department_name: string
-    department_name_kr: string
-    parent_id: number
-    head_user_id: string
-    tree_level: number
-    department_desc: string
-    children: Array<GetCompanyWithDepartment>
+  department_id: number
+  department_name: string
+  department_name_kr: string
+  parent_id?: number
+  head_user_id?: string
+  tree_level: number
+  department_desc?: string
+  children?: Array<GetCompanyWithDepartment>
 }
 
-const useGetCompanyWithDepartments = (reqData: GetCompanyWithDepartmentsReq) => {
+const useGetCompanyWithDepartments = (reqData: GetCompanyWithDepartmentsReq, enabled: boolean = true) => {
   return useQuery({
     queryKey: [CompanyQueryKey.GET_COMPANY_WITH_DEPARTMENTS, reqData.company_id],
     queryFn: async (): Promise<GetCompanyWithDepartmentResp> => {
-      const resp: ApiResponse = await api.request({
+      if (!reqData.company_id || reqData.company_id.trim() === '') {
+        throw new Error('회사 ID가 필요합니다.');
+      }
+
+      const resp: ApiResponse<GetCompanyWithDepartmentResp> = await api.request({
         method: 'get',
         url: `/company/${reqData.company_id}/departments`
       });
 
-      if (resp.code !== 200) throw new Error(resp.data.data.message);
-
       return resp.data;
-    }
+    },
+    enabled: enabled && !!reqData.company_id && reqData.company_id.trim() !== ''
   });
 };
 
@@ -154,7 +154,9 @@ export {
 export type {
   // Interface
   PostCompanyReq,
+  PostCompanyResp,
   PutCompanyReq,
+  GetCompanyWithDepartmentsReq,
   GetCompanyWithDepartmentResp,
   GetCompanyWithDepartment
 }
