@@ -29,6 +29,12 @@ const api = axios.create({
 api.interceptors.request.use(
   (config: any) => {
     const headers = config.headers as CustomHeaders;
+
+    // login, logout API는 /api/v1 없이 호출
+    if (config.url === '/login' || config.url === '/logout') {
+      config.baseURL = import.meta.env.VITE_BASE_URL;
+    }
+
     // url에 따른 각종 header 세팅
     // jwt 사용시 accessToken 세팅
     return config;

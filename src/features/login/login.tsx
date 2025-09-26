@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/shadcn/button';
@@ -5,6 +6,7 @@ import { Card, CardContent } from '@/components/shadcn/card';
 import { Input } from '@/components/shadcn/input';
 import { Label } from '@/components/shadcn/label';
 import { useTheme } from '@/components/shadcn/themeProvider';
+import { usePostLogin } from '@/api/auth';
 import loginBG from '@/assets/img/login_bg.jpg';
 import Logo from '@/assets/img/porest.svg';
 import LogoDark from '@/assets/img/porest_dark.svg';
@@ -15,10 +17,26 @@ export default function Login({
 }: React.ComponentProps<'div'>) {
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const onFinish = (values: any) => {
-    // 로그인 로직 추가
-    localStorage.setItem('key', '');
-    navigate('/dashboard');
+  const [id, setId] = useState('');
+  const [pw, setPw] = useState('');
+
+  const loginMutation = usePostLogin();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!id || !pw) {
+      return;
+    }
+
+    loginMutation.mutate(
+      { id, pw },
+      {
+        onSuccess: () => {
+          navigate('/dashboard');
+        }
+      }
+    );
   }
 
   return (
@@ -36,18 +54,20 @@ export default function Login({
               </div>
               <form
                 className='p-6 md:p-8 h-full flex justify-center'
-                onSubmit={onFinish}
+                onSubmit={handleSubmit}
               >
                 <div className='flex flex-col justify-center gap-6'>
                   <div className='flex flex-col items-center text-center'>
                     <img src={ theme == 'light' ? Logo : LogoDark } alt='logo'></img>
                   </div>
                   <div className='grid gap-3'>
-                    <Label htmlFor='email'>Email</Label>
+                    <Label htmlFor='email'>ID</Label>
                     <Input
                       id='email'
-                      type='email'
-                      placeholder='example@gmail.com'
+                      type='text'
+                      placeholder='아이디를 입력하세요'
+                      value={id}
+                      onChange={(e) => setId(e.target.value)}
                       required
                     />
                   </div>
@@ -61,13 +81,20 @@ export default function Login({
                         Forgot your password?
                       </a>
                     </div>
-                    <Input id='password' type='password' required />
+                    <Input
+                      id='password'
+                      type='password'
+                      value={pw}
+                      onChange={(e) => setPw(e.target.value)}
+                      required
+                    />
                   </div>
                   <Button
                     type='submit'
                     className='w-full'
+                    disabled={loginMutation.isPending}
                   >
-                    Login
+                    {loginMutation.isPending ? 'Loading...' : 'Login'}
                   </Button>
                   <div className='after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t'>
                     <span className='bg-card text-muted-foreground relative z-10 px-2'>
